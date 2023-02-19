@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4918382706571430367
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4918382706571430365}
+  - component: {fileID: 4918382706571430366}
+  - component: {fileID: 4918382706571430364}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4918382706571430365
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4918382706571430367}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 409.66666, y: 205.33333, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4918382706571430366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4918382706571430367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11874e57bf8d53540acfdc4ff68708de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tubes: []
+  mats:
+  - {fileID: 2100000, guid: e804aee6221eccc41aa7f59c20633b86, type: 2}
+  - {fileID: 2100000, guid: cacda47b3d0bd454da442d685c609552, type: 2}
+  tubePositions: []
+  loadedLevelNum: 0
+  gameScreen: {fileID: 0}
+  mainScreen: {fileID: 0}
+  levelScreen: {fileID: 0}
+  settingScreen: {fileID: 0}
+--- !u!114 &4918382706571430364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4918382706571430367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 813996fab4d21924a961fe917ca267b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tubes:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  balls:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  mats:
+  - {fileID: 2100000, guid: e804aee6221eccc41aa7f59c20633b86, type: 2}
+  - {fileID: 2100000, guid: cacda47b3d0bd454da442d685c609552, type: 2}
+  - {fileID: 2100000, guid: 04f0a5f51b7139945b300a06da8424eb, type: 2}
+  - {fileID: 2100000, guid: 6e673a525b5ad204aa203d1be8869d73, type: 2}
+  - {fileID: 2100000, guid: dfecc45d80a311345b22fd2b18d48e35, type: 2}
+  - {fileID: 2100000, guid: 462a7558329bca34c8a130d1e89076d2, type: 2}
+  - {fileID: 2100000, guid: 92f6f517c6e54a644b6197ee98f03e78, type: 2}
+  - {fileID: 2100000, guid: ec0de7eee49c7e342b9ab9150f277105, type: 2}
+  - {fileID: 2100000, guid: 5b24d47df7f95be419177230bcc8c213, type: 2}
+  - {fileID: 2100000, guid: 4b4cf945840f3f14d876eaba3cb56afb, type: 2}
+  - {fileID: 2100000, guid: 1cefe206e256fcd49a9ba93972d434a4, type: 2}
+  - {fileID: 2100000, guid: 639ae47b369022348882d9f9ae3d19ab, type: 2}
+  chosen: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
