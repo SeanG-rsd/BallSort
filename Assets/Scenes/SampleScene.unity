@@ -19437,6 +19437,18 @@ PrefabInstance:
       propertyPath: settingScreen
       value: 
       objectReference: {fileID: 1253168399}
+    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: loadedLevelNum
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: mats.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: tubes.Array.size
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 4918382706571430367, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: m_Name
       value: GameManager
