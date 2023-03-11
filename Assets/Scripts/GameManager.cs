@@ -7,76 +7,122 @@ public class GameManager : MonoBehaviour
 { 
     public List<GameObject> tubes;
 
-    public List<Material> mats;
-
-    public List<GameObject> tubePositions;
 
     bool clickState;
     GameObject firstTubeClicked;
 
     Material currentMat;
 
-    public int loadedLevelNum;
-
+    public List<GameObject> screens;
     public GameObject gameScreen;
-    public GameObject mainScreen;
-    public GameObject levelScreen;
-    public GameObject settingScreen;
+
+    public int menuNum = 0;
+
+    public List<GameObject> resetTubes = new List<GameObject>();
+    
+    public GameObject resetTubePrefab;
+
+    
+
 
     // Start is called before the first frame update
     void Start()
     {
         
+        //resetTubes = tubes;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            ToggleSettingScreen();
+            Debug.Log("reset");
+            tubes = resetTubes;
+        }
+
+        
+
+        for (int i = 0; i < screens.Count; ++i)
+        {
+            if (i == menuNum && !screens[i].activeSelf)
+            {
+                OpenMenuNum(i);
+            }
         }
     }
 
-    public void OpenCurrentLevel()
+    public void ResetGame()
     {
-        gameScreen.SetActive(true);
-        mainScreen.SetActive(false);
-        levelScreen.SetActive(false);
-        settingScreen.SetActive(false);
-    }
+        Debug.Log("reset game");
 
-    public void OpenPickScreen()
-    {
-        gameScreen.SetActive(false);
-        mainScreen.SetActive(false);
-        levelScreen.SetActive(true);
-        settingScreen.SetActive(false);
-    }
+        List<GameObject> testTubes = new List<GameObject>();
 
-    public void OpenMainScreen()
-    {
-        gameScreen.SetActive(false);
-        mainScreen.SetActive(true);
-        levelScreen.SetActive(false);
-        settingScreen.SetActive(false);
-    }
-
-    public void ToggleSettingScreen()
-    {
-        if (gameScreen.activeSelf && !settingScreen.activeSelf)
+        for (int i = 0; i < resetTubes.Count; ++i)
         {
-            settingScreen.SetActive(true);
+            GameObject test = Instantiate(resetTubes[i], new Vector3(0, 0, 0), Quaternion.identity);
+
+            test.transform.SetParent(gameScreen.transform.GetChild(0));
+
+
+            test.transform.position = tubes[i].transform.position;
+            test.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+
+            
+
+            testTubes.Add(test);
+            Destroy(tubes[i]);
+            
+
+            clickState = false;
+            
         }
-        else if (gameScreen.activeSelf && settingScreen.activeSelf)
+
+        tubes.Clear();
+        tubes = testTubes;
+        
+        //menuNum = 2;
+        
+
+        //menuNum = 1;
+    }
+
+    public void OpenMenuNum(int index)
+    {
+        for (int i = 0; i < screens.Count; ++i)
         {
-            settingScreen.SetActive(false);
+            screens[i].SetActive(false);
         }
+
+        screens[index].SetActive(true);
+    }
+
+    public void OpenLevelScreen()
+    {
+        menuNum = 1;
+        ResetGame();
+    }
+
+    public void ResetCurrent()
+    {
+        ResetGame();
+        gameObject.GetComponent<LevelCreator>().LoadLastLevel();
+    }
+
+    bool CheckForWin() // check to see if all tubes are the right color
+    {
+        for (int i = 0; i < tubes.Count; ++i)
+        {
+            if (!tubes[i].GetComponent<Tube>().FullTube() && !tubes[i].GetComponent<Tube>().EmptyTube()) { return false; } 
+        }
+
+        return true;
     }
 
     public void Clicked(GameObject tube)
     {
-        if (!clickState && !tube.GetComponent<Tube>().FullTube())
+        
+        if (!clickState && !tube.GetComponent<Tube>().FullTube()) // move ball to the top
         {
             clickState = true;
             firstTubeClicked = tube;
@@ -84,39 +130,40 @@ public class GameManager : MonoBehaviour
 
             firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
         }
-        else if (clickState && firstTubeClicked != tube)
+        else if (clickState && firstTubeClicked != tube) // move balls into empty tube
         {
             GameObject ball = firstTubeClicked.GetComponent<Tube>().GetTopBall();
 
             Tube second = tube.GetComponent<Tube>();
             //Debug.Log(ball.GetComponent<Image>().color);
             
-            if (second.EmptyTube())
+            if (second.EmptyTube()) 
             {
 
                 clickState = false;
 
                 //Debug.Log("tubeSecondClick");
-
                 second.NewBallsToBottom(ball);
-                Debug.Log(firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball));
 
-                if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball))
+                
+
+                for (int i = 0; i <= firstTubeClicked.GetComponent<Tube>().CheckHowManyNextIsSameColor(ball); ++i)
                 {
-                    second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
-                    if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball))
+             
+                    if (firstTubeClicked.GetComponent<Tube>().ReturnNext() != null)
                     {
-                        second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
-                        if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball))
+                        if (firstTubeClicked.GetComponent<Tube>().CheckTwo(firstTubeClicked.GetComponent<Tube>().ReturnNext(), ball))
                         {
                             second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
                         }
                     }
                 }
 
+                
+
                 firstTubeClicked = null;
             }
-            else if (ball.GetComponent<Image>().color == second.GetBottomBall().GetComponent<Image>().color && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube))
+            else if (ball.GetComponent<Image>().color == second.GetBottomBall().GetComponent<Image>().color && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
             {
                 clickState = false;
 
@@ -124,7 +171,7 @@ public class GameManager : MonoBehaviour
 
                 second.NewBallsToBottom(ball);
 
-                if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball))
+                if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball)) // fix this for only going to the last ball to get rid of error
                 {
                     second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
                     if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball))
@@ -139,24 +186,53 @@ public class GameManager : MonoBehaviour
 
                 firstTubeClicked = null;
             }
-            else
+            else // move ball from different tube to the top
             {
                 firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
 
-                Debug.Log("moveTopToBottom");
+                Debug.Log("move from dif");
 
                 firstTubeClicked = tube;
+                
                 
 
                 firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
             }
+
+            if (CheckForWin()) { Win(); }
+            else { Debug.Log("not win"); }
+
         }
-        else if (clickState && firstTubeClicked == tube)
+        else if (clickState && firstTubeClicked == tube) // move ball back into the tube
         {
             tube.GetComponent<Tube>().MoveTopToBottom();
+
+            Debug.Log("same tube");
 
             tube = null;
             clickState = false;
         }
+
+
+        
+    }
+
+    void Win()
+    {
+        menuNum = 1;
+        gameObject.GetComponent<LevelCreator>().BeatLastLevel();
+        gameObject.GetComponent<LevelCreator>().UpdateCompleted();
+        ResetGame();
+
+    }
+
+    void SaveWins()
+    {
+
+    }
+
+    void LoadWins()
+    {
+
     }
 }

@@ -153,6 +153,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spots: 0000000000
   index: 0
+  GameTube: 0
+  isFull: 0
+  gm: {fileID: 4918382706571430367, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+  button: {fileID: 6566811625261048976}
 --- !u!1 &1208351212285713882
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4918382706571430365}
-  - component: {fileID: 4918382706571430366}
   - component: {fileID: 4918382706571430364}
+  - component: {fileID: 4918382706571430366}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -33,28 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4918382706571430366
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4918382706571430367}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11874e57bf8d53540acfdc4ff68708de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tubes: []
-  mats:
-  - {fileID: 2100000, guid: e804aee6221eccc41aa7f59c20633b86, type: 2}
-  - {fileID: 2100000, guid: cacda47b3d0bd454da442d685c609552, type: 2}
-  tubePositions: []
-  loadedLevelNum: 0
-  gameScreen: {fileID: 0}
-  mainScreen: {fileID: 0}
-  levelScreen: {fileID: 0}
-  settingScreen: {fileID: 0}
 --- !u!114 &4918382706571430364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,3 +85,49 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 1cefe206e256fcd49a9ba93972d434a4, type: 2}
   - {fileID: 2100000, guid: 639ae47b369022348882d9f9ae3d19ab, type: 2}
   chosen: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  savedLevels: 
+  spots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  chooseButtonPrefab: {fileID: 6807884434142539258, guid: 77e32631c5f815b43a627bf7746ff436, type: 3}
+  saveButton: {fileID: 0}
+--- !u!114 &4918382706571430366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4918382706571430367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11874e57bf8d53540acfdc4ff68708de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tubes:
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  - {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  tubePositions: []
+  loadedLevelNum: 0
+  gameScreen: {fileID: 2978833170344611570, guid: 2612457ea66030c458d6a1f9e295f03e, type: 3}
+  mainScreen: {fileID: 0}
+  levelScreen: {fileID: 0}
+  settingScreen: {fileID: 0}
+  makeScreen: {fileID: 0}
+  screens: []
+  menuNum: 1

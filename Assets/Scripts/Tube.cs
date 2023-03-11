@@ -11,7 +11,21 @@ public class Tube : MonoBehaviour
 
     public bool GameTube;
 
+    public bool isFull;
+
+    public GameObject gm;
+
+    public Button button;
+
     // Start is called before the first frame update
+
+    void Awake()
+    {
+        gm = GameObject.Find("GameManager");
+        GameTube = true;
+        button.onClick.AddListener(Clicked);
+    }
+
     void Start()
     {
         if (GameTube) { UpdateSpots(); }
@@ -37,13 +51,15 @@ public class Tube : MonoBehaviour
 
     public void MoveBottomToTop()
     {
+        //Debug.Log("t");
+
         for (int i = 1; i < transform.childCount; ++i)
         {
             if (spots[i] && !spots[0])
             {
                 transform.GetChild(i).GetChild(0).SetParent(transform.GetChild(0));
                 transform.GetChild(0).GetChild(0).position = transform.GetChild(0).position;
-                Debug.Log(i);
+                //Debug.Log(i);
                 index = i;
                 return;
             }
@@ -65,7 +81,7 @@ public class Tube : MonoBehaviour
         return 5;
     }
 
-    public void MoveTopToBottom()
+    public void MoveTopToBottom() // move the lowest ball in the tube to the above spot on the tube
     {
         for (int i = transform.childCount - 1; i >= 0; i--)
         {
@@ -78,7 +94,7 @@ public class Tube : MonoBehaviour
         }
     }
 
-    public GameObject GetTopBall()
+    public GameObject GetTopBall() // get the ball sitting above the tube
     {
         if (spots[0])
         {
@@ -88,7 +104,7 @@ public class Tube : MonoBehaviour
         return null;
     }
 
-    public GameObject GetBottomBall()
+    public GameObject GetBottomBall() // get the last ball in the tube
     {
         UpdateSpots();
 
@@ -105,7 +121,7 @@ public class Tube : MonoBehaviour
         return null;
     }
 
-    public bool EmptyTube()
+    public bool EmptyTube() // check if the tube is empty
     {
         if (!spots[4])
         {
@@ -114,28 +130,36 @@ public class Tube : MonoBehaviour
         return false;
     }
 
-    public bool FullTube()
+    public bool FullTube() // check if the tube is completed
     {
-        for (int i = 1; i < transform.childCount; ++i)
+        if (!spots[0])
         {
-            
+            for (int i = 1; i < transform.childCount; ++i)
+            {
 
-            if (!spots[i])
-            {
-                return false;
-            }
-            else
-            {
-                if (spots[1] && spots[i])
+
+                if (!spots[i])
                 {
-                    GameObject ball = transform.GetChild(1).GetChild(0).gameObject;
-                    GameObject check = transform.GetChild(i).GetChild(0).gameObject;
+                    return false;
+                }
+                else
+                {
+                    if (spots[1] && spots[i])
+                    {
+                        GameObject ball = transform.GetChild(1).GetChild(0).gameObject;
+                        GameObject check = transform.GetChild(i).GetChild(0).gameObject;
 
-                    if (ball.GetComponent<Image>().color != check.GetComponent<Image>().color) { return false; }
+                        if (ball.GetComponent<Image>().color != check.GetComponent<Image>().color) { return false; }
+                    }
                 }
             }
+
+            isFull = true;
+
+            return true;
         }
-        return true;
+
+        return false;
     }
 
     public void NewBallsToBottom(GameObject ball)
@@ -154,17 +178,40 @@ public class Tube : MonoBehaviour
 
     public bool CheckIfNextIsSameColor(GameObject ball)
     {
-        Debug.Log("check if next is same color: " + BottomIndex());
-        if (spots[BottomIndex()] && BottomIndex() != 5)
+        //Debug.Log("check if next is same color: " + BottomIndex());
+        if (BottomIndex() != 5)
         {
-            
-            if (gameObject.transform.GetChild(BottomIndex()).GetChild(0).gameObject.GetComponent<Image>().color == ball.GetComponent<Image>().color)
+            if (spots[BottomIndex()])
             {
-                return true;
+
+                if (gameObject.transform.GetChild(BottomIndex()).GetChild(0).gameObject.GetComponent<Image>().color == ball.GetComponent<Image>().color)
+                {
+                    return true;
+                }
             }
         }
 
         return false;
+    }
+
+    public int CheckHowManyNextIsSameColor(GameObject ball)
+    {
+        int num = 0;
+
+        for (int i = BottomIndex(); i < 5; ++i)
+        {
+            if (spots[i])
+            {
+                if (gameObject.transform.GetChild(i).GetChild(0).gameObject.GetComponent<Image>().color != ball.GetComponent<Image>().color) { return num; }
+                if (gameObject.transform.GetChild(i).GetChild(0).gameObject.GetComponent<Image>().color == ball.GetComponent<Image>().color)
+                {
+                    num++;
+                    
+                }
+            }
+        }
+        //Debug.Log("num same: " + num);
+        return num;
     }
 
     public bool CheckTwo(GameObject ball, GameObject other)
@@ -179,19 +226,21 @@ public class Tube : MonoBehaviour
 
     public GameObject ReturnNext()
     {
-        Debug.Log("return next: " + BottomIndex());
-        if (spots[BottomIndex()])
+        //Debug.Log("return next: " + BottomIndex());
+        if (BottomIndex() != 5)
         {
-            return transform.GetChild(BottomIndex()).GetChild(0).gameObject;
-            
-        }
+            if (spots[BottomIndex()])
+            {
+                return transform.GetChild(BottomIndex()).GetChild(0).gameObject;
 
+            }
+        }
         return null;
     }
 
     public bool CanMoveIntoNextTube(GameObject tube)
     {
-        Debug.Log("check if moveable");
+        //Debug.Log("check if moveable");
 
         if (tube.GetComponent<Tube>().ReturnNumOpenSpots() != 0)
         {
@@ -204,7 +253,7 @@ public class Tube : MonoBehaviour
                 {
                     if (CheckTwo(ball, transform.GetChild(i).GetChild(0).gameObject))
                     {
-                        Debug.Log("is same color");
+                        //Debug.Log("is same color");
                         numMoving++;
                     }
                     else
@@ -214,7 +263,7 @@ public class Tube : MonoBehaviour
                 }
             }
 
-            Debug.Log("numMoving: " + numMoving);
+            //Debug.Log("numMoving: " + numMoving);
 
             if (numMoving <= tube.GetComponent<Tube>().ReturnNumOpenSpots())
             {
@@ -234,8 +283,15 @@ public class Tube : MonoBehaviour
             if (!spots[i]) { num++; }
         }
 
-        Debug.Log("open spots: " + num);
+        //Debug.Log("open spots: " + num);
         return num;
+    }
+
+    void Clicked()
+    {
+        
+        gm.GetComponent<GameManager>().Clicked(gameObject);
+
     }
 }
 
