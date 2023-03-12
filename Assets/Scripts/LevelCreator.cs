@@ -45,8 +45,8 @@ public class LevelCreator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-        savedLevels = GetLevels("Assets/Resources/Levels.txt");
+        Debug.Log(Application.persistentDataPath);
+        savedLevels = GetLevels(Application.persistentDataPath + "/Levels.txt");
         LoadGame();
         LoadLevelChooseList();
         LoadCompleted();
@@ -118,7 +118,7 @@ public class LevelCreator : MonoBehaviour
         AddToLevelList(newLevel);
 
         AddToDatabase(levels.Count - 1);
-        WriteLevels("Assets/Resources/Levels.txt");
+        WriteLevels(Application.persistentDataPath + "/Levels.txt");
 
         ResetMaker();
 
@@ -480,7 +480,7 @@ public class LevelCreator : MonoBehaviour
         }
     }
 
-    public void ResetData() // reset database
+    public void ResetData(GameObject button) // reset database
     {
         PlayerPrefs.DeleteAll();
         completedSave = "";
@@ -494,6 +494,8 @@ public class LevelCreator : MonoBehaviour
             }
         }
 
+
+        button.GetComponent<TMP_Text>().text = levels.Count.ToString();
     }
 
     public void UpdateCompleted()
