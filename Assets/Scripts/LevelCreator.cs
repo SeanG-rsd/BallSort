@@ -46,7 +46,7 @@ public class LevelCreator : MonoBehaviour
     void Start()
     {
         Debug.Log(Application.persistentDataPath);
-        savedLevels = GetLevels(Application.persistentDataPath + "/Levels.txt");
+        savedLevels = GetLevels("Assets/Resources/Levels.txt");
         LoadGame();
         LoadLevelChooseList();
         LoadCompleted();
@@ -118,7 +118,7 @@ public class LevelCreator : MonoBehaviour
         AddToLevelList(newLevel);
 
         AddToDatabase(levels.Count - 1);
-        WriteLevels(Application.persistentDataPath + "/Levels.txt");
+        WriteLevels("Assets/Resources/Levels.txt");
 
         ResetMaker();
 

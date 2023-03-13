@@ -99,7 +99,9 @@ public class GameManager : MonoBehaviour
 
     public void OpenLevelScreen()
     {
+        Debug.Log("openlevelscreen");
         menuNum = 1;
+        OpenMenuNum(menuNum);
         ResetGame();
     }
 
