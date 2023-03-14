@@ -42,11 +42,13 @@ public class LevelCreator : MonoBehaviour
     public Material blankMat;
     public string completedSave = "";
 
+    public TextAsset textfile;
+
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log(Application.persistentDataPath);
-        savedLevels = GetLevels("Assets/Resources/Levels.txt");
+        savedLevels = GetLevels();
         LoadGame();
         LoadLevelChooseList();
         LoadCompleted();
@@ -436,7 +438,7 @@ public class LevelCreator : MonoBehaviour
             completedSave = PlayerPrefs.GetString("SavedString");
             Debug.Log(completedSave);
         }
-        else { Debug.LogError("There is no save data"); }
+        else { Debug.LogWarning("There is no save data"); }
 
         List<int> completed = new List<int>();
         string set = "";
@@ -629,16 +631,10 @@ public class LevelCreator : MonoBehaviour
         }
     }
 
-    public string GetLevels(string path) // open the text file containing the string of levels
+    public string GetLevels() // open the text file containing the string of levels
     {
 
-        StreamReader reader = new StreamReader(path);
-
-        string l = reader.ReadToEnd();
-
-        reader.Close();
-
-        return l;
+        return textfile.text;
     }
 
     

@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
 
 
             test.transform.position = tubes[i].transform.position;
-            test.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
 
             
 
