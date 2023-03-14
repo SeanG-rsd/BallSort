@@ -222,6 +222,7 @@ public class GameManager : MonoBehaviour
     void Win()
     {
         menuNum = 1;
+        OpenMenuNum(menuNum);
         gameObject.GetComponent<LevelCreator>().BeatLastLevel();
         gameObject.GetComponent<LevelCreator>().UpdateCompleted();
         ResetGame();
