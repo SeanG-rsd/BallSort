@@ -44,6 +44,8 @@ public class LevelCreator : MonoBehaviour
 
     public TextAsset textfile;
 
+    public int tryAgain = 4;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -186,7 +188,86 @@ public class LevelCreator : MonoBehaviour
         }
     }
 
-    
+    public void GenerateLevelsButton()
+    {
+
+        GenerateLevel();
+    }
+
+    List<int> FindPossibleChoices()
+    {
+        List<int> choices = new List<int>();
+
+        for (int i = 0; i < chosen.Count; ++i)
+        {
+            if (chosen[i] < 4)
+            {
+                choices.Add(i);
+                
+            }
+        }
+        Debug.Log(choices.Count);
+        return choices;
+    }
+
+    void GenerateLevel()
+    {
+        
+
+        ResetMaker();
+
+        if (!FinishedMaking())
+        {
+            
+            List<List<int>> newLevel = new List<List<int>>(12);
+
+            for (int ii = 0; ii < 12; ii++)
+            {
+
+
+                List<int> newTube = new List<int>(4);
+                //int tryAgain = 4;
+                
+                for (int i = 0; i < 4; ++i)
+                {
+                    List<int> choices = FindPossibleChoices();
+                    
+
+                    int add = Random.Range(0, choices.Count);
+
+                    newTube.Add(choices[add]);
+                    chosen[choices[add]]++;
+                    
+                }
+
+                Debug.Log("new tube size = " + newTube.Count);
+
+                newLevel.Add(newTube);
+            }
+
+
+
+
+
+            if (FinishedMaking())
+            {
+                Debug.Log("new level sixe = " + newLevel.Count);
+                levels.Add(newLevel);
+                AddToLevelList(newLevel);
+
+                AddToDatabase(levels.Count - 1);
+                WriteLevels("Assets/Resources/Levels.txt");
+
+            }
+            else
+            {
+                Debug.Log(FinishedMaking());
+                Debug.LogError("Did not work");
+            }
+        }
+
+        
+    }
 
     public void AddToLevelList(List<List<int>> newLevel)
     {
@@ -315,7 +396,7 @@ public class LevelCreator : MonoBehaviour
     {
         if (currentLevelPage == 0) { pageLeftButton.GetComponent<Button>().interactable = false; }
         else if (!pageLeftButton.GetComponent<Button>().interactable) { pageLeftButton.GetComponent<Button>().interactable = true; }
-        if (currentLevelPage == levelButtons.Count - 1) { pageRightButton.GetComponent<Button>().interactable = false; }
+        if (currentLevelPage == levelButtons.Count - 2) { pageRightButton.GetComponent<Button>().interactable = false; }
         else if (!pageRightButton.GetComponent<Button>().interactable) { pageRightButton.GetComponent<Button>().interactable = true; }
     }
 

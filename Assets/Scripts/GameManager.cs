@@ -188,7 +188,7 @@ public class GameManager : MonoBehaviour
 
                 firstTubeClicked = null;
             }
-            else // move ball from different tube to the top
+            else if (!second.FullTube())// move ball from different tube to the top
             {
                 firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
 
