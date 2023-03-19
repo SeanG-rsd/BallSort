@@ -32,6 +32,8 @@ public class LevelCreator : MonoBehaviour
 
     public GameObject pageLeftButton;
     public GameObject pageRightButton;
+    public GameObject pageRightFarButton;
+    public GameObject pageLeftFarButton;
     List<List<GameObject>> levelButtons = new List<List<GameObject>>();
     int currentLevelPage = 0;
 
@@ -44,7 +46,14 @@ public class LevelCreator : MonoBehaviour
 
     public TextAsset textfile;
 
-    public int tryAgain = 4;
+    public TMP_Text levelNumText;
+    public TMP_Text pageNumText;
+
+    public Vector2 levelsPerPage;
+    public GameObject list;
+    public GameObject spotPrefab;
+
+    public int genXLevels;
 
     // Start is called before the first frame update
     void Start()
@@ -190,8 +199,10 @@ public class LevelCreator : MonoBehaviour
 
     public void GenerateLevelsButton()
     {
-
-        GenerateLevel();
+        for (int i = 0; i < genXLevels; ++i)
+        {
+            GenerateLevel();
+        }
     }
 
     List<int> FindPossibleChoices()
@@ -304,11 +315,50 @@ public class LevelCreator : MonoBehaviour
         UpdateListPage();
     }
 
+    float GenerateSpots()
+    {
+        spots.Clear();
+
+        Vector2 listRect = new Vector2(list.GetComponent<RectTransform>().rect.width, list.GetComponent<RectTransform>().rect.height);
+        Vector2 chooseButtonRect = new Vector2(chooseButtonPrefab.GetComponent<RectTransform>().rect.width, chooseButtonPrefab.GetComponent<RectTransform>().rect.height);
+
+        float sizeX = listRect.x / levelsPerPage.x;
+        float sizeY = listRect.y / levelsPerPage.y;
+        float scaleX = sizeX / chooseButtonRect.x;
+        float scaleY = sizeY / chooseButtonRect.y;
+        Debug.Log("size x = " + sizeX);
+
+        float halfY = levelsPerPage.y / 2;
+        
+
+        for (float r = halfY; r > -halfY; --r)
+        {
+            float halfX = levelsPerPage.x / 2;
+            
+
+            for (float c = -halfX; c < halfX; ++c)
+            {
+                GameObject newSpot = Instantiate(spotPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                newSpot.transform.SetParent(list.transform);
+                newSpot.transform.localPosition = new Vector3(c * chooseButtonPrefab.GetComponent<RectTransform>().rect.width * scaleX, r * chooseButtonPrefab.GetComponent<RectTransform>().rect.height * scaleY, 0);
+                newSpot.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                spots.Add(newSpot);
+                
+            }
+        }
+
+        if (sizeX == sizeY) { return scaleX; }
+        Debug.LogError("generatespots no work");
+        return 1;
+    }
+
     public void LoadLevelChooseList() // create the initial list of levels that you can click on to load
     {
         Debug.Log("Load Level Choose List");
+        float scale = GenerateSpots();
 
-        
+        int LPP = (int)levelsPerPage.x * (int)levelsPerPage.y;
+
         List<GameObject> page = new List<GameObject>();
         
 
@@ -318,16 +368,13 @@ public class LevelCreator : MonoBehaviour
 
             for (int i = 0; i < levels.Count; ++i)
             {
-                
-
-
 
                 GameObject newButton = Instantiate(chooseButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                 newButton.transform.SetParent(spots[spotCount].transform);
                 newButton.transform.position = spots[spotCount].transform.position;
-                newButton.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                newButton.transform.localScale = new Vector3(scale, scale, 1.0f);
 
-                newButton.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = "Level " + actualCount;
+                newButton.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = actualCount.ToString();
                 newButton.GetComponent<ChooseButton>().levelValue = actualCount;
 
 
@@ -338,7 +385,7 @@ public class LevelCreator : MonoBehaviour
                 page.Add(newButton);
                 //Debug.Log("page count: " + page.Count);
 
-                if (spotCount > 7)
+                if (spotCount > LPP - 1)
                 { 
                     spotCount = 0;
                     List<GameObject> add = new List<GameObject>();
@@ -351,19 +398,19 @@ public class LevelCreator : MonoBehaviour
 
 
                 }
-                
-
-
-
             }
+
+            
+
         }
 
-        
-        levelButtons.Add(page);
+
+        if (page.Count != 0) { levelButtons.Add(page); }
 
         
 
         currentLevelPage = 0;
+        Debug.LogWarning(levelButtons.Count);
         UpdateListPage();
         UpdatePageButtons();
     }
@@ -394,15 +441,41 @@ public class LevelCreator : MonoBehaviour
 
     void UpdatePageButtons()
     {
-        if (currentLevelPage == 0) { pageLeftButton.GetComponent<Button>().interactable = false; }
-        else if (!pageLeftButton.GetComponent<Button>().interactable) { pageLeftButton.GetComponent<Button>().interactable = true; }
-        if (currentLevelPage == levelButtons.Count - 2) { pageRightButton.GetComponent<Button>().interactable = false; }
-        else if (!pageRightButton.GetComponent<Button>().interactable) { pageRightButton.GetComponent<Button>().interactable = true; }
+
+        pageNumText.text = (currentLevelPage + 1).ToString() + " / " + (levelButtons.Count).ToString();
+
+        if (currentLevelPage == 0)
+        { 
+            pageLeftButton.GetComponent<Button>().interactable = false;
+            pageLeftFarButton.GetComponent<Button>().interactable = false;
+        }
+        else if (!pageLeftButton.GetComponent<Button>().interactable) 
+        {
+            pageLeftButton.GetComponent<Button>().interactable = true;
+            pageLeftFarButton.GetComponent<Button>().interactable = true;
+        }
+        if (currentLevelPage == levelButtons.Count - 1)
+        {
+            pageRightButton.GetComponent<Button>().interactable = false;
+            pageRightFarButton.GetComponent<Button>().interactable = false;
+        }
+        else if (!pageRightButton.GetComponent<Button>().interactable)
+        { 
+            pageRightButton.GetComponent<Button>().interactable = true;
+            pageRightFarButton.GetComponent<Button>().interactable = true;
+        }
     }
 
     public void PageLeft()
     {
         currentLevelPage--;
+        UpdateListPage();
+        UpdatePageButtons();
+    }
+
+    public void PageLeftFar()
+    {
+        currentLevelPage = 0;
         UpdateListPage();
         UpdatePageButtons();
     }
@@ -414,11 +487,18 @@ public class LevelCreator : MonoBehaviour
         UpdatePageButtons();
     }
 
+    public void PageRightFar()
+    {
+        currentLevelPage = levelButtons.Count - 1;
+        UpdateListPage();
+        UpdatePageButtons();
+    }
+
     public void LoadLevel(int index) // load a certain level based on the index given
     {
         List<GameObject> Gametubes = gameObject.GetComponent<GameManager>().tubes;
 
-
+        levelNumText.text = "Level " + (index + 1).ToString();
         //index = button.GetComponent<ChooseButton>().levelValue - 1;
 
         //Debug.Log("Level Count: " + levels.Count);
