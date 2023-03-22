@@ -22,6 +22,7 @@ public class LevelCreator : MonoBehaviour
     public List<int> chosen;
 
     public string savedLevels = "";
+    
 
     public List<GameObject> spots;
     public GameObject chooseButtonPrefab;
@@ -55,10 +56,19 @@ public class LevelCreator : MonoBehaviour
 
     public int genXLevels;
 
+   
+    public List<List<List<int>>> challengeLevels = new List<List<List<int>>>();
+    public float challengeTime;
+    
+    public TMP_Text challengeTimeText;
+    public GameObject challengeList;
+    public GameObject challengeButton;
+    public GameObject giveUpButton;
+
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(Application.persistentDataPath);
+        challengeTimeText.gameObject.SetActive(false);
         savedLevels = GetLevels();
         LoadGame();
         LoadLevelChooseList();
@@ -201,7 +211,7 @@ public class LevelCreator : MonoBehaviour
     {
         for (int i = 0; i < genXLevels; ++i)
         {
-            GenerateLevel();
+            GenerateLevel(false);
         }
     }
 
@@ -221,7 +231,7 @@ public class LevelCreator : MonoBehaviour
         return choices;
     }
 
-    void GenerateLevel()
+    void GenerateLevel(bool challenge)
     {
         
 
@@ -260,7 +270,7 @@ public class LevelCreator : MonoBehaviour
 
 
 
-            if (FinishedMaking())
+            if (FinishedMaking() && !challenge)
             {
                 Debug.Log("new level sixe = " + newLevel.Count);
                 levels.Add(newLevel);
@@ -270,6 +280,10 @@ public class LevelCreator : MonoBehaviour
                 WriteLevels("Assets/Resources/Levels.txt");
 
             }
+            else if (FinishedMaking() && challenge)
+            {
+                challengeLevels.Add(newLevel);
+            }
             else
             {
                 Debug.Log(FinishedMaking());
@@ -278,6 +292,42 @@ public class LevelCreator : MonoBehaviour
         }
 
         
+    }
+
+    public void StartChallenge()
+    {
+        pageNumText.gameObject.SetActive(false);
+        pageLeftButton.SetActive(false);
+        pageLeftFarButton.SetActive(false);
+        pageRightButton.SetActive(false);
+        pageRightFarButton.SetActive(false);
+
+        levelNumText.gameObject.SetActive(false);
+        challengeTimeText.gameObject.SetActive(true);
+
+        challengeButton.GetComponent<Button>().interactable = false;
+        giveUpButton.SetActive(true);
+        gameObject.GetComponent<GameManager>().modeButton.SetActive(false);
+        challengeList.SetActive(true);
+        list.SetActive(false);
+    }
+
+    public void GiveUpChallenge()
+    {
+        pageNumText.gameObject.SetActive(true);
+        pageLeftButton.SetActive(true);
+        pageLeftFarButton.SetActive(true);
+        pageRightButton.SetActive(true);
+        pageRightFarButton.SetActive(true);
+
+        levelNumText.gameObject.SetActive(true);
+        challengeTimeText.gameObject.SetActive(false);
+
+        challengeButton.GetComponent<Button>().interactable = true;
+        giveUpButton.SetActive(false);
+        gameObject.GetComponent<GameManager>().modeButton.SetActive(true);
+        challengeList.SetActive(false);
+        list.SetActive(true);
     }
 
     public void AddToLevelList(List<List<int>> newLevel)
@@ -410,7 +460,7 @@ public class LevelCreator : MonoBehaviour
         
 
         currentLevelPage = 0;
-        Debug.LogWarning(levelButtons.Count);
+        //Debug.LogWarning(levelButtons.Count);
         UpdateListPage();
         UpdatePageButtons();
     }
@@ -599,7 +649,7 @@ public class LevelCreator : MonoBehaviour
             completedSave = PlayerPrefs.GetString("SavedString");
             Debug.Log(completedSave);
         }
-        else { Debug.LogWarning("There is no save data"); }
+        //else { Debug.LogWarning("There is no save data"); }
 
         List<int> completed = new List<int>();
         string set = "";
