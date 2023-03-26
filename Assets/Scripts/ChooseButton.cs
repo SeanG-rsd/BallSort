@@ -11,12 +11,12 @@ public class ChooseButton : MonoBehaviour
 
     public Button button;
 
+    
+
     // Start is called before the first frame update
     void Awake()
     {
         GameManager = GameObject.Find("GameManager");
-
-        button.onClick.AddListener(LoadLevel);
     }
 
     // Update is called once per frame
@@ -25,8 +25,23 @@ public class ChooseButton : MonoBehaviour
         
     }
 
-    public void LoadLevel()
+    void LoadLevel()
     {
         GameManager.GetComponent<LevelCreator>().LoadLevel(levelValue - 1);
+    }
+
+    void LoadChallenge()
+    {
+        GameManager.GetComponent<LevelCreator>().LoadChallengeLevel(levelValue - 1);
+    }
+
+    public void Challenge()
+    {
+        button.onClick.AddListener(LoadChallenge);
+    }
+
+    public void Level()
+    {
+        button.onClick.AddListener(LoadLevel);
     }
 }

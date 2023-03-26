@@ -143,6 +143,12 @@ public class GameManager : MonoBehaviour
         canUndo = false;
     }
 
+    public void ResetChallenge()
+    {
+        ResetGame();
+        gameObject.GetComponent<LevelCreator>().LoadLastChallengeLevel();
+    }
+
     bool CheckForWin() // check to see if all tubes are the right color
     {
         for (int i = 0; i < tubes.Count; ++i)
@@ -255,13 +261,23 @@ public class GameManager : MonoBehaviour
 
     void Win()
     {
-        menuNum = 1;
-        OpenMenuNum(menuNum);
-        gameObject.GetComponent<LevelCreator>().BeatLastLevel();
-        gameObject.GetComponent<LevelCreator>().UpdateCompleted();
-        ResetGame();
-        SetUndoTubes();
-        canUndo = false;
+        if (!gameObject.GetComponent<LevelCreator>().inChallenge)
+        {
+            menuNum = 1;
+            OpenMenuNum(menuNum);
+            gameObject.GetComponent<LevelCreator>().BeatLastLevel();
+            gameObject.GetComponent<LevelCreator>().UpdateCompleted();
+            ResetGame();
+            SetUndoTubes();
+            canUndo = false;
+        }
+        else if (gameObject.GetComponent<LevelCreator>().inChallenge)
+        {
+            menuNum = 1;
+            OpenMenuNum(menuNum);
+            gameObject.GetComponent<LevelCreator>().BeatLastChallengeLevel();
+            //gameObject.GetComponent<LevelCreator>().UpdateCompleted();
+        }
     }
 
     void SetUndoTubes()
