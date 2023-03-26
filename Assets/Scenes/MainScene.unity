@@ -24605,6 +24605,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 299820514}
     - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: challengeRequirement
+      value: 
+      objectReference: {fileID: 1204210815}
+    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: tubes.Array.data[10]
       value: 
       objectReference: {fileID: 1348858553}
