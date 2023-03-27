@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     private int firstUndoTube;
     public GameObject moveHolder;
     public bool canUndo;
+    private List<List<GameObject>> undoHolster = new List<List<GameObject>>();
 
     public GameObject insult;
     public TMP_Text insultText;

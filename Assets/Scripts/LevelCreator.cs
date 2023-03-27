@@ -83,15 +83,14 @@ public class LevelCreator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        challengeTimeTextGame.gameObject.SetActive(false);
-        challengeTimeTextList.gameObject.SetActive(false);
+        
         savedLevels = GetLevels();
         LoadGame();
         LoadLevelChooseList();
         LoadCompleted();
-        
 
-        
+        challengeRequirement.SetActive(ChallengeRequirement());
+
     }
 
     // Update is called once per frame
