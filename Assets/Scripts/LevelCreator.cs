@@ -89,7 +89,7 @@ public class LevelCreator : MonoBehaviour
         LoadLevelChooseList();
         LoadCompleted();
 
-        challengeRequirement.SetActive(ChallengeRequirement());
+        challengeRequirement.SetActive(!ChallengeRequirement());
 
     }
 
@@ -101,7 +101,7 @@ public class LevelCreator : MonoBehaviour
         if (inChallenge)
         {
             challengeTime += Time.deltaTime;
-            float roundedTime = Mathf.Round(challengeTime * 100) / 100;
+            float roundedTime = Mathf.Round(challengeTime * 10) / 10;
             challengeTimeTextGame.text = roundedTime.ToString();
             challengeTimeTextList.text = roundedTime.ToString();
 
@@ -111,6 +111,7 @@ public class LevelCreator : MonoBehaviour
                 inChallenge = false;
                 
                 SaveChallengeTime();
+                Debug.LogWarning("beat challenge");
                 GiveUpChallenge();
             }
         }
@@ -378,7 +379,7 @@ public class LevelCreator : MonoBehaviour
         }
 
 
-        Debug.LogWarning("setup");
+        
 
         if (challengeSpots.Count > 0) { challengeSpots.Clear(); }
 
@@ -477,6 +478,8 @@ public class LevelCreator : MonoBehaviour
      
         
         Debug.LogWarning("complete");
+
+        Debug.LogWarning(challengeLevels.Count);
     }
 
     public void LoadChallengeLevel(int index) // load a certain level based on the index given
@@ -532,16 +535,6 @@ public class LevelCreator : MonoBehaviour
             }
         }
 
-        bool add = true;
-        for (int i = 0; i < completedChallenge.Count; ++i)
-        {
-            if (lastLevelLoaded == completedChallenge[i]) { add = true; }
-        }
-        if (add)
-        {
-            int addNew = lastLevelLoaded;
-            completedChallenge.Add(addNew);
-        }
     }
 
     public void GiveUpChallenge()
@@ -571,7 +564,17 @@ public class LevelCreator : MonoBehaviour
 
     bool BeatChallenge()
     {
-        if (completedChallenge.Count != challengeLevels.Count) { return false; }
+        for (int i = 0; i < challengeLevelButtons.Count; ++i)
+        {
+            for (int ii = 0; ii < challengeLevelButtons[i].Count; ++ii)
+            {
+                if (challengeLevelButtons[i][ii].GetComponent<Image>().color != completedMat.color)
+                {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 

@@ -277,6 +277,7 @@ public class GameManager : MonoBehaviour
             menuNum = 1;
             OpenMenuNum(menuNum);
             gameObject.GetComponent<LevelCreator>().BeatLastChallengeLevel();
+            ResetGame();
             //gameObject.GetComponent<LevelCreator>().UpdateCompleted();
         }
     }
