@@ -89,7 +89,7 @@ public class LevelCreator : MonoBehaviour
         LoadLevelChooseList();
         LoadCompleted();
 
-        challengeRequirement.SetActive(!ChallengeRequirement());
+        challengeRequirement.SetActive(ChallengeRequirement());
 
     }
 
