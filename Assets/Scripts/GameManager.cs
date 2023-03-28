@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
     public GameObject moveHolder;
     public bool canUndo;
     private List<List<GameObject>> undoHolster = new List<List<GameObject>>();
+    private int undosLeft;
+    public int givenUndos;
+    public TMP_Text undosLeftText;
 
     public GameObject insult;
     public TMP_Text insultText;
@@ -50,6 +53,8 @@ public class GameManager : MonoBehaviour
         insultTimer = insultTime;
         //ModeChange();
         OpenMenuNum(1);
+        undosLeft = givenUndos;
+        undosLeftText.text = undosLeft.ToString();
     }
 
     // Update is called once per frame
@@ -84,8 +89,10 @@ public class GameManager : MonoBehaviour
 
     public void ResetGame()
     {
-        Debug.Log("reset game");
-        
+        //Debug.Log("reset game");
+        undosLeft = givenUndos;
+        undosLeftText.text = undosLeft.ToString();
+
         List<GameObject> testTubes = new List<GameObject>();
 
         for (int i = 0; i < resetTubes.Count; ++i)
@@ -129,7 +136,7 @@ public class GameManager : MonoBehaviour
 
     public void OpenLevelScreen()
     {
-        Debug.Log("openlevelscreen");
+        //Debug.Log("openlevelscreen");
         menuNum = 1;
         OpenMenuNum(menuNum);
         ResetGame();
@@ -142,6 +149,13 @@ public class GameManager : MonoBehaviour
         gameObject.GetComponent<LevelCreator>().LoadLastLevel();
         SetUndoTubes();
         canUndo = false;
+
+        for (int i = 0; i < moveHolder.transform.childCount; ++i)
+        {
+            Destroy(moveHolder.transform.GetChild(i).gameObject);
+            
+        }
+        undoHolster.Clear();
     }
 
     public void ResetChallenge()
@@ -168,7 +182,7 @@ public class GameManager : MonoBehaviour
             SetUndoTubes();
             clickState = true;
             firstTubeClicked = tube;
-            Debug.Log("tubeFirstClicked");
+            //Debug.Log("tubeFirstClicked");
 
             firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
         }
@@ -232,7 +246,7 @@ public class GameManager : MonoBehaviour
             {
                 firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
 
-                Debug.Log("move from dif");
+                //Debug.Log("move from dif");
 
                 firstTubeClicked = tube;
                 
@@ -244,7 +258,7 @@ public class GameManager : MonoBehaviour
 
 
             if (CheckForWin()) { Win(); }
-            else { Debug.Log("not win"); }
+            //else { Debug.Log("not win"); }
 
             
 
@@ -253,7 +267,7 @@ public class GameManager : MonoBehaviour
         {
             tube.GetComponent<Tube>().MoveTopToBottom();
 
-            Debug.Log("same tube");
+            //Debug.Log("same tube");
 
             tube = null;
             clickState = false;
@@ -284,8 +298,8 @@ public class GameManager : MonoBehaviour
 
     void SetUndoTubes()
     {
-        for (int i = 0; i < undoTubes.Count; ++i) { Destroy(undoTubes[i]); }
-        undoTubes.Clear();
+        //for (int i = 0; i < undoTubes.Count; ++i) { Destroy(undoTubes[i]); }
+        List<GameObject> newTubes = new List<GameObject>();
 
         for (int i = 0; i < tubes.Count; ++i)
         {
@@ -316,21 +330,29 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            undoTubes.Add(test);
+            newTubes.Add(test);
+
+            
         }
 
+        
+        
+        undoHolster.Add(newTubes);
+
+        //Debug.LogWarning(undoHolster.Count);
         
     }
 
     public void UNDO()
     {
-        if (canUndo)
+        if (canUndo && undoHolster.Count != 0 && undosLeft > 0)
         {
-            Debug.LogWarning("undo");
+            undosLeft--;
+            //Debug.LogWarning("undo");
             insult.SetActive(true);
             if (insultTimer == insultTime) { doInsult = true; }
 
-
+            undoTubes = undoHolster[undoHolster.Count - 1];
 
             List<GameObject> testTubes = new List<GameObject>();
 
@@ -354,8 +376,13 @@ public class GameManager : MonoBehaviour
             tubes.Clear();
             tubes = testTubes;
 
-            canUndo = false;
+            undoHolster.RemoveAt(undoHolster.Count - 1);
+            //Debug.LogWarning(undoHolster.Count);
+
+            if (undoHolster.Count == 0) { canUndo = false; }
         }
+
+        undosLeftText.text = undosLeft.ToString();
     }
 
     public void ModeChange()

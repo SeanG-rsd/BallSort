@@ -76,6 +76,7 @@ public class LevelCreator : MonoBehaviour
     List<int> completedChallenge = new List<int>();
     public TMP_Text recordText;
     public GameObject challengeRequirement;
+    bool startChallenge;
 
     public GameObject requirementBox;
     public TMP_Text requirementText;
@@ -98,12 +99,12 @@ public class LevelCreator : MonoBehaviour
     {
         saveButton.GetComponent<Button>().interactable = FinishedMaking();
 
-        if (inChallenge)
+        if (inChallenge && startChallenge)
         {
             challengeTime += Time.deltaTime;
-            float roundedTime = Mathf.Round(challengeTime * 10) / 10;
-            challengeTimeTextGame.text = roundedTime.ToString();
-            challengeTimeTextList.text = roundedTime.ToString();
+            
+            challengeTimeTextGame.text = OrganizeChallengeTime(challengeTime).ToString();
+            challengeTimeTextList.text = OrganizeChallengeTime(challengeTime).ToString();
 
             if (BeatChallenge())
             {
@@ -111,7 +112,7 @@ public class LevelCreator : MonoBehaviour
                 inChallenge = false;
                 
                 SaveChallengeTime();
-                Debug.LogWarning("beat challenge");
+                //Debug.LogWarning("beat challenge");
                 GiveUpChallenge();
             }
         }
@@ -208,7 +209,7 @@ public class LevelCreator : MonoBehaviour
             {
 
                 if (tubes[i].transform.GetChild(ii).gameObject.GetComponent<TMP_Dropdown>().value != 0) { newChosen[tubes[i].transform.GetChild(ii).gameObject.GetComponent<TMP_Dropdown>().value - 1]++; }
-                Debug.Log(newChosen[i]);
+                //Debug.Log(newChosen[i]);
                 
             }
 
@@ -270,7 +271,7 @@ public class LevelCreator : MonoBehaviour
                 
             }
         }
-        Debug.Log(choices.Count);
+        //Debug.Log(choices.Count);
         return choices;
     }
 
@@ -304,7 +305,7 @@ public class LevelCreator : MonoBehaviour
                     
                 }
 
-                Debug.Log("new tube size = " + newTube.Count);
+                //Debug.Log("new tube size = " + newTube.Count);
 
                 newLevel.Add(newTube);
             }
@@ -390,7 +391,7 @@ public class LevelCreator : MonoBehaviour
         float sizeY = listRect.y / challengeLevelsPerPage.y;
         float scaleX = sizeX / chooseButtonRect.x;
         float scaleY = sizeY / chooseButtonRect.y;
-        Debug.Log("size x = " + sizeX);
+        //Debug.Log("size x = " + sizeX);
 
         float halfY = challengeLevelsPerPage.y / 2;
 
@@ -415,7 +416,7 @@ public class LevelCreator : MonoBehaviour
         int LPP = (int)challengeLevelsPerPage.x * (int)challengeLevelsPerPage.y;
 
         
-        Debug.LogWarning("spots");
+        //Debug.LogWarning("spots");
 
         challengeLevels.Clear();
         for (int i = 0; i < LPP; ++i)
@@ -477,15 +478,15 @@ public class LevelCreator : MonoBehaviour
         currentLevelPage = 0;
      
         
-        Debug.LogWarning("complete");
+        //Debug.LogWarning("complete");
 
-        Debug.LogWarning(challengeLevels.Count);
+        //Debug.LogWarning(challengeLevels.Count);
     }
 
     public void LoadChallengeLevel(int index) // load a certain level based on the index given
     {
         List<GameObject> Gametubes = gameObject.GetComponent<GameManager>().tubes;
-
+        startChallenge = true;
         
 
         if (challengeLevels.Count > 0)
@@ -539,6 +540,7 @@ public class LevelCreator : MonoBehaviour
 
     public void GiveUpChallenge()
     {
+        startChallenge = false;
         inChallenge = false;
         challengeTime = 0;
 
@@ -586,9 +588,37 @@ public class LevelCreator : MonoBehaviour
             PlayerPrefs.SetFloat("ChallengeTime", challengeTime); 
         }
         else { PlayerPrefs.SetFloat("ChallengeTime", loadedChallengeTime); }
-        Debug.Log(PlayerPrefs.GetFloat("ChallengeTime"));
+        //Debug.Log(PlayerPrefs.GetFloat("ChallengeTime"));
         PlayerPrefs.Save();
-        Debug.Log("Game data saved!");
+        //Debug.Log("Game data saved!");
+    }
+
+    string OrganizeChallengeTime(float time)
+    {
+        float roundedTime = Mathf.Round(time * 10) / 10;
+
+        string end = "00:00.00";
+
+        int minutes = (int)roundedTime / 60;
+        
+        var seconds = roundedTime - (minutes * 60);
+
+        
+
+        string min = "";
+        string sec = "";
+
+        if (minutes < 10) { min = "0" + minutes.ToString(); }
+        else { min = minutes.ToString(); }
+
+        if (seconds < 10.0) { sec = "0" + seconds.ToString(); }
+        else { sec = seconds.ToString(); }
+
+        if (seconds - (int)seconds == 0) { sec = sec + ".0"; }
+
+        end = min + ":" + sec;
+
+        return end;
     }
 
     public void AddToLevelList(List<List<int>> newLevel)
@@ -637,7 +667,7 @@ public class LevelCreator : MonoBehaviour
         float sizeY = listRect.y / levelsPerPage.y;
         float scaleX = sizeX / chooseButtonRect.x;
         float scaleY = sizeY / chooseButtonRect.y;
-        Debug.Log("size x = " + sizeX);
+        //Debug.Log("size x = " + sizeX);
 
         float halfY = levelsPerPage.y / 2;
         
@@ -659,13 +689,13 @@ public class LevelCreator : MonoBehaviour
         }
 
         if (sizeX == sizeY) { return scaleX; }
-        Debug.LogError("generatespots no work");
+        //Debug.LogError("generatespots no work");
         return 1;
     }
 
     public void LoadLevelChooseList() // create the initial list of levels that you can click on to load
     {
-        Debug.Log("Load Level Choose List");
+        //Debug.Log("Load Level Choose List");
         float scale = GenerateSpots();
 
         int LPP = (int)levelsPerPage.x * (int)levelsPerPage.y;
@@ -882,7 +912,7 @@ public class LevelCreator : MonoBehaviour
 
     public void BeatIndexLevel(int index)
     {
-        Debug.Log(index);
+        //Debug.Log(index);
         for (int i = 0; i < levelButtons.Count; ++i)
         {
             for (int ii = 0; ii < levelButtons[i].Count; ++ii)
@@ -950,23 +980,23 @@ public class LevelCreator : MonoBehaviour
                     int add = System.Convert.ToInt32(set);
                     completed.Add(add);
                     set = "";
-                    Debug.Log(completed.Count);
+                    //Debug.Log(completed.Count);
                 }
             }
         }
 
-        Debug.Log(completed.Count);
+        //Debug.Log(completed.Count);
 
         for (int index = 0; index < completed.Count; ++index)
         {
-            Debug.Log("complete load: " + completed[index]);
+            //Debug.Log("complete load: " + completed[index]);
             for (int i = 0; i < levelButtons.Count; ++i)
             {
                 for (int ii = 0; ii < levelButtons[i].Count; ++ii)
                 {
                     if (levelButtons[i][ii].GetComponent<ChooseButton>().levelValue == completed[index])
                     {
-                        Debug.Log("loadedCom: " + index);
+                        //Debug.Log("loadedCom: " + index);
                         levelButtons[i][ii].GetComponent<Image>().color = completedMat.color;
                     }
                 }
@@ -1017,7 +1047,7 @@ public class LevelCreator : MonoBehaviour
     {
         PlayerPrefs.SetString("SavedString", completedSave);
         PlayerPrefs.Save();
-        Debug.Log("Game data saved!");  
+        //Debug.Log("Game data saved!");  
     }
 
     public void LoadGame() // load all the levels from a string to their list versions
