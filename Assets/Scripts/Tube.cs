@@ -17,6 +17,9 @@ public class Tube : MonoBehaviour
 
     public Button button;
 
+    public GameObject CorkPrefab;
+    public bool corked;
+
     // Start is called before the first frame update
 
     void Awake()
@@ -24,11 +27,12 @@ public class Tube : MonoBehaviour
         gm = GameObject.Find("GameManager");
         GameTube = true;
         button.onClick.AddListener(Clicked);
+        corked = false;
     }
 
     void Start()
     {
-        if (GameTube) { UpdateSpots(); }
+        if (!corked && GameTube) { UpdateSpots(); }
     }
 
     public void UpdateSpots()
@@ -46,7 +50,7 @@ public class Tube : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameTube) { UpdateSpots(); }
+        if (!corked && GameTube) { UpdateSpots(); }
     }
 
     public void MoveBottomToTop()
@@ -292,6 +296,19 @@ public class Tube : MonoBehaviour
         
         gm.GetComponent<GameManager>().Clicked(gameObject);
 
+    }
+
+    public void Cork()
+    {
+        Debug.Log("corked");
+
+        corked = true;
+
+        GameObject Cork = Instantiate(CorkPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+
+        Cork.transform.SetParent(gameObject.transform);
+        Cork.transform.localPosition = new Vector3(0, 108, 0);
+        Cork.transform.localScale = new Vector3(1, 1, 1);
     }
 }
 

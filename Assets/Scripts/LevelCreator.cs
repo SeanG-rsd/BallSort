@@ -36,7 +36,7 @@ public class LevelCreator : MonoBehaviour
     public GameObject pageRightFarButton;
     public GameObject pageLeftFarButton;
     List<List<GameObject>> levelButtons = new List<List<GameObject>>();
-    int currentLevelPage = 0;
+    public int currentLevelPage = 0;
 
     int spotCount = 0;
     int actualCount = 1;
@@ -357,6 +357,7 @@ public class LevelCreator : MonoBehaviour
         pageLeftFarButton.SetActive(false);
         pageRightButton.SetActive(false);
         pageRightFarButton.SetActive(false);
+        requirementBox.SetActive(false);
 
         levelNumText.gameObject.SetActive(false);
         challengeTimeTextGame.gameObject.SetActive(true);
@@ -405,7 +406,7 @@ public class LevelCreator : MonoBehaviour
             {
                 GameObject newSpot = Instantiate(spotPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                 newSpot.transform.SetParent(challengeList.transform);
-                newSpot.transform.localPosition = new Vector3(c * chooseButtonPrefab.GetComponent<RectTransform>().rect.width * scaleX, r * chooseButtonPrefab.GetComponent<RectTransform>().rect.height * scaleY, 0);
+                newSpot.transform.localPosition = new Vector3((c * chooseButtonRect.x * scaleX) + (chooseButtonRect.x), (r * chooseButtonRect.y * scaleY) - (chooseButtonRect.y), 0);
                 newSpot.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
                 challengeSpots.Add(newSpot);
 
@@ -440,7 +441,7 @@ public class LevelCreator : MonoBehaviour
                 GameObject newButton = Instantiate(chooseButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                 newButton.transform.SetParent(challengeSpots[challengeSpotCount].transform);
                 newButton.transform.position = challengeSpots[challengeSpotCount].transform.position;
-                newButton.transform.localScale = new Vector3(scaleX, scaleY, 1.0f);
+                newButton.transform.localScale = new Vector3(scaleX - 0.05f, scaleY - 0.05f, 1.0f);
 
                 newButton.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = challengeActualCount.ToString();
                 newButton.GetComponent<ChooseButton>().levelValue = challengeActualCount;
@@ -475,7 +476,7 @@ public class LevelCreator : MonoBehaviour
 
 
 
-        currentLevelPage = 0;
+        //currentLevelPage = 0;
      
         
         //Debug.LogWarning("complete");
@@ -549,6 +550,7 @@ public class LevelCreator : MonoBehaviour
         pageLeftFarButton.SetActive(true);
         pageRightButton.SetActive(true);
         pageRightFarButton.SetActive(true);
+        
 
         levelNumText.gameObject.SetActive(true);
         challengeTimeTextGame.gameObject.SetActive(false);
@@ -562,6 +564,12 @@ public class LevelCreator : MonoBehaviour
         resetButton.SetActive(true);
         challengeReset.SetActive(false);
         recordText.gameObject.SetActive(false);
+
+        challengeTimeTextGame.text = OrganizeChallengeTime(challengeTime).ToString();
+        challengeTimeTextList.text = OrganizeChallengeTime(challengeTime).ToString();
+
+        UpdateListPage();
+        UpdatePageButtons();
     }
 
     bool BeatChallenge()
@@ -681,14 +689,14 @@ public class LevelCreator : MonoBehaviour
             {
                 GameObject newSpot = Instantiate(spotPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                 newSpot.transform.SetParent(list.transform);
-                newSpot.transform.localPosition = new Vector3(c * chooseButtonPrefab.GetComponent<RectTransform>().rect.width * scaleX, r * chooseButtonPrefab.GetComponent<RectTransform>().rect.height * scaleY, 0);
+                newSpot.transform.localPosition = new Vector3((c * chooseButtonRect.x * scaleX) + (chooseButtonRect.x / 4), (r * chooseButtonRect.y * scaleY) - (chooseButtonRect.y / 4), 0);
                 newSpot.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
                 spots.Add(newSpot);
                 
             }
         }
 
-        if (sizeX == sizeY) { return scaleX; }
+        if (sizeX == sizeY) { return scaleX - 0.05f; }
         //Debug.LogError("generatespots no work");
         return 1;
     }
