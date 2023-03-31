@@ -159,6 +159,12 @@ MonoBehaviour:
   button: {fileID: 2013661105700565378}
   CorkPrefab: {fileID: 6003194038069275040, guid: 9c9d068f6d3fc684886ac489f4c3ad1f, type: 3}
   corked: 0
+  spotObjects:
+  - {fileID: 7408563438138244360}
+  - {fileID: 8577234061322277499}
+  - {fileID: 8881310231911409792}
+  - {fileID: 8742129656317682712}
+  - {fileID: 7884623469738082068}
 --- !u!1 &7408563438138244360
 GameObject:
   m_ObjectHideFlags: 0

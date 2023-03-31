@@ -20,6 +20,8 @@ public class Tube : MonoBehaviour
     public GameObject CorkPrefab;
     public bool corked;
 
+    public List<GameObject> spotObjects;
+
     // Start is called before the first frame update
 
     void Awake()
@@ -30,6 +32,8 @@ public class Tube : MonoBehaviour
         corked = false;
     }
 
+    
+
     void Start()
     {
         if (!corked && GameTube) { UpdateSpots(); }
@@ -37,9 +41,9 @@ public class Tube : MonoBehaviour
 
     public void UpdateSpots()
     {
-        for (int i = 0; i < transform.childCount; ++i)
+        for (int i = 0; i < spotObjects.Count; ++i)
         {
-            if (transform.GetChild(i).childCount == 0)
+            if (spotObjects[i].transform.childCount == 0)
             {
                 spots[i] = false;
             }    
@@ -55,14 +59,13 @@ public class Tube : MonoBehaviour
 
     public void MoveBottomToTop()
     {
-        //Debug.Log("t");
-
-        for (int i = 1; i < transform.childCount; ++i)
+        
+        for (int i = 1; i < spotObjects.Count; ++i)
         {
             if (spots[i] && !spots[0])
             {
-                transform.GetChild(i).GetChild(0).SetParent(transform.GetChild(0));
-                transform.GetChild(0).GetChild(0).position = transform.GetChild(0).position;
+                spotObjects[i].transform.GetChild(0).SetParent(spotObjects[0].transform);
+                spotObjects[0].transform.GetChild(0).position = spotObjects[0].transform.position;
                 //Debug.Log(i);
                 index = i;
                 return;
@@ -74,7 +77,7 @@ public class Tube : MonoBehaviour
     {
         UpdateSpots();
 
-        for (int i = 1; i < transform.childCount; ++i)
+        for (int i = 1; i < spotObjects.Count; ++i)
         {
             if (spots[i])
             {
@@ -87,12 +90,12 @@ public class Tube : MonoBehaviour
 
     public void MoveTopToBottom() // move the lowest ball in the tube to the above spot on the tube
     {
-        for (int i = transform.childCount - 1; i >= 0; i--)
+        for (int i = spotObjects.Count - 1; i >= 0; i--)
         {
             if (!spots[i] && spots[0])
             {
-                transform.GetChild(0).GetChild(0).SetParent(transform.GetChild(i));
-                transform.GetChild(i).GetChild(0).position = transform.GetChild(i).position;
+                spotObjects[0].transform.GetChild(0).SetParent(spotObjects[i].transform);
+                spotObjects[i].transform.GetChild(0).position = spotObjects[i].transform.position;
                 return;
             }
         }
@@ -102,7 +105,7 @@ public class Tube : MonoBehaviour
     {
         if (spots[0])
         {
-            return transform.GetChild(0).GetChild(0).gameObject;
+            return spotObjects[0].transform.GetChild(0).gameObject;
         }
         Debug.LogWarning("not getting top ball");
         return null;
@@ -116,7 +119,7 @@ public class Tube : MonoBehaviour
         {
             if (spots[i])
             {
-                return transform.GetChild(i).GetChild(0).gameObject;
+                return spotObjects[i].transform.GetChild(0).gameObject;
             }
 
             
@@ -138,7 +141,7 @@ public class Tube : MonoBehaviour
     {
         if (!spots[0])
         {
-            for (int i = 1; i < transform.childCount; ++i)
+            for (int i = 1; i < spotObjects.Count; ++i)
             {
 
 
@@ -150,8 +153,8 @@ public class Tube : MonoBehaviour
                 {
                     if (spots[1] && spots[i])
                     {
-                        GameObject ball = transform.GetChild(1).GetChild(0).gameObject;
-                        GameObject check = transform.GetChild(i).GetChild(0).gameObject;
+                        GameObject ball = spotObjects[1].transform.GetChild(0).gameObject;
+                        GameObject check = spotObjects[i].transform.GetChild(0).gameObject;
 
                         if (ball.GetComponent<Image>().color != check.GetComponent<Image>().color) { return false; }
                     }
@@ -168,12 +171,12 @@ public class Tube : MonoBehaviour
 
     public void NewBallsToBottom(GameObject ball)
     {
-        for (int i = 1; i < transform.childCount; ++i)
+        for (int i = 1; i < spotObjects.Count; ++i)
         {
             if (!spots[i])
             {
-                ball.transform.SetParent(transform.GetChild(i));
-                ball.transform.position = transform.GetChild(i).position;
+                ball.transform.SetParent(spotObjects[i].transform);
+                ball.transform.position = spotObjects[i].transform.position;
             }
         }
 
@@ -188,7 +191,7 @@ public class Tube : MonoBehaviour
             if (spots[BottomIndex()])
             {
 
-                if (gameObject.transform.GetChild(BottomIndex()).GetChild(0).gameObject.GetComponent<Image>().color == ball.GetComponent<Image>().color)
+                if (spotObjects[BottomIndex()].transform.GetChild(0).gameObject.GetComponent<Image>().color == ball.GetComponent<Image>().color)
                 {
                     return true;
                 }
@@ -206,8 +209,8 @@ public class Tube : MonoBehaviour
         {
             if (spots[i])
             {
-                if (gameObject.transform.GetChild(i).GetChild(0).gameObject.GetComponent<Image>().color != ball.GetComponent<Image>().color) { return num; }
-                if (gameObject.transform.GetChild(i).GetChild(0).gameObject.GetComponent<Image>().color == ball.GetComponent<Image>().color)
+                if (spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Image>().color != ball.GetComponent<Image>().color) { return num; }
+                if (spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Image>().color == ball.GetComponent<Image>().color)
                 {
                     num++;
                     
@@ -235,7 +238,7 @@ public class Tube : MonoBehaviour
         {
             if (spots[BottomIndex()])
             {
-                return transform.GetChild(BottomIndex()).GetChild(0).gameObject;
+                return spotObjects[BottomIndex()].transform.GetChild(0).gameObject;
 
             }
         }
@@ -253,9 +256,9 @@ public class Tube : MonoBehaviour
             int numMoving = 1;
             if (!EmptyTube())
             {
-                for (int i = BottomIndex(); i < transform.childCount; ++i)
+                for (int i = BottomIndex(); i < spotObjects.Count; ++i)
                 {
-                    if (CheckTwo(ball, transform.GetChild(i).GetChild(0).gameObject))
+                    if (CheckTwo(ball, spotObjects[i].transform.GetChild(0).gameObject))
                     {
                         //Debug.Log("is same color");
                         numMoving++;
@@ -282,7 +285,7 @@ public class Tube : MonoBehaviour
     {
         int num = 0;
 
-        for (int i = 1; i < transform.childCount; ++i)
+        for (int i = 1; i < spotObjects.Count; ++i)
         {
             if (!spots[i]) { num++; }
         }

@@ -376,7 +376,7 @@ public class LevelCreator : MonoBehaviour
             loadedChallengeTime = PlayerPrefs.GetFloat("ChallengeTime");
             if (loadedChallengeTime != 0) { recordText.gameObject.SetActive(true); }
             float roundedTime = Mathf.Round(loadedChallengeTime * 100) / 100;
-            recordText.text = "Record: " + roundedTime.ToString();
+            recordText.text = "Record: " + OrganizeChallengeTime(roundedTime).ToString();
 
         }
 
@@ -406,7 +406,7 @@ public class LevelCreator : MonoBehaviour
             {
                 GameObject newSpot = Instantiate(spotPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                 newSpot.transform.SetParent(challengeList.transform);
-                newSpot.transform.localPosition = new Vector3((c * chooseButtonRect.x * scaleX) + (chooseButtonRect.x), (r * chooseButtonRect.y * scaleY) - (chooseButtonRect.y), 0);
+                newSpot.transform.localPosition = new Vector3((c * chooseButtonRect.x * scaleX) + (chooseButtonRect.x * scaleX / 2), (r * chooseButtonRect.y * scaleY) - (chooseButtonRect.y * scaleY / 2), 0);
                 newSpot.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
                 challengeSpots.Add(newSpot);
 
@@ -689,7 +689,7 @@ public class LevelCreator : MonoBehaviour
             {
                 GameObject newSpot = Instantiate(spotPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                 newSpot.transform.SetParent(list.transform);
-                newSpot.transform.localPosition = new Vector3((c * chooseButtonRect.x * scaleX) + (chooseButtonRect.x / 4), (r * chooseButtonRect.y * scaleY) - (chooseButtonRect.y / 4), 0);
+                newSpot.transform.localPosition = new Vector3((c * chooseButtonRect.x * scaleX) + (chooseButtonRect.x * scaleX / 2), (r * chooseButtonRect.y * scaleY) - (chooseButtonRect.y * scaleY / 2), 0);
                 newSpot.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
                 spots.Add(newSpot);
                 
