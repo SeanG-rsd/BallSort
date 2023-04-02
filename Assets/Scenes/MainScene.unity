@@ -1802,7 +1802,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
   m_PrefabInstance: {fileID: 4918382706438896027}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1282209937}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11874e57bf8d53540acfdc4ff68708de, type: 3}
@@ -1813,7 +1813,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
   m_PrefabInstance: {fileID: 4918382706438896027}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1282209937}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 813996fab4d21924a961fe917ca267b8, type: 3}
@@ -14829,6 +14829,44 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2110128137344227918, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
   m_PrefabInstance: {fileID: 1279713354}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1282209937 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4918382706571430367, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+  m_PrefabInstance: {fileID: 4918382706438896027}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1282209938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282209937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fd4c1ba1a84dd44fb5c348568a7f096, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _androidGameId: 5229531
+  _iOSGameId: 5229530
+  _testMode: 1
+--- !u!114 &1282209940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282209937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23653b2b6d258a641a0d41e3d6aed7d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _loadBannerButton: {fileID: 0}
+  _showBannerButton: {fileID: 0}
+  _hideBannerButton: {fileID: 0}
+  _bannerPosition: 4
+  _androidAdUnitId: Banner_Android
+  _iOSAdUnitId: Banner_iOS
 --- !u!1001 &1291100480
 PrefabInstance:
   m_ObjectHideFlags: 0
