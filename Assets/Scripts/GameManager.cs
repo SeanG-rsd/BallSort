@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     private List<List<GameObject>> undoHolster = new List<List<GameObject>>();
     private int undosLeft;
     public int givenUndos;
+    public int undoCost;
     public TMP_Text undosLeftText;
 
     public GameObject insult;
@@ -41,9 +42,19 @@ public class GameManager : MonoBehaviour
     bool doInsult;
     public float insultTime;
     float insultTimer;
+    
 
     public Material blank;
     public Material badRed;
+
+    public bool tinyTubeTime;
+    bool tinyTubeActive;
+    public GameObject TinyTube;
+    public int TinyTubeCost;
+    public Button TinyTubeButton;
+    public TMP_Text TTTExt;
+    List<GameObject> TTHolster = new List<GameObject>();
+    public GameObject TinyTubePrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -53,8 +64,7 @@ public class GameManager : MonoBehaviour
         insultTimer = insultTime;
         //ModeChange();
         OpenMenuNum(1);
-        undosLeft = givenUndos;
-        undosLeftText.text = undosLeft.ToString();
+        
 
         ResetGame();
     }
@@ -62,6 +72,8 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+
         if (insult.activeSelf)
         {
             if (doInsult)
@@ -93,7 +105,10 @@ public class GameManager : MonoBehaviour
     {
         //Debug.Log("reset game");
         undosLeft = givenUndos;
-        undosLeftText.text = undosLeft.ToString();
+        undosLeftText.text = "Free Undos Left: " + undosLeft.ToString();
+        if (undosLeft == 0) { undosLeftText.text = "No Undos Left: " + undoCost.ToString() + " coins"; }
+        TTTExt.text = "Buy Tiny Tube for " + TinyTubeCost.ToString() + " coins";
+
 
         List<GameObject> testTubes = new List<GameObject>();
 
@@ -121,7 +136,14 @@ public class GameManager : MonoBehaviour
         tubes = testTubes;
 
         //menuNum = 2;
+        if (tinyTubeActive)
+        {
+            tinyTubeActive = false;
+            TinyTube.SetActive(false);
+            TinyTubeButton.interactable = true;
 
+            if (TinyTube.GetComponent<TinyTube>().FullTube()) { Destroy(TinyTube.GetComponent<TinyTube>().GetBottomBall()); }
+        }
         
         //menuNum = 1;
     }
@@ -158,6 +180,7 @@ public class GameManager : MonoBehaviour
             
         }
         undoHolster.Clear();
+        TTHolster.Clear();
     }
 
     public void ResetChallenge()
@@ -177,12 +200,14 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    void Cork()
+    public void Cork()
     {
+        Debug.Log("cork");
+
         for (int i = 0; i < tubes.Count; ++i)
         {
             if (!tubes[i].GetComponent<Tube>().corked) { if (tubes[i].GetComponent<Tube>().FullTube() && !tubes[i].GetComponent<Tube>().EmptyTube()) { tubes[i].GetComponent<Tube>().Cork(); } }
-            else { Debug.Log("dont cork"); }
+            else { Debug.Log("dont cork " + i.ToString()); }
             
         }
     }
@@ -191,7 +216,7 @@ public class GameManager : MonoBehaviour
     {
         if (!tube.GetComponent<Tube>().corked)
         {
-            if (!clickState && !tube.GetComponent<Tube>().FullTube()) // move ball to the top
+            if (!clickState && !tube.GetComponent<Tube>().FullTube() && !tube.GetComponent<Tube>().EmptyTube()) // move ball to the top
             {
                 SetUndoTubes();
                 clickState = true;
@@ -200,7 +225,7 @@ public class GameManager : MonoBehaviour
 
                 firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
             }
-            else if (clickState && firstTubeClicked != tube) // move balls into empty tube
+            else if (!tinyTubeTime && clickState && firstTubeClicked != tube) // move balls into empty tube
             {
                 GameObject ball = firstTubeClicked.GetComponent<Tube>().GetTopBall();
 
@@ -233,7 +258,7 @@ public class GameManager : MonoBehaviour
 
                     firstTubeClicked = null;
                 }
-                else if (ball.GetComponent<Image>().color == second.GetBottomBall().GetComponent<Image>().color && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
+                else if (ball.tag == second.GetBottomBall().tag && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
                 {
                     clickState = false;
 
@@ -268,28 +293,209 @@ public class GameManager : MonoBehaviour
 
                     firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
                 }
+
                 canUndo = true;
                 Cork();
                 if (CheckForWin()) { Win(); }
 
+            }
+            else if (tinyTubeTime && clickState && firstTubeClicked != tube) // move balls into empty tube
+            {
+                GameObject ball = firstTubeClicked.GetComponent<TinyTube>().GetTopBall();
+
+                Tube second = tube.GetComponent<Tube>();
+                //Debug.Log(ball.GetComponent<Image>().color);
+
+                if (second.EmptyTube())
+                {
+
+                    clickState = false;
+
+                    //Debug.Log("tubeSecondClick");
+                    second.NewBallsToBottom(ball);
+
+
+
+                    for (int i = 0; i <= firstTubeClicked.GetComponent<TinyTube>().CheckHowManyNextIsSameColor(ball); ++i)
+                    {
+
+                        if (firstTubeClicked.GetComponent<TinyTube>().ReturnNext() != null)
+                        {
+                            if (firstTubeClicked.GetComponent<TinyTube>().CheckTwo(firstTubeClicked.GetComponent<TinyTube>().ReturnNext(), ball))
+                            {
+                                second.NewBallsToBottom(firstTubeClicked.GetComponent<TinyTube>().ReturnNext());
+                            }
+                        }
+                    }
+
+
+
+                    firstTubeClicked = null;
+                }
+
+                else if (ball.tag == second.GetBottomBall().tag && !second.FullTube() && firstTubeClicked.GetComponent<TinyTube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
+                {
+                    clickState = false;
+
+
+
+                    second.NewBallsToBottom(ball);
+
+                    if (firstTubeClicked.GetComponent<TinyTube>().CheckIfNextIsSameColor(ball)) // fix this for only going to the last ball to get rid of error
+                    {
+                        second.NewBallsToBottom(firstTubeClicked.GetComponent<TinyTube>().ReturnNext());
+                        if (firstTubeClicked.GetComponent<TinyTube>().CheckIfNextIsSameColor(ball))
+                        {
+                            second.NewBallsToBottom(firstTubeClicked.GetComponent<TinyTube>().ReturnNext());
+                            if (firstTubeClicked.GetComponent<TinyTube>().CheckIfNextIsSameColor(ball))
+                            {
+                                second.NewBallsToBottom(firstTubeClicked.GetComponent<TinyTube>().ReturnNext());
+                            }
+                        }
+                    }
+
+                    firstTubeClicked = null;
+                }
+                else if (!second.FullTube())// move ball from different tube to the top
+                {
+                    firstTubeClicked.GetComponent<TinyTube>().MoveTopToBottom();
+
+                    //Debug.Log("move from dif");
+
+                    firstTubeClicked = tube;
+
+
+
+                    firstTubeClicked.GetComponent<TinyTube>().MoveBottomToTop();
+                }
 
                 //else { Debug.Log("not win"); }
+                canUndo = true;
+                Cork();
+                if (CheckForWin()) { Win(); }
 
-
-
+                tinyTubeTime = false;
             }
+            
+            
+            
             else if (clickState && firstTubeClicked == tube) // move ball back into the tube
             {
                 tube.GetComponent<Tube>().MoveTopToBottom();
 
                 //Debug.Log("same tube");
                 undoHolster.RemoveAt(undoHolster.Count - 1);
+                if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
                 tube = null;
                 clickState = false;
             }
 
         }
     }
+
+    public void ClickedTinyTube(GameObject tube)
+    {
+        if (!clickState && !tube.GetComponent<TinyTube>().EmptyTube()) // move ball to the top
+        {
+            SetUndoTubes();
+            clickState = true;
+            firstTubeClicked = tube;
+            //Debug.Log("tubeFirstClicked");
+            tinyTubeTime = true;
+
+            firstTubeClicked.GetComponent<TinyTube>().MoveBottomToTop();
+        }
+        else if (clickState && firstTubeClicked != tube) // move balls into empty tube
+        {
+            GameObject ball = firstTubeClicked.GetComponent<Tube>().GetTopBall();
+
+            TinyTube second = tube.GetComponent<TinyTube>();
+            //Debug.Log(ball.GetComponent<Image>().color);
+
+            if (second.EmptyTube())
+            {
+
+                clickState = false;
+
+                //Debug.Log("tubeSecondClick");
+                second.NewBallsToBottom(ball);
+
+
+
+                for (int i = 0; i <= firstTubeClicked.GetComponent<Tube>().CheckHowManyNextIsSameColor(ball); ++i)
+                {
+
+                    if (firstTubeClicked.GetComponent<Tube>().ReturnNext() != null)
+                    {
+                        if (firstTubeClicked.GetComponent<Tube>().CheckTwo(firstTubeClicked.GetComponent<Tube>().ReturnNext(), ball))
+                        {
+                            second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
+                        }
+                    }
+                }
+
+
+
+                firstTubeClicked = null;
+            }
+            else if (ball.tag == second.GetBottomBall().tag && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
+            {
+                clickState = false;
+
+
+
+                second.NewBallsToBottom(ball);
+
+                if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball)) // fix this for only going to the last ball to get rid of error
+                {
+                    second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
+                    if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball))
+                    {
+                        second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
+                        if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball))
+                        {
+                            second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
+                        }
+                    }
+                }
+
+                firstTubeClicked = null;
+            }
+            else if (!second.FullTube())// move ball from different tube to the top
+            {
+                firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
+
+                //Debug.Log("move from dif");
+
+                firstTubeClicked = tube;
+
+
+
+                firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
+            }
+            canUndo = true;
+            Cork();
+            if (CheckForWin()) { Win(); }
+
+
+            //else { Debug.Log("not win"); }
+
+            tinyTubeTime = false;
+
+        }
+        else if (clickState && firstTubeClicked == tube) // move ball back into the tube
+        {
+            tube.GetComponent<TinyTube>().MoveTopToBottom();
+
+            //Debug.Log("same tube");
+            undoHolster.RemoveAt(undoHolster.Count - 1);
+            if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
+            tube = null;
+            clickState = false;
+        }
+
+    }
+
 
     void Win()
     {
@@ -330,6 +536,7 @@ public class GameManager : MonoBehaviour
                 if (tubes[i].transform.GetChild(ii).childCount != 0 && test.transform.GetChild(ii).childCount != 0) // is one in actual and in new
                 {
                     GameObject newBall = tubes[i].transform.GetChild(ii).GetChild(0).gameObject;
+                    test.transform.GetChild(ii).GetChild(0).gameObject.tag = newBall.tag;
                     test.transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = newBall.GetComponent<Image>().color;
                 }
                 else if (tubes[i].transform.GetChild(ii).childCount != 0 && test.transform.GetChild(ii).childCount == 0) // is one in actual but not in new
@@ -352,9 +559,39 @@ public class GameManager : MonoBehaviour
             
         }
 
-        
-        
+        if (TinyTube.activeSelf)
+        {
+            GameObject tt = Instantiate(TinyTubePrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            tt.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            tt.transform.SetParent(moveHolder.transform);
+            for (int ii = 0; ii < 2; ++ii)
+            {
+                if (TinyTube.transform.GetChild(ii).childCount != 0 && tt.transform.GetChild(ii).childCount != 0) // is one in actual and in new
+                {
+                    GameObject newBall = TinyTube.transform.GetChild(ii).GetChild(0).gameObject;
+                    tt.transform.GetChild(ii).GetChild(0).gameObject.tag = newBall.tag;
+                    tt.transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = newBall.GetComponent<Image>().color;
+                }
+                else if (TinyTube.transform.GetChild(ii).childCount != 0 && tt.transform.GetChild(ii).childCount == 0) // is one in actual but not in new
+                {
+                    GameObject newBall = TinyTube.transform.GetChild(ii).GetChild(0).gameObject;
+                    GameObject added = Instantiate(newBall, new Vector3(0, 0, 0), Quaternion.identity);
+
+                    added.transform.SetParent(tt.transform.GetChild(ii));
+                    added.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                    added.transform.localPosition = new Vector3(0, 0, 0);
+                }
+                else if (TinyTube.transform.GetChild(ii).childCount == 0 && tt.transform.GetChild(ii).childCount != 0) // in not one in actual but in new
+                {
+                    Destroy(tt.transform.GetChild(ii).GetChild(0).gameObject);
+                }
+            }
+
+            TTHolster.Add(tt);
+        }
+
         undoHolster.Add(newTubes);
+        
 
         //Debug.LogWarning(undoHolster.Count);
         
@@ -362,6 +599,10 @@ public class GameManager : MonoBehaviour
 
     public void UNDO()
     {
+        int coins = gameObject.GetComponent<LevelCreator>().coins;
+
+        
+
         if (canUndo && undoHolster.Count != 0 && undosLeft > 0)
         {
             undosLeft--;
@@ -369,7 +610,64 @@ public class GameManager : MonoBehaviour
             insult.SetActive(true);
             if (insultTimer == insultTime) { doInsult = true; }
 
+            GameObject undoTT = new GameObject();
             undoTubes = undoHolster[undoHolster.Count - 1];
+            if (TinyTube.activeSelf) { undoTT = TTHolster[TTHolster.Count - 1]; }
+
+                List<GameObject> testTubes = new List<GameObject>();
+
+            for (int i = 0; i < undoTubes.Count; ++i)
+            {
+                GameObject test = Instantiate(undoTubes[i], new Vector3(0, 0, 0), Quaternion.identity);
+
+                test.transform.SetParent(gameScreen.transform.GetChild(0));
+
+
+                test.transform.position = tubes[i].transform.position;
+                test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
+
+
+
+                testTubes.Add(test);
+                Destroy(tubes[i]);
+
+            }
+
+            tubes.Clear();
+            tubes = testTubes;
+            
+
+            undoHolster.RemoveAt(undoHolster.Count - 1);
+
+            if (TinyTube.activeSelf)
+            {
+                GameObject test = Instantiate(undoTT, new Vector3(0, 0, 0), Quaternion.identity);
+
+                test.transform.SetParent(gameScreen.transform.GetChild(0));
+
+
+                test.transform.position = TinyTube.transform.position;
+                test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
+                Destroy(TinyTube);
+                TinyTube = test;
+                TTHolster.RemoveAt(TTHolster.Count - 1);
+                
+            }
+
+            
+
+            if (undoHolster.Count == 0) { canUndo = false; }
+        }
+        else if (canUndo && undoHolster.Count != 0 && coins >= undoCost && undosLeft == 0)
+        {
+            insult.SetActive(true);
+            coins -= undoCost;
+            gameObject.GetComponent<LevelCreator>().coins = coins;
+            if (insultTimer == insultTime) { doInsult = true; }
+
+            GameObject undoTT = new GameObject();
+            undoTubes = undoHolster[undoHolster.Count - 1];
+            if (TinyTube.activeSelf) { undoTT = TTHolster[TTHolster.Count - 1]; }
 
             List<GameObject> testTubes = new List<GameObject>();
 
@@ -392,15 +690,49 @@ public class GameManager : MonoBehaviour
 
             tubes.Clear();
             tubes = testTubes;
-            Cork();
+            
 
             undoHolster.RemoveAt(undoHolster.Count - 1);
+            if (TinyTube.activeSelf)
+            {
+                GameObject test = Instantiate(undoTT, new Vector3(0, 0, 0), Quaternion.identity);
+
+                test.transform.SetParent(gameScreen.transform.GetChild(0));
+
+
+                test.transform.position = TinyTube.transform.position;
+                test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
+                Destroy(TinyTube);
+                TinyTube = test;
+                TTHolster.RemoveAt(TTHolster.Count - 1);
+
+            }
             //Debug.LogWarning(undoHolster.Count);
 
             if (undoHolster.Count == 0) { canUndo = false; }
         }
 
-        undosLeftText.text = undosLeft.ToString();
+        undosLeftText.text = "Free Undos Left: " + undosLeft.ToString();
+        if (undosLeft == 0) { undosLeftText.text = "No Undos Left: " + undoCost.ToString() + " coins"; }
+        
+    }
+
+    public void TinyTubeTime()
+    {
+        int coins = gameObject.GetComponent<LevelCreator>().coins;
+
+        if (!tinyTubeActive && coins >= TinyTubeCost)
+        {
+            //if (insultTimer == insultTime) { doInsult = true; }
+
+            tinyTubeActive = tinyTubeActive;
+            TinyTubeButton.interactable = false;
+
+            TinyTube.SetActive(true);
+            coins -= TinyTubeCost;
+            gameObject.GetComponent<LevelCreator>().coins = coins;
+            tinyTubeActive = true;
+        }
     }
 
     public void ModeChange()
@@ -408,12 +740,14 @@ public class GameManager : MonoBehaviour
         if (undoButton.activeSelf)
         {
             undoButton.SetActive(false);
+            TinyTubeButton.gameObject.SetActive(false);
             modeButtonText.GetComponent<TMP_Text>().text = "Mode: Normal";
             modeButton.GetComponent<Image>().color = blank.color;
         }
         else if (!undoButton.activeSelf)
         {
             undoButton.SetActive(true);
+            TinyTubeButton.gameObject.SetActive(true);
             modeButtonText.GetComponent<TMP_Text>().text = "Mode:   Easy";
             modeButton.GetComponent<Image>().color = badRed.color;
         }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Tube : MonoBehaviour
+public class TinyTube : MonoBehaviour
 {
-    public List<bool> spots = new List<bool> { false, false, false, false, false };
+    public List<bool> spots = new List<bool> { false, false };
 
     public int index;
 
@@ -17,9 +17,6 @@ public class Tube : MonoBehaviour
 
     public Button button;
 
-    public GameObject CorkPrefab;
-    public bool corked;
-
     public List<GameObject> spotObjects;
 
     // Start is called before the first frame update
@@ -29,14 +26,14 @@ public class Tube : MonoBehaviour
         gm = GameObject.Find("GameManager");
         GameTube = true;
         button.onClick.AddListener(Clicked);
-        corked = false;
+        
     }
 
-    
+
 
     void Start()
     {
-        if (!corked && GameTube)
+        if (GameTube)
         {
             UpdateSpots();
             
@@ -50,32 +47,22 @@ public class Tube : MonoBehaviour
             if (spotObjects[i].transform.childCount == 0)
             {
                 spots[i] = false;
-            }    
+            }
             else { spots[i] = true; }
         }
     }
 
-    void UpdateCork()
-    {
-        if (FullTube() && !EmptyTube())
-        {
-            Cork();
-        }
-    }
+    
 
     // Update is called once per frame
     void Update()
     {
-        if (!corked && GameTube)
-        {
-            UpdateSpots();
-            UpdateCork();
-        }
+        if (GameTube) { UpdateSpots(); }
     }
 
     public void MoveBottomToTop()
     {
-        
+
         for (int i = 1; i < spotObjects.Count; ++i)
         {
             if (spots[i] && !spots[0])
@@ -138,7 +125,7 @@ public class Tube : MonoBehaviour
                 return spotObjects[i].transform.GetChild(0).gameObject;
             }
 
-            
+
         }
 
         return null;
@@ -146,7 +133,7 @@ public class Tube : MonoBehaviour
 
     public bool EmptyTube() // check if the tube is empty
     {
-        if (!spots[4])
+        if (!spots[1])
         {
             return true;
         }
@@ -172,7 +159,7 @@ public class Tube : MonoBehaviour
                         GameObject ball = spotObjects[1].transform.GetChild(0).gameObject;
                         GameObject check = spotObjects[i].transform.GetChild(0).gameObject;
 
-                        if (ball.tag != check.tag) { return false; }
+                        if (ball.GetComponent<Image>().color != check.GetComponent<Image>().color) { return false; }
                     }
                 }
             }
@@ -207,7 +194,7 @@ public class Tube : MonoBehaviour
             if (spots[BottomIndex()])
             {
 
-                if (spotObjects[BottomIndex()].transform.GetChild(0).gameObject.tag == ball.tag)
+                if (spotObjects[BottomIndex()].transform.GetChild(0).gameObject.GetComponent<Image>().color == ball.GetComponent<Image>().color)
                 {
                     return true;
                 }
@@ -225,11 +212,11 @@ public class Tube : MonoBehaviour
         {
             if (spots[i])
             {
-                if (spotObjects[i].transform.GetChild(0).gameObject.tag != ball.tag) { return num; }
-                if (spotObjects[i].transform.GetChild(0).gameObject.tag == ball.tag)
+                if (spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Image>().color != ball.GetComponent<Image>().color) { return num; }
+                if (spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Image>().color == ball.GetComponent<Image>().color)
                 {
                     num++;
-                    
+
                 }
             }
         }
@@ -239,7 +226,7 @@ public class Tube : MonoBehaviour
 
     public bool CheckTwo(GameObject ball, GameObject other)
     {
-        if (other.tag == ball.tag)
+        if (other.GetComponent<Image>().color == ball.GetComponent<Image>().color)
         {
             return true;
         }
@@ -312,22 +299,9 @@ public class Tube : MonoBehaviour
 
     void Clicked()
     {
-        
-        gm.GetComponent<GameManager>().Clicked(gameObject);
 
-    }
+        gm.GetComponent<GameManager>().ClickedTinyTube(gameObject);
 
-    public void Cork()
-    {
-        Debug.Log("corked");
-
-        corked = true;
-
-        GameObject Cork = Instantiate(CorkPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-
-        Cork.transform.SetParent(gameObject.transform);
-        Cork.transform.localPosition = new Vector3(0, 108, 0);
-        Cork.transform.localScale = new Vector3(1, 1, 1);
     }
 }
 

@@ -81,6 +81,14 @@ public class LevelCreator : MonoBehaviour
     public GameObject requirementBox;
     public TMP_Text requirementText;
 
+    public int coins;
+    public TMP_Text coinsText;
+    public int coinIncriment;
+
+
+    public GameObject fixCompleted;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -98,6 +106,7 @@ public class LevelCreator : MonoBehaviour
     void Update()
     {
         saveButton.GetComponent<Button>().interactable = FinishedMaking();
+        UpdateCoins();
 
         if (inChallenge && startChallenge)
         {
@@ -119,6 +128,13 @@ public class LevelCreator : MonoBehaviour
 
         //Debug.Log("Level Count: " + levels.Count);
 
+    }
+
+    void UpdateCoins()
+    {
+        coinsText.text = "Coins: " + coins.ToString();
+        PlayerPrefs.SetInt("CoinCount", coins);
+        PlayerPrefs.Save();
     }
 
     public void ChangedValue(GameObject dropdown) // changed a value in the maker to update chosen
@@ -499,7 +515,11 @@ public class LevelCreator : MonoBehaviour
                 {
 
 
+                    
                     Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[challengeLevels[index][i][mat]].color;
+                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (levels[index][i][mat] + 1).ToString();
+                    if (!Gametubes[i].GetComponent<Tube>().corked) { if (Gametubes[i].GetComponent<Tube>().FullTube() && !Gametubes[i].GetComponent<Tube>().EmptyTube()) { Gametubes[i].GetComponent<Tube>().Cork(); } }
+                    else { Debug.Log("dont cork"); }
 
                     mat++;
 
@@ -507,6 +527,8 @@ public class LevelCreator : MonoBehaviour
                 }
 
             }
+
+            
         }
         else
         {
@@ -517,6 +539,8 @@ public class LevelCreator : MonoBehaviour
 
         gameObject.GetComponent<GameManager>().menuNum = 2;
         lastLevelLoaded = index;
+
+        
     }
 
     public void LoadLastChallengeLevel()
@@ -854,7 +878,12 @@ public class LevelCreator : MonoBehaviour
 
     public void PageRightFar()
     {
-        currentLevelPage = levelButtons.Count - 1;
+        while (!CheckRequirement())
+        {
+            currentLevelPage++;
+        }
+
+        currentLevelPage--;
         UpdateListPage();
         UpdatePageButtons();
     }
@@ -878,13 +907,17 @@ public class LevelCreator : MonoBehaviour
                     
 
                     Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[levels[index][i][mat]].color;
-
+                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (levels[index][i][mat] + 1).ToString();
+                    if (!Gametubes[i].GetComponent<Tube>().corked) { if (Gametubes[i].GetComponent<Tube>().FullTube() && !Gametubes[i].GetComponent<Tube>().EmptyTube()) { Gametubes[i].GetComponent<Tube>().Cork(); } }
+                    else { Debug.Log("dont cork"); }
                     mat++;
 
                     //Debug.Log("changed color");
                 }
 
             }
+
+            gameObject.GetComponent<GameManager>().Cork();
         }
         else
         {
@@ -895,6 +928,8 @@ public class LevelCreator : MonoBehaviour
 
         gameObject.GetComponent<GameManager>().menuNum = 2;
         lastLevelLoaded = index;
+
+        
     }
 
     public void LoadLastLevel()
@@ -908,14 +943,19 @@ public class LevelCreator : MonoBehaviour
         {
             for (int ii = 0; ii < levelButtons[i].Count; ++ii)
             {
-                if (lastLevelLoaded + 1 == levelButtons[i][ii].GetComponent<ChooseButton>().levelValue)
+                if (lastLevelLoaded + 1 == levelButtons[i][ii].GetComponent<ChooseButton>().levelValue && levelButtons[i][ii].GetComponent<Image>().color != completedMat.color)
                 {
                     levelButtons[i][ii].GetComponent<Image>().color = completedMat.color;
+                    coins += coinIncriment;
+                    
                 }
+                else if (lastLevelLoaded + 1 == 45) { Unlock(); }
             }
         }
 
         challengeRequirement.SetActive(ChallengeRequirement());
+
+        
     }
 
     public void BeatIndexLevel(int index)
@@ -933,6 +973,8 @@ public class LevelCreator : MonoBehaviour
         }
 
         challengeRequirement.SetActive(ChallengeRequirement());
+
+        
     }
 
     public void AddToDatabase(int index) // add a new level to the saved string
@@ -967,6 +1009,10 @@ public class LevelCreator : MonoBehaviour
         {
             completedSave = PlayerPrefs.GetString("SavedString");
             Debug.Log(completedSave);
+        }
+        if (PlayerPrefs.HasKey("CoinCount"))
+        {
+            coins = PlayerPrefs.GetInt("CoinCount");
         }
         //else { Debug.LogWarning("There is no save data"); }
 
@@ -1010,6 +1056,9 @@ public class LevelCreator : MonoBehaviour
                 }
             }
         }
+
+        if (!PlayerPrefs.HasKey("InitialCoins")) { coins = completed.Count * coinIncriment; }
+        GiveInitialCoins();
     }
 
     public void ResetData(GameObject button) // reset database
@@ -1028,7 +1077,7 @@ public class LevelCreator : MonoBehaviour
         }
 
 
-        button.GetComponent<TMP_Text>().text = levels.Count.ToString();
+        
     }
 
     public void UpdateCompleted()
@@ -1050,6 +1099,8 @@ public class LevelCreator : MonoBehaviour
         completedSave = newCompleted;
         SaveCompleted();
     }
+
+    
 
     public void SaveCompleted()
     {
@@ -1167,5 +1218,37 @@ public class LevelCreator : MonoBehaviour
         return textfile.text;
     }
 
-    
+    public void FixCompleted() // temporary
+    {
+        string newCompleted = "";
+        
+
+        for (int i = 0; i < levelButtons.Count; ++i)
+        {
+            for (int ii = 0; ii < levelButtons[i].Count; ++ii)
+            {
+                if (levelButtons[i][ii].GetComponent<ChooseButton>().levelValue <= 312)
+                {
+                    newCompleted = newCompleted + levelButtons[i][ii].GetComponent<ChooseButton>().levelValue.ToString() + ",";
+                    coins += coinIncriment;
+                }
+
+            }
+        }
+
+        completedSave = newCompleted;
+        SaveCompleted();
+        Destroy(fixCompleted);
+    }
+
+    public void Unlock() // temporary
+    {
+        fixCompleted.SetActive(true);
+        
+    }
+
+    public void GiveInitialCoins()
+    {
+        PlayerPrefs.SetInt("InitialCoins", 1);
+    }
 }
