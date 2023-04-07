@@ -949,7 +949,7 @@ public class LevelCreator : MonoBehaviour
                     coins += coinIncriment;
                     
                 }
-                else if (lastLevelLoaded + 1 == 45) { Unlock(); }
+                //else if (lastLevelLoaded + 1 == 45) { Unlock(); }
             }
         }
 
@@ -1218,7 +1218,7 @@ public class LevelCreator : MonoBehaviour
         return textfile.text;
     }
 
-    public void FixCompleted() // temporary
+    /*public void FixCompleted() // temporary
     {
         string newCompleted = "";
         
@@ -1245,7 +1245,7 @@ public class LevelCreator : MonoBehaviour
     {
         fixCompleted.SetActive(true);
         
-    }
+    }*/
 
     public void GiveInitialCoins()
     {

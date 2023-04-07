@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Advertisements;
+using TMPro;
 
 public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListener
 {
@@ -9,6 +10,8 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
     [SerializeField] string _androidAdUnitId = "Rewarded_Android";
     [SerializeField] string _iOSAdUnitId = "Rewarded_iOS";
     string _adUnitId = null; // This will remain null for unsupported platforms
+
+    [SerializeField] int reward;
 
     void Awake()
     {
@@ -26,7 +29,7 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
 
     private void Start()
     {
-        
+        _showAdButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = "+" + reward.ToString() + " Coins (Ad)";
     }
 
     // Load content to the Ad Unit:
@@ -66,6 +69,8 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
         if (adUnitId.Equals(_adUnitId) && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
         {
             Debug.Log("Unity Ads Rewarded Ad Completed");
+            int coins = gameObject.GetComponent<LevelCreator>().coins + 300;
+            gameObject.GetComponent<LevelCreator>().coins = coins;
             // Grant a reward.
         }
     }
