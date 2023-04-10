@@ -127,7 +127,7 @@ public class Tube : MonoBehaviour
         return null;
     }
 
-    public GameObject GetBottomBall() // get the last ball in the tube
+    public GameObject GetBottomBall() // get the lowest ball in the tube
     {
         UpdateSpots();
 
@@ -267,7 +267,9 @@ public class Tube : MonoBehaviour
 
         if (tube.GetComponent<Tube>().ReturnNumOpenSpots() != 0)
         {
-            GameObject ball = GetTopBall();
+            GameObject ball = null;
+            if (spots[0]) { ball = GetTopBall(); }
+            else { ball = GetBottomBall(); }
 
             int numMoving = 1;
             if (!EmptyTube())
@@ -306,7 +308,27 @@ public class Tube : MonoBehaviour
             if (!spots[i]) { num++; }
         }
 
-        //Debug.Log("open spots: " + num);
+        Debug.Log("open spots: " + num);
+        return num;
+    }
+
+    public int NumSameAtTop()
+    {
+        int num = 0;
+        if (!spots[4]) { return 0; }
+
+        for (int i = 1; i < spotObjects.Count; ++i)
+        {
+            if (spots[i])
+            {
+                if (spotObjects[i].transform.GetChild(0).gameObject.tag == spotObjects[BottomIndex()].transform.GetChild(0).gameObject.tag)
+                {
+                    num++;
+                }
+            }
+        }
+        Debug.Log("num same at top: " + num);
+
         return num;
     }
 
@@ -326,7 +348,7 @@ public class Tube : MonoBehaviour
         GameObject Cork = Instantiate(CorkPrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
         Cork.transform.SetParent(gameObject.transform);
-        Cork.transform.localPosition = new Vector3(0, 108, 0);
+        Cork.transform.localPosition = new Vector3(0, 104.5f, 0);
         Cork.transform.localScale = new Vector3(1, 1, 1);
     }
 }

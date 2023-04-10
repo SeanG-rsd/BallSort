@@ -367,6 +367,7 @@ public class LevelCreator : MonoBehaviour
         inChallenge = true;
         completedChallenge.Clear();
 
+        gameObject.GetComponent<RewardedAd>()._showAdButton.gameObject.SetActive(false);
         
         pageNumText.gameObject.SetActive(false);
         pageLeftButton.SetActive(false);
@@ -517,7 +518,7 @@ public class LevelCreator : MonoBehaviour
 
                     
                     Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[challengeLevels[index][i][mat]].color;
-                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (levels[index][i][mat] + 1).ToString();
+                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (challengeLevels[index][i][mat] + 1).ToString();
                     if (!Gametubes[i].GetComponent<Tube>().corked) { if (Gametubes[i].GetComponent<Tube>().FullTube() && !Gametubes[i].GetComponent<Tube>().EmptyTube()) { Gametubes[i].GetComponent<Tube>().Cork(); } }
                     else { Debug.Log("dont cork"); }
 
@@ -574,7 +575,9 @@ public class LevelCreator : MonoBehaviour
         pageLeftFarButton.SetActive(true);
         pageRightButton.SetActive(true);
         pageRightFarButton.SetActive(true);
-        
+
+        gameObject.GetComponent<RewardedAd>()._showAdButton.gameObject.SetActive(true);
+
 
         levelNumText.gameObject.SetActive(true);
         challengeTimeTextGame.gameObject.SetActive(false);
@@ -878,12 +881,20 @@ public class LevelCreator : MonoBehaviour
 
     public void PageRightFar()
     {
+        int cp = currentLevelPage;
+        
+
         while (!CheckRequirement())
         {
             currentLevelPage++;
         }
+        Debug.Log(cp + " " + currentLevelPage);
+        if (currentLevelPage == cp + 1) { currentLevelPage = levelButtons.Count; }
+        
+
 
         currentLevelPage--;
+        if (cp + 1 > currentLevelPage) { currentLevelPage = levelButtons.Count - 1; }
         UpdateListPage();
         UpdatePageButtons();
     }

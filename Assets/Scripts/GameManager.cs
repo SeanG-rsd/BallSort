@@ -56,12 +56,19 @@ public class GameManager : MonoBehaviour
     List<GameObject> TTHolster = new List<GameObject>();
     public GameObject TinyTubePrefab;
 
+    public GameObject NoMovesLeftBox;
+    public float noMoveTime;
+    float noMoveTimer;
+    bool noMoves;
+
     // Start is called before the first frame update
     void Start()
     {
 
         insult.SetActive(false);
+        NoMovesLeftBox.SetActive(false);
         insultTimer = insultTime;
+        noMoveTimer = noMoveTime;
         //ModeChange();
         OpenMenuNum(1);
         
@@ -89,6 +96,18 @@ public class GameManager : MonoBehaviour
                 insultTimer = insultTime;
             }
         }
+
+        if (noMoves)
+        {
+            if (noMoveTimer < 0)
+            {
+                noMoves = false;
+                NoMovesLeftBox.SetActive(false);
+                noMoveTimer = noMoveTime;
+            }
+
+            noMoveTimer -= Time.deltaTime;
+        }
         
         
 
@@ -108,6 +127,10 @@ public class GameManager : MonoBehaviour
         undosLeftText.text = "Free Undos Left: " + undosLeft.ToString();
         if (undosLeft == 0) { undosLeftText.text = "No Undos Left: " + undoCost.ToString() + " coins"; }
         TTTExt.text = "Buy Tiny Tube for " + TinyTubeCost.ToString() + " coins";
+
+        noMoves = false;
+        NoMovesLeftBox.SetActive(false);
+        noMoveTimer = noMoveTime;
 
 
         List<GameObject> testTubes = new List<GameObject>();
@@ -191,6 +214,12 @@ public class GameManager : MonoBehaviour
 
     bool CheckForWin() // check to see if all tubes are the right color
     {
+        if (!CheckIfAnyMovesLeft())
+        {
+            noMoves = true;
+            NoMovesLeftBox.SetActive(true);
+            noMoveTimer = noMoveTime;
+        }
         for (int i = 0; i < tubes.Count; ++i)
         {
             
@@ -257,6 +286,9 @@ public class GameManager : MonoBehaviour
 
 
                     firstTubeClicked = null;
+                    canUndo = true;
+                    Cork();
+                    if (CheckForWin()) { Win(); }
                 }
                 else if (ball.tag == second.GetBottomBall().tag && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
                 {
@@ -280,6 +312,9 @@ public class GameManager : MonoBehaviour
                     }
 
                     firstTubeClicked = null;
+                    canUndo = true;
+                    Cork();
+                    if (CheckForWin()) { Win(); }
                 }
                 else if (!second.FullTube())// move ball from different tube to the top
                 {
@@ -294,9 +329,7 @@ public class GameManager : MonoBehaviour
                     firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
                 }
 
-                canUndo = true;
-                Cork();
-                if (CheckForWin()) { Win(); }
+                
 
             }
             else if (tinyTubeTime && clickState && firstTubeClicked != tube) // move balls into empty tube
@@ -331,6 +364,9 @@ public class GameManager : MonoBehaviour
 
 
                     firstTubeClicked = null;
+                    canUndo = true;
+                    Cork();
+                    if (CheckForWin()) { Win(); }
                 }
 
                 else if (ball.tag == second.GetBottomBall().tag && !second.FullTube() && firstTubeClicked.GetComponent<TinyTube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
@@ -355,24 +391,25 @@ public class GameManager : MonoBehaviour
                     }
 
                     firstTubeClicked = null;
+                    canUndo = true;
+                    Cork();
+                    if (CheckForWin()) { Win(); }
                 }
                 else if (!second.FullTube())// move ball from different tube to the top
                 {
                     firstTubeClicked.GetComponent<TinyTube>().MoveTopToBottom();
 
-                    //Debug.Log("move from dif");
+                    Debug.Log("move from dif");
 
                     firstTubeClicked = tube;
 
 
 
-                    firstTubeClicked.GetComponent<TinyTube>().MoveBottomToTop();
+                    firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
                 }
 
                 //else { Debug.Log("not win"); }
-                canUndo = true;
-                Cork();
-                if (CheckForWin()) { Win(); }
+                
 
                 tinyTubeTime = false;
             }
@@ -391,7 +428,7 @@ public class GameManager : MonoBehaviour
             }
 
         }
-    }
+    } // main game function
 
     public void ClickedTinyTube(GameObject tube)
     {
@@ -405,7 +442,7 @@ public class GameManager : MonoBehaviour
 
             firstTubeClicked.GetComponent<TinyTube>().MoveBottomToTop();
         }
-        else if (clickState && firstTubeClicked != tube) // move balls into empty tube
+        else if (!tinyTubeTime && clickState && firstTubeClicked != tube) // coming from normal tube (firstTubeClicked is a normal tube)
         {
             GameObject ball = firstTubeClicked.GetComponent<Tube>().GetTopBall();
 
@@ -437,6 +474,7 @@ public class GameManager : MonoBehaviour
 
 
                 firstTubeClicked = null;
+                tinyTubeTime = false;
             }
             else if (ball.tag == second.GetBottomBall().tag && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
             {
@@ -460,8 +498,9 @@ public class GameManager : MonoBehaviour
                 }
 
                 firstTubeClicked = null;
+                tinyTubeTime = false;
             }
-            else if (!second.FullTube())// move ball from different tube to the top
+            else if (!second.EmptyTube())// move ball from different tube to the top
             {
                 firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
 
@@ -471,7 +510,7 @@ public class GameManager : MonoBehaviour
 
 
 
-                firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
+                firstTubeClicked.GetComponent<TinyTube>().MoveBottomToTop();
             }
             canUndo = true;
             Cork();
@@ -480,9 +519,10 @@ public class GameManager : MonoBehaviour
 
             //else { Debug.Log("not win"); }
 
-            tinyTubeTime = false;
+            
 
         }
+        
         else if (clickState && firstTubeClicked == tube) // move ball back into the tube
         {
             tube.GetComponent<TinyTube>().MoveTopToBottom();
@@ -733,6 +773,43 @@ public class GameManager : MonoBehaviour
             gameObject.GetComponent<LevelCreator>().coins = coins;
             tinyTubeActive = true;
         }
+    }
+    
+    public bool CheckIfAnyMovesLeft()
+    {
+        for (int i = 0; i < tubes.Count; ++i)
+        {
+            for (int ii = 0; ii < tubes.Count; ++ii)
+            {
+                if (ii != i)
+                {
+                    Tube tube1 = tubes[i].GetComponent<Tube>();
+                    Tube tube2 = tubes[ii].GetComponent<Tube>();
+                    GameObject ball1 = null;
+                    GameObject ball2 = null;
+
+                    //Debug.Log(i + " " + ii);
+                    if (!tube1.EmptyTube()) { ball1 = tubes[i].GetComponent<Tube>().GetBottomBall(); }
+                    else { return true; }
+                    if (!tube2.EmptyTube()) { ball2 = tubes[ii].GetComponent<Tube>().GetBottomBall(); }
+                    else { return true; }
+                    if (ball1.tag == ball2.tag)
+                    {
+                        if (tube1.NumSameAtTop() <= tube2.ReturnNumOpenSpots())
+                        { 
+                            Debug.LogWarning("there is a move");
+                            return true;
+                        }
+                        
+                    }
+                       
+                }
+            }
+        }
+        
+
+
+        return false;
     }
 
     public void ModeChange()
