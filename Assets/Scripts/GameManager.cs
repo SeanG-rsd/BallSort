@@ -61,6 +61,10 @@ public class GameManager : MonoBehaviour
     float noMoveTimer;
     bool noMoves;
 
+    bool win;
+    static float winTime = 1.0f;
+    float winTimer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -69,6 +73,7 @@ public class GameManager : MonoBehaviour
         NoMovesLeftBox.SetActive(false);
         insultTimer = insultTime;
         noMoveTimer = noMoveTime;
+        winTimer = winTime;
         //ModeChange();
         OpenMenuNum(1);
         
@@ -79,7 +84,17 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (win)
+        {
+            if (winTimer < 0)
+            {
+                win = false;
+                winTimer = winTime;
+                gameObject.GetComponent<LevelCreator>().WinScreen();
+            }
+
+            winTimer -= Time.deltaTime;
+        }
 
         if (insult.activeSelf)
         {
@@ -539,7 +554,7 @@ public class GameManager : MonoBehaviour
 
     void Win()
     {
-        if (!gameObject.GetComponent<LevelCreator>().inChallenge)
+        /*if (!gameObject.GetComponent<LevelCreator>().inChallenge)
         {
             menuNum = 1;
             OpenMenuNum(menuNum);
@@ -556,10 +571,12 @@ public class GameManager : MonoBehaviour
             gameObject.GetComponent<LevelCreator>().BeatLastChallengeLevel();
             ResetGame();
             //gameObject.GetComponent<LevelCreator>().UpdateCompleted();
-        }
+        }*/
+
+        win = true;
     }
 
-    void SetUndoTubes()
+    public void SetUndoTubes()
     {
         //for (int i = 0; i < undoTubes.Count; ++i) { Destroy(undoTubes[i]); }
         List<GameObject> newTubes = new List<GameObject>();

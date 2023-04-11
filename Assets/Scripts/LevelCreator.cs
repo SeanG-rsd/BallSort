@@ -86,13 +86,18 @@ public class LevelCreator : MonoBehaviour
     public int coinIncriment;
 
 
-    public GameObject fixCompleted;
+    public GameObject winScreen;
+    public ParticleSystem confettiPrefab;
+    public List<GameObject> confettiSpots;
+    public TMP_Text winCoinText;
 
+    GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        winScreen.SetActive(false);
+        gameManager = GetComponent<GameManager>();
         savedLevels = GetLevels();
         LoadGame();
         LoadLevelChooseList();
@@ -948,7 +953,54 @@ public class LevelCreator : MonoBehaviour
         LoadLevel(lastLevelLoaded);
     }
 
-    public void BeatLastLevel()
+    public void WinScreen()
+    {
+        winScreen.SetActive(true);
+        winCoinText.text = "+" + coinIncriment.ToString() + " Coins";
+
+        for (int i = 0; i < confettiSpots.Count; ++i)
+        {
+            ParticleSystem confetti = Instantiate(confettiPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+
+            //confetti.gameObject.transform.SetParent(confettiSpots[i].transform);
+            confetti.gameObject.transform.localScale = new Vector3(1, 1, 1);
+            Vector3 pos = confettiSpots[i].transform.position;
+            pos.z = -1;
+
+            confetti.gameObject.transform.position = pos;
+
+            confetti.Play();
+        }
+
+        if (!inChallenge)
+        {
+            if (!BeatLastLevel()) { winCoinText.text = "You've Already Beat This Level!"; }
+            UpdateCompleted();
+            gameObject.GetComponent<GameManager>().SetUndoTubes();
+        }
+        else if (inChallenge)
+        {
+            BeatLastChallengeLevel();
+        }
+
+        
+    }
+
+    public void WinNext()
+    {
+        gameObject.GetComponent<GameManager>().ResetGame();
+        LoadLevel(lastLevelLoaded + 1);
+        winScreen.SetActive(false);
+    }
+
+    public void WinLevels()
+    {
+        gameObject.GetComponent<GameManager>().menuNum = 1;
+        gameObject.GetComponent<GameManager>().ResetGame();
+        winScreen.SetActive(false);
+    }
+
+    public bool BeatLastLevel()
     {
         for (int i = 0; i < levelButtons.Count; ++i)
         {
@@ -958,6 +1010,7 @@ public class LevelCreator : MonoBehaviour
                 {
                     levelButtons[i][ii].GetComponent<Image>().color = completedMat.color;
                     coins += coinIncriment;
+                    return true;
                     
                 }
                 //else if (lastLevelLoaded + 1 == 45) { Unlock(); }
@@ -965,7 +1018,7 @@ public class LevelCreator : MonoBehaviour
         }
 
         challengeRequirement.SetActive(ChallengeRequirement());
-
+        return false;
         
     }
 

@@ -22,11 +22,17 @@ public class Tube : MonoBehaviour
 
     public List<GameObject> spotObjects;
 
+    public ParticleSystem confettiPrefab;
+    float loadedConfetti = 0.2f;
+    bool canConfetti;
+
     // Start is called before the first frame update
 
     void Awake()
     {
         gm = GameObject.Find("GameManager");
+        
+        
         GameTube = true;
         button.onClick.AddListener(Clicked);
         corked = false;
@@ -70,6 +76,15 @@ public class Tube : MonoBehaviour
         {
             UpdateSpots();
             UpdateCork();
+        }
+
+        if (!canConfetti)
+        {
+            loadedConfetti -= Time.deltaTime;
+            if (loadedConfetti < 0)
+            {
+                canConfetti = true;
+            }
         }
     }
 
@@ -341,11 +356,29 @@ public class Tube : MonoBehaviour
 
     public void Cork()
     {
-        Debug.Log("corked");
+        //Debug.Log("corked");
 
         corked = true;
 
         GameObject Cork = Instantiate(CorkPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        ParticleSystem confetti = Instantiate(confettiPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+
+        //confetti.gameObject.transform.SetParent(gameObject.transform);
+        Vector3 pos = spotObjects[spotObjects.Count - 1].transform.position;
+        pos.z = -1;
+        pos.y = pos.y - 0.1f;
+        confetti.gameObject.transform.position = pos;
+        confetti.gameObject.transform.localScale = new Vector3(1, 1, 1);
+        
+        
+
+        if (canConfetti)
+        {
+            Debug.Log("confetti");
+            confetti.Play();
+            canConfetti = false;
+        }
+        else { Destroy(confetti.gameObject); }
 
         Cork.transform.SetParent(gameObject.transform);
         Cork.transform.localPosition = new Vector3(0, 104.5f, 0);
