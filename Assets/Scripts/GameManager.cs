@@ -246,12 +246,12 @@ public class GameManager : MonoBehaviour
 
     public void Cork()
     {
-        Debug.Log("cork");
+        //Debug.Log("cork");
 
         for (int i = 0; i < tubes.Count; ++i)
         {
             if (!tubes[i].GetComponent<Tube>().corked) { if (tubes[i].GetComponent<Tube>().FullTube() && !tubes[i].GetComponent<Tube>().EmptyTube()) { tubes[i].GetComponent<Tube>().Cork(); } }
-            else { Debug.Log("dont cork " + i.ToString()); }
+            
             
         }
     }

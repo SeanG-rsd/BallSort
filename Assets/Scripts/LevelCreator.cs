@@ -90,6 +90,7 @@ public class LevelCreator : MonoBehaviour
     public ParticleSystem confettiPrefab;
     public List<GameObject> confettiSpots;
     public TMP_Text winCoinText;
+    public Button winNextButton;
 
     GameManager gameManager;
 
@@ -554,19 +555,21 @@ public class LevelCreator : MonoBehaviour
         LoadChallengeLevel(lastLevelLoaded);
     }
 
-    public void BeatLastChallengeLevel()
+    public bool BeatLastChallengeLevel()
     {
         for (int i = 0; i < challengeLevelButtons.Count; ++i)
         {
             for (int ii = 0; ii < challengeLevelButtons[i].Count; ++ii)
             {
-                if (lastLevelLoaded + 1 == challengeLevelButtons[i][ii].GetComponent<ChooseButton>().levelValue)
+                if (lastLevelLoaded + 1 == challengeLevelButtons[i][ii].GetComponent<ChooseButton>().levelValue && challengeLevelButtons[i][ii].GetComponent<Image>().color != completedMat.color)
                 {
                     challengeLevelButtons[i][ii].GetComponent<Image>().color = completedMat.color;
+                    Debug.LogWarning("Beat Last Challenge Level");
+                    return true;
                 }
             }
         }
-
+        return false;
     }
 
     public void GiveUpChallenge()
@@ -977,10 +980,22 @@ public class LevelCreator : MonoBehaviour
             if (!BeatLastLevel()) { winCoinText.text = "You've Already Beat This Level!"; }
             UpdateCompleted();
             gameObject.GetComponent<GameManager>().SetUndoTubes();
+            if (lastLevelLoaded >= levels.Count - 1)
+            {
+                winNextButton.interactable = false;
+                winCoinText.text = "You've Beat the Game!\n" + "+" + coinIncriment.ToString() + " Coins";
+            }
         }
         else if (inChallenge)
         {
+            winCoinText.text = "Challenge " + (lastLevelLoaded + 1).ToString() + " completed";
+            if (!BeatLastChallengeLevel()) { winCoinText.text = "You've Already Beat This Challenge Level!"; }
             BeatLastChallengeLevel();
+            if (lastLevelLoaded >= challengeLevels.Count - 1)
+            {
+                winNextButton.interactable = false;
+                winCoinText.text = "You've Beat The Challenge!";
+            }
         }
 
         
@@ -989,12 +1004,16 @@ public class LevelCreator : MonoBehaviour
     public void WinNext()
     {
         gameObject.GetComponent<GameManager>().ResetGame();
-        LoadLevel(lastLevelLoaded + 1);
+
+        if (!inChallenge) { if (lastLevelLoaded < levels.Count) { LoadLevel(lastLevelLoaded + 1); } }
+        else if (inChallenge) { if (lastLevelLoaded < challengeLevels.Count - 1) { LoadChallengeLevel(lastLevelLoaded + 1); } }
+
         winScreen.SetActive(false);
     }
 
     public void WinLevels()
     {
+
         gameObject.GetComponent<GameManager>().menuNum = 1;
         gameObject.GetComponent<GameManager>().ResetGame();
         winScreen.SetActive(false);
