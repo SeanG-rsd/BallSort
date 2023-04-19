@@ -7,7 +7,7 @@ using TMPro;
 public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListener
 {
     public Button _showAdButton;
-    [SerializeField] string _androidAdUnitId = "Rewarded_Android";
+    //[SerializeField] string _androidAdUnitId = "Rewarded_Android";
     [SerializeField] string _iOSAdUnitId = "Rewarded_iOS";
     string _adUnitId = null; // This will remain null for unsupported platforms
 
@@ -71,6 +71,7 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
             Debug.Log("Unity Ads Rewarded Ad Completed");
             int coins = gameObject.GetComponent<LevelCreator>().coins + reward;
             gameObject.GetComponent<LevelCreator>().coins = coins;
+            LoadAd();
             // Grant a reward.
         }
     }

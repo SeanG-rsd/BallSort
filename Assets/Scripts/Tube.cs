@@ -323,7 +323,7 @@ public class Tube : MonoBehaviour
             if (!spots[i]) { num++; }
         }
 
-        Debug.Log("open spots: " + num);
+        //Debug.Log("open spots: " + num);
         return num;
     }
 
@@ -340,9 +340,13 @@ public class Tube : MonoBehaviour
                 {
                     num++;
                 }
+                else
+                {
+                    return num;
+                }
             }
         }
-        Debug.Log("num same at top: " + num);
+        //Debug.Log("num same at top: " + num);
 
         return num;
     }

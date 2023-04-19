@@ -664,8 +664,8 @@ public class GameManager : MonoBehaviour
         {
             undosLeft--;
             //Debug.LogWarning("undo");
-            insult.SetActive(true);
-            if (insultTimer == insultTime) { doInsult = true; }
+            //insult.SetActive(true);
+            //if (insultTimer == insultTime) { doInsult = true; }
 
             GameObject undoTT = new GameObject();
             undoTubes = undoHolster[undoHolster.Count - 1];
@@ -782,7 +782,7 @@ public class GameManager : MonoBehaviour
         {
             //if (insultTimer == insultTime) { doInsult = true; }
 
-            tinyTubeActive = tinyTubeActive;
+            
             TinyTubeButton.interactable = false;
 
             TinyTube.SetActive(true);
@@ -800,20 +800,33 @@ public class GameManager : MonoBehaviour
             {
                 if (ii != i)
                 {
+                    
                     Tube tube1 = tubes[i].GetComponent<Tube>();
                     Tube tube2 = tubes[ii].GetComponent<Tube>();
                     GameObject ball1 = null;
                     GameObject ball2 = null;
 
-                    //Debug.Log(i + " " + ii);
-                    if (!tube1.EmptyTube()) { ball1 = tubes[i].GetComponent<Tube>().GetBottomBall(); }
-                    else { return true; }
-                    if (!tube2.EmptyTube()) { ball2 = tubes[ii].GetComponent<Tube>().GetBottomBall(); }
-                    else { return true; }
+                    if (!tube1.EmptyTube() && !tube2.EmptyTube())
+                    {
+                        ball1 = tubes[i].GetComponent<Tube>().GetBottomBall();
+                        ball2 = tubes[ii].GetComponent<Tube>().GetBottomBall();
+                    }
+                    else
+                    {
+                        Debug.Log(i + " " + ii);
+                        Debug.LogWarning("there is a move");
+                        return true;
+                    }
+
+
+                    Debug.Log("num same at top: " + tube1.NumSameAtTop());
+                    Debug.Log("open spots: " + tube2.ReturnNumOpenSpots());
+
                     if (ball1.tag == ball2.tag)
                     {
                         if (tube1.NumSameAtTop() <= tube2.ReturnNumOpenSpots())
-                        { 
+                        {
+                            Debug.Log(i + " " + ii);
                             Debug.LogWarning("there is a move");
                             return true;
                         }
@@ -824,8 +837,6 @@ public class GameManager : MonoBehaviour
             }
         }
         
-
-
         return false;
     }
 
@@ -847,4 +858,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+    
 }

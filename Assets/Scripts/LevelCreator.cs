@@ -638,7 +638,7 @@ public class LevelCreator : MonoBehaviour
 
     string OrganizeChallengeTime(float time)
     {
-        float roundedTime = Mathf.Round(time * 10) / 10;
+        float roundedTime = Mathf.Round(time * 100) / 100;
 
         string end = "00:00.00";
 
@@ -985,6 +985,14 @@ public class LevelCreator : MonoBehaviour
                 winNextButton.interactable = false;
                 winCoinText.text = "You've Beat the Game!\n" + "+" + coinIncriment.ToString() + " Coins";
             }
+
+            int LPP = (int)levelsPerPage.x * (int)levelsPerPage.y;
+
+            if (lastLevelLoaded % LPP == 0 && CheckRequirement())
+            {
+                winCoinText.text = "Complete The Rest of The Page!";
+                winNextButton.interactable = false;
+            }
         }
         else if (inChallenge)
         {
@@ -1004,8 +1012,12 @@ public class LevelCreator : MonoBehaviour
     public void WinNext()
     {
         gameObject.GetComponent<GameManager>().ResetGame();
+        
 
-        if (!inChallenge) { if (lastLevelLoaded < levels.Count) { LoadLevel(lastLevelLoaded + 1); } }
+        if (!inChallenge)
+        {
+            if (lastLevelLoaded < levels.Count) { LoadLevel(lastLevelLoaded + 1); }
+        }
         else if (inChallenge) { if (lastLevelLoaded < challengeLevels.Count - 1) { LoadChallengeLevel(lastLevelLoaded + 1); } }
 
         winScreen.SetActive(false);
@@ -1029,6 +1041,7 @@ public class LevelCreator : MonoBehaviour
                 {
                     levelButtons[i][ii].GetComponent<Image>().color = completedMat.color;
                     coins += coinIncriment;
+                    challengeRequirement.SetActive(ChallengeRequirement());
                     return true;
                     
                 }
@@ -1333,5 +1346,10 @@ public class LevelCreator : MonoBehaviour
     public void GiveInitialCoins()
     {
         PlayerPrefs.SetInt("InitialCoins", 1);
+    }
+
+    public void Test()
+    {
+        gameObject.GetComponent<LevelSolver>().InitiateLevel(levels[lastLevelLoaded]);
     }
 }
