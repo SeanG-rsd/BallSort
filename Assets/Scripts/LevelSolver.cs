@@ -47,19 +47,34 @@ public class LevelSolver : MonoBehaviour
     void SolveLevel()
     {
 
-        List<Vector2> possibleMoves = ReturnPossibleMoves();
+        List<Vector2> possibleMoves = ReturnPossibleMoves(currentState);
 
-
+        if (possibleMoves.Count == 0) { Debug.LogWarning("there are no moves"); }
 
     }
 
-
-
-    List<Vector2> ReturnPossibleMoves()
+    List<List<int>> MakeMove(List<List<int>> initial, Vector2 move)
     {
-        for (int i = 0; i < currentState.Count; ++i)
+        List<List<int>> final = new List<List<int>>();
+
+
+
+
+
+
+
+
+
+        return final;
+    }
+
+    List <Vector2> ReturnPossibleMoves(List<List<int>> state)
+    {
+        List<Vector2> moves = new List<Vector2>();
+
+        for (int i = 0; i < state.Count; ++i)
         {
-            for (int ii = 0; ii < currentState.Count; ++ii)
+            for (int ii = 0; ii < state.Count; ++ii)
             {
                 if (ii != i)
                 {
@@ -69,13 +84,13 @@ public class LevelSolver : MonoBehaviour
                         //Debug.Log("num same at top: " + NumSameAtTop(i));
                         //Debug.Log("open spots: " + ReturnNumOpenSpots(ii));
 
-                        if (currentState[i][BottomIndex(i)] == currentState[ii][BottomIndex(ii)])
+                        if (state[i][BottomIndex(i)] == state[ii][BottomIndex(ii)])
                         {
                             if (NumSameAtTop(i) <= ReturnNumOpenSpots(ii))
                             {
                                 Debug.Log(i + " " + ii);
                                 Debug.LogWarning("there is a move");
-                                return new Vector2(i, ii);
+                                moves.Add(new Vector2(i, ii));
                             }
 
                         }
@@ -84,13 +99,13 @@ public class LevelSolver : MonoBehaviour
                     {
                         Debug.Log(i + " " + ii);
                         Debug.LogWarning("there is a move");
-                        return new Vector2(i, ii);
+                        moves.Add(new Vector2(i, ii));
                     }
                 }
             }
         }
 
-        return new Vector2(100, 100);
+        return moves;
     }
 
     void OutputState()

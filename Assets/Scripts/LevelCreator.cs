@@ -1152,9 +1152,6 @@ public class LevelCreator : MonoBehaviour
                 }
             }
         }
-
-        if (!PlayerPrefs.HasKey("InitialCoins")) { coins = completed.Count * coinIncriment; }
-        GiveInitialCoins();
     }
 
     public void ResetData(GameObject button) // reset database
@@ -1342,11 +1339,6 @@ public class LevelCreator : MonoBehaviour
         fixCompleted.SetActive(true);
         
     }*/
-
-    public void GiveInitialCoins()
-    {
-        PlayerPrefs.SetInt("InitialCoins", 1);
-    }
 
     public void Test()
     {

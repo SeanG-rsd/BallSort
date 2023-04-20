@@ -65,12 +65,38 @@ public class GameManager : MonoBehaviour
     static float winTime = 1.0f;
     float winTimer;
 
+    public GameObject SettingsScreen;
+
+    public Image gameBackground;
+    public Image levelBackground;
+    public Image settingsBackground;
+
+    public Sprite greenSetting;
+    public Sprite blueSetting;
+    public Sprite redSetting;
+    public Sprite defaultSetting;
+
+    public GameObject greenSettingButton;
+    public Button greenLockButton;
+
+    public GameObject redSettingButton;
+    public Button redLockButton;
+
+    public GameObject blueSettingButton;
+    public Button blueLockButton;
+
+    public GameObject defaultSettingButton;
+
+    public int BackgroundCost;
+
+
     // Start is called before the first frame update
     void Start()
     {
 
         insult.SetActive(false);
         NoMovesLeftBox.SetActive(false);
+        SettingsScreen.SetActive(false);
         insultTimer = insultTime;
         noMoveTimer = noMoveTime;
         winTimer = winTime;
@@ -79,6 +105,7 @@ public class GameManager : MonoBehaviour
         
 
         ResetGame();
+        LoadBackgrounds();
     }
 
     // Update is called once per frame
@@ -858,6 +885,80 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void OpenSettingsScreen()
+    {
+        if (SettingsScreen.activeSelf) { SettingsScreen.SetActive(false); }
+        else if (!SettingsScreen.activeSelf) { SettingsScreen.SetActive(true); }
+    }
 
+    public void BuyBackground(int index)
+    {
+        int coins = gameObject.GetComponent<LevelCreator>().coins;
+        if (coins >= BackgroundCost)
+        {
+            if (index == 0) { greenLockButton.gameObject.SetActive(false);
+                PlayerPrefs.SetInt("greenLock", 1);
+            }
+            else if (index == 1) { redLockButton.gameObject.SetActive(false);
+                PlayerPrefs.SetInt("redLock", 1);
+            }
+            else if (index == 2) { blueLockButton.gameObject.SetActive(false);
+                PlayerPrefs.SetInt("blueLock", 1);
+            }
+            coins -= BackgroundCost;
+            gameObject.GetComponent<LevelCreator>().coins = coins;
+        }
+    }
+
+    public void SetBackground(int index)
+    {
+        if (index == 0)
+        {
+            levelBackground.sprite = defaultSetting;
+            gameBackground.sprite = defaultSetting;
+            settingsBackground.sprite = defaultSetting;
+
+        }
+        else if (index == 1)
+        {
+            levelBackground.sprite = greenSetting;
+            gameBackground.sprite = greenSetting;
+            settingsBackground.sprite = greenSetting;
+            greenLockButton.gameObject.SetActive(false);
+        }
+        else if (index == 2)
+        {
+            levelBackground.sprite = redSetting;
+            gameBackground.sprite = redSetting;
+            settingsBackground.sprite = redSetting;
+            redLockButton.gameObject.SetActive(false);
+        }
+        else if (index == 3)
+        {
+            levelBackground.sprite = blueSetting;
+            gameBackground.sprite = blueSetting;
+            settingsBackground.sprite = blueSetting;
+            blueLockButton.gameObject.SetActive(false);
+        }
+        PlayerPrefs.SetInt("lastBackground", index);
+    }
+
+    public void LoadBackgrounds()
+    {
+        if (PlayerPrefs.HasKey("lastBackground"))
+        {
+            Debug.Log(PlayerPrefs.GetInt("lastBackground"));
+            SetBackground(PlayerPrefs.GetInt("lastBackground"));
+        }
+        else
+        {
+            PlayerPrefs.SetInt("lastBackground", 0);
+        }
+
+        greenLockButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = BackgroundCost.ToString() + " Coins";
+        redLockButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = BackgroundCost.ToString() + " Coins";
+        blueLockButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = BackgroundCost.ToString() + " Coins";
+        
+    }
     
 }
