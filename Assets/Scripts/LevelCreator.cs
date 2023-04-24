@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -93,6 +95,8 @@ public class LevelCreator : MonoBehaviour
     public Button winNextButton;
 
     GameManager gameManager;
+
+    DateTime challengeStart;
 
     // Start is called before the first frame update
     void Start()
@@ -320,7 +324,7 @@ public class LevelCreator : MonoBehaviour
                     List<int> choices = FindPossibleChoices();
                     
 
-                    int add = Random.Range(0, choices.Count);
+                    int add = UnityEngine.Random.Range(0, choices.Count);
 
                     newTube.Add(choices[add]);
                     chosen[choices[add]]++;
@@ -374,7 +378,7 @@ public class LevelCreator : MonoBehaviour
         completedChallenge.Clear();
 
         gameObject.GetComponent<RewardedAd>()._showAdButton.gameObject.SetActive(false);
-        
+        challengeStart = DateTime.Now;
         pageNumText.gameObject.SetActive(false);
         pageLeftButton.SetActive(false);
         pageLeftFarButton.SetActive(false);
@@ -509,6 +513,8 @@ public class LevelCreator : MonoBehaviour
 
     public void LoadChallengeLevel(int index) // load a certain level based on the index given
     {
+        gameManager.undoHolster.Clear();
+        gameManager.TTHolster.Clear();
         List<GameObject> Gametubes = gameObject.GetComponent<GameManager>().tubes;
         startChallenge = true;
         
@@ -638,29 +644,29 @@ public class LevelCreator : MonoBehaviour
 
     string OrganizeChallengeTime(float time)
     {
-        float roundedTime = Mathf.Round(time * 100) / 100;
-
         string end = "00:00.00";
+        DateTime challengeCurrent = DateTime.Now;
 
-        int minutes = (int)roundedTime / 60;
-        
-        var seconds = roundedTime - (minutes * 60);
-
-        
-
+        TimeSpan ts = challengeCurrent - challengeStart;
         string min = "";
         string sec = "";
+        string ms = "";
+        float milli = Mathf.Round(ts.Milliseconds / 10);
 
-        if (minutes < 10) { min = "0" + minutes.ToString(); }
-        else { min = minutes.ToString(); }
+        if (ts.Minutes == 0) { min = "00"; }
+        else if (ts.Minutes < 10) { min = "0" + ts.Minutes.ToString(); }
+        else { min = ts.Minutes.ToString(); }
 
-        if (seconds < 10.0) { sec = "0" + seconds.ToString(); }
-        else { sec = seconds.ToString(); }
+        if (ts.Seconds == 0) { sec = "00"; }
+        else if (ts.Seconds < 10) { sec = "0" + ts.Seconds.ToString(); }
+        else { sec = ts.Seconds.ToString(); }
 
-        if (seconds - (int)seconds == 0) { sec = sec + ".0"; }
+        if (milli == 0) { ms = "00"; }
+        else if (milli < 10) { ms = "0" + milli.ToString(); }
+        else { ms = milli.ToString(); }
 
-        end = min + ":" + sec;
-
+        end = min + ":" + sec + "." + ms;
+        Debug.Log(end);
         return end;
     }
 
@@ -823,17 +829,17 @@ public class LevelCreator : MonoBehaviour
             }
         }
 
-        requirementBox.SetActive(CheckRequirement());
+        requirementBox.SetActive(CheckRequirement(currentLevelPage));
         if (requirementBox.activeSelf) { requirementText.text = "Complete levels " + levelButtons[currentLevelPage - 1][0].GetComponent<ChooseButton>().levelValue + "-" + levelButtons[currentLevelPage - 1][levelButtons[currentLevelPage - 1].Count - 1].GetComponent<ChooseButton>().levelValue + " to unlock"; }
     }
 
-    bool CheckRequirement()
+    bool CheckRequirement(int page)
     {
-        if (currentLevelPage != 0)
+        if (page != 0)
         {
-            for (int i = 0; i < levelButtons[currentLevelPage - 1].Count; ++i)
+            for (int i = 0; i < levelButtons[page - 1].Count; ++i)
             {
-                if (levelButtons[currentLevelPage - 1][i].GetComponent<Image>().color != completedMat.color) { return true; }
+                if (levelButtons[page - 1][i].GetComponent<Image>().color != completedMat.color) { return true; }
             }
         }
         return false;
@@ -892,7 +898,7 @@ public class LevelCreator : MonoBehaviour
         int cp = currentLevelPage;
         
 
-        while (!CheckRequirement())
+        while (!CheckRequirement(currentLevelPage))
         {
             currentLevelPage++;
         }
@@ -909,6 +915,9 @@ public class LevelCreator : MonoBehaviour
 
     public void LoadLevel(int index) // load a certain level based on the index given
     {
+        gameManager.undoHolster.Clear();
+        gameManager.TTHolster.Clear();
+        Debug.LogWarning("Loaded Level " + index);
         List<GameObject> Gametubes = gameObject.GetComponent<GameManager>().tubes;
 
         levelNumText.text = "Level " + (index + 1).ToString();
@@ -988,10 +997,11 @@ public class LevelCreator : MonoBehaviour
 
             int LPP = (int)levelsPerPage.x * (int)levelsPerPage.y;
 
-            if (lastLevelLoaded % LPP == 0 && CheckRequirement())
+            if ((lastLevelLoaded + 1) % LPP == 0 && CheckRequirement(currentLevelPage + 1))
             {
-                winCoinText.text = "Complete The Rest of The Page!";
+                
                 winNextButton.interactable = false;
+                
             }
         }
         else if (inChallenge)

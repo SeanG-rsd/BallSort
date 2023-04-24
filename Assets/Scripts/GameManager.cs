@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     private int firstUndoTube;
     public GameObject moveHolder;
     public bool canUndo;
-    private List<List<GameObject>> undoHolster = new List<List<GameObject>>();
+    public List<List<GameObject>> undoHolster = new List<List<GameObject>>();
     private int undosLeft;
     public int givenUndos;
     public int undoCost;
@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
     public int TinyTubeCost;
     public Button TinyTubeButton;
     public TMP_Text TTTExt;
-    List<GameObject> TTHolster = new List<GameObject>();
+    public List<GameObject> TTHolster = new List<GameObject>();
     public GameObject TinyTubePrefab;
 
     public GameObject NoMovesLeftBox;
@@ -744,10 +744,10 @@ public class GameManager : MonoBehaviour
         }
         else if (canUndo && undoHolster.Count != 0 && coins >= undoCost && undosLeft == 0)
         {
-            insult.SetActive(true);
+            //insult.SetActive(true);
             coins -= undoCost;
             gameObject.GetComponent<LevelCreator>().coins = coins;
-            if (insultTimer == insultTime) { doInsult = true; }
+            //if (insultTimer == insultTime) { doInsult = true; }
 
             GameObject undoTT = new GameObject();
             undoTubes = undoHolster[undoHolster.Count - 1];
@@ -840,21 +840,21 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log(i + " " + ii);
-                        Debug.LogWarning("there is a move");
+                        //Debug.Log(i + " " + ii);
+                        //Debug.LogWarning("there is a move");
                         return true;
                     }
 
 
-                    Debug.Log("num same at top: " + tube1.NumSameAtTop());
-                    Debug.Log("open spots: " + tube2.ReturnNumOpenSpots());
+                    //Debug.Log("num same at top: " + tube1.NumSameAtTop());
+                    //Debug.Log("open spots: " + tube2.ReturnNumOpenSpots());
 
                     if (ball1.tag == ball2.tag)
                     {
                         if (tube1.NumSameAtTop() <= tube2.ReturnNumOpenSpots())
                         {
-                            Debug.Log(i + " " + ii);
-                            Debug.LogWarning("there is a move");
+                            //Debug.Log(i + " " + ii);
+                            //Debug.LogWarning("there is a move");
                             return true;
                         }
                         
@@ -954,6 +954,10 @@ public class GameManager : MonoBehaviour
         {
             PlayerPrefs.SetInt("lastBackground", 0);
         }
+
+        if (PlayerPrefs.HasKey("redLock")) { if (PlayerPrefs.GetInt("redLock") == 1) { redLockButton.gameObject.SetActive(false); } }
+        if (PlayerPrefs.HasKey("greenLock")) { if (PlayerPrefs.GetInt("greenLock") == 1) { greenLockButton.gameObject.SetActive(false); } }
+        if (PlayerPrefs.HasKey("blueLock")) { if (PlayerPrefs.GetInt("blueLock") == 1) { blueLockButton.gameObject.SetActive(false); } }
 
         greenLockButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = BackgroundCost.ToString() + " Coins";
         redLockButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = BackgroundCost.ToString() + " Coins";
