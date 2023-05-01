@@ -46,50 +46,73 @@ public class LevelSolver : MonoBehaviour
 
     void SolveLevel()
     {
+        currentState = initialLevel;
         List<List<List<int>>> statesMade = new List<List<List<int>>>();
-
-        statesMade.Add(initialLevel);
-
         List<List<Vector2>> movesForEachState = new List<List<Vector2>>();
         List<int> indexForState = new List<int>();
+        List<Vector2> possibleMoves = new List<Vector2>();
 
-        indexForState.Add(0);
-        List<Vector2> possibleMoves = ReturnPossibleMoves(statesMade[statesMade.Count - 1]);
-        movesForEachState.Add(possibleMoves);
-
-        OutputState(statesMade[0]);
-        while (indexForState[0] < movesForEachState[0].Count)
+        while (!CheckForWin(currentState))
         {
             
 
-            if (movesForEachState[movesForEachState.Count - 1].Count > 0 && movesForEachState[movesForEachState.Count - 1].Count >= indexForState[indexForState.Count - 1] + 1) 
+            List<List<int>> t = currentState;
+
+            statesMade.Add(t);
+            possibleMoves = ReturnPossibleMoves(statesMade[statesMade.Count - 1]);
+            indexForState.Add(0);
+            movesForEachState.Add(possibleMoves);
+
+            Debug.Log(statesMade.Count);
+            Debug.Log(movesForEachState.Count);
+            Debug.Log(indexForState.Count);
+
+            if (movesForEachState[movesForEachState.Count - 1].Count >= indexForState[indexForState.Count - 1] + 1) 
             {
                 Debug.Log("move");
-                Debug.Log(possibleMoves[0]);
-                Debug.Log(possibleMoves[indexForState[indexForState.Count - 1]]);
-                List<List<int>> newState = MakeMove(statesMade[statesMade.Count - 1], possibleMoves[indexForState[indexForState.Count - 1]]);
-                statesMade.Add(newState);
-                indexForState.Add(0);
-                possibleMoves = ReturnPossibleMoves(statesMade[statesMade.Count - 1]);
+                
 
-                movesForEachState.Add(possibleMoves);
+                Debug.Log(possibleMoves.Count);
                 if (possibleMoves.Count == 0) { Debug.Log("no moves"); }
+                else { Debug.Log(possibleMoves[indexForState[indexForState.Count - 1]]); }
+
+                
+                currentState = MakeMove(statesMade[statesMade.Count - 1], possibleMoves[indexForState[indexForState.Count - 1]]);
+
+                Debug.Log(statesMade.Count);
+                Debug.Log(movesForEachState.Count);
+                Debug.Log(indexForState.Count);
                 OutputState(statesMade[statesMade.Count - 1]);
-                if (CheckForWin(newState)) { Debug.Log("found win"); }
+                if (CheckForWin(currentState)) { Debug.Log("found win"); }
             }
             else
             {
                 Debug.Log("no moves on current state");
                 statesMade.RemoveAt(statesMade.Count - 1);
+                for (int i = 0; i < statesMade.Count; ++i)
+                {
+                    OutputState(statesMade[i]);
+                }
                
                 movesForEachState.RemoveAt(movesForEachState.Count - 1);
                 possibleMoves = movesForEachState[movesForEachState.Count - 1];
                 indexForState.RemoveAt(indexForState.Count - 1);
                 indexForState[indexForState.Count - 1]++;
+
+                Debug.Log(statesMade.Count);
+                Debug.Log(movesForEachState.Count);
+                Debug.Log(indexForState.Count);
+                OutputState(statesMade[statesMade.Count - 1]);
             }
 
+            currentState = statesMade[statesMade.Count - 1];
             
-            
+
+            if (statesMade.Count > 10)
+            {
+                Debug.LogError("looped");
+                return;
+            }
         }
 
         
@@ -135,6 +158,7 @@ public class LevelSolver : MonoBehaviour
         {
             if (!FullTube(initial, i) && !EmptyTube(initial, i)) { return false; }
         }
+        Debug.Log("win");
         return true;
     }
 
@@ -158,16 +182,16 @@ public class LevelSolver : MonoBehaviour
                         {
                             if (NumSameAtTop(state, i) <= ReturnNumOpenSpots(state, ii))
                             {
-                                //Debug.Log(i + " " + ii);
+                                Debug.Log(i + " " + ii);
                                 //Debug.LogWarning("there is a move");
                                 moves.Add(new Vector2(i, ii));
                             }
 
                         }
                     }
-                    else if (EmptyTube(state, ii))
+                    else if (EmptyTube(state, ii) && !EmptyTube(state, i))
                     {
-                        //Debug.Log(i + " " + ii);
+                        Debug.Log(i + " " + ii);
                         //Debug.LogWarning("there is a move");
                         moves.Add(new Vector2(i, ii));
                     }
@@ -267,11 +291,11 @@ public class LevelSolver : MonoBehaviour
             {
                 if (initial[tube][0] != 0 && initial[tube][i] != 0)
                 {
-                    if (initial[tube][0] == initial[tube][i]) { return true; }
+                    if (initial[tube][0] != initial[tube][i]) { return false; }
                     
                 }
             }
         }
-        return false;
+        return true;
     }
 }

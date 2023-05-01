@@ -88,20 +88,25 @@ public class Tube : MonoBehaviour
         }
     }
 
-    public void MoveBottomToTop()
+    public void MoveBottomToTop(LineRenderer newLine)
     {
-        
-        for (int i = 1; i < spotObjects.Count; ++i)
+
+        spotObjects[BottomIndex()].transform.GetChild(0).SetParent(spotObjects[0].transform);
+        spotObjects[0].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(newLine);
+        //Debug.Log(i);
+        index = BottomIndex();
+
+        /*for (int i = 1; i < spotObjects.Count; ++i)
         {
             if (spots[i] && !spots[0])
             {
-                spotObjects[i].transform.GetChild(0).SetParent(spotObjects[0].transform);
-                spotObjects[0].transform.GetChild(0).position = spotObjects[0].transform.position;
+                spotObjects[BottomIndex()].transform.GetChild(0).SetParent(spotObjects[0].transform);
+                spotObjects[0].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(new Vector3(0, 0, 0));
                 //Debug.Log(i);
                 index = i;
                 return;
             }
-        }
+        }*/
     }
 
     public int BottomIndex()
@@ -119,14 +124,14 @@ public class Tube : MonoBehaviour
         return 5;
     }
 
-    public void MoveTopToBottom() // move the lowest ball in the tube to the above spot on the tube
+    public void MoveTopToBottom(LineRenderer newLine) // move the lowest ball in the tube to the above spot on the tube
     {
         for (int i = spotObjects.Count - 1; i >= 0; i--)
         {
             if (!spots[i] && spots[0])
             {
                 spotObjects[0].transform.GetChild(0).SetParent(spotObjects[i].transform);
-                spotObjects[i].transform.GetChild(0).position = spotObjects[i].transform.position;
+                spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(newLine);
                 return;
             }
         }
@@ -200,14 +205,15 @@ public class Tube : MonoBehaviour
         return false;
     }
 
-    public void NewBallsToBottom(GameObject ball)
+    public void NewBallsToBottom(GameObject ball, LineRenderer newLine)
     {
         for (int i = 1; i < spotObjects.Count; ++i)
         {
             if (!spots[i])
             {
+                
                 ball.transform.SetParent(spotObjects[i].transform);
-                ball.transform.position = spotObjects[i].transform.position;
+                spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(newLine);
             }
         }
 
