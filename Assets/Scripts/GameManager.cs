@@ -91,6 +91,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject ballPathPrefab;
 
+    public TMP_Text solveText;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -165,6 +167,8 @@ public class GameManager : MonoBehaviour
 
     public void ResetGame()
     {
+        solveText.text = "";
+
         //Debug.Log("reset game");
         undosLeft = givenUndos;
         undosLeftText.text = "Free Undos Left: " + undosLeft.ToString();
@@ -1142,5 +1146,14 @@ public class GameManager : MonoBehaviour
         blueLockButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = BackgroundCost.ToString() + " Coins";
         
     }
-    
+
+
+    public void ShowSolveText()
+    {
+        if (solveText.gameObject.activeSelf)
+        {
+            solveText.gameObject.SetActive(false);
+        }
+        else { solveText.gameObject.SetActive(true); }
+    }
 }

@@ -92,7 +92,9 @@ public class Tube : MonoBehaviour
     {
 
         spotObjects[BottomIndex()].transform.GetChild(0).SetParent(spotObjects[0].transform);
-        spotObjects[0].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(newLine);
+        //spotObjects[0].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(newLine);
+
+        spotObjects[0].transform.GetChild(0).position = spotObjects[0].transform.position;
         //Debug.Log(i);
         index = BottomIndex();
 
@@ -131,7 +133,8 @@ public class Tube : MonoBehaviour
             if (!spots[i] && spots[0])
             {
                 spotObjects[0].transform.GetChild(0).SetParent(spotObjects[i].transform);
-                spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(newLine);
+                spotObjects[i].transform.GetChild(0).position = spotObjects[i].transform.position;
+                //spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(newLine);
                 return;
             }
         }
@@ -213,7 +216,8 @@ public class Tube : MonoBehaviour
             {
                 
                 ball.transform.SetParent(spotObjects[i].transform);
-                spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(newLine);
+                ball.transform.position = spotObjects[i].transform.position;
+                //spotObjects[i].transform.GetChild(0).gameObject.GetComponent<Ball>().MoveToPoint(newLine);
             }
         }
 
