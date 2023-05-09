@@ -88,7 +88,7 @@ public class Tube : MonoBehaviour
         }
     }
 
-    public void MoveBottomToTop(LineRenderer newLine)
+    public void MoveBottomToTop()
     {
 
         spotObjects[BottomIndex()].transform.GetChild(0).SetParent(spotObjects[0].transform);
@@ -126,7 +126,7 @@ public class Tube : MonoBehaviour
         return 5;
     }
 
-    public void MoveTopToBottom(LineRenderer newLine) // move the lowest ball in the tube to the above spot on the tube
+    public void MoveTopToBottom() // move the lowest ball in the tube to the above spot on the tube
     {
         for (int i = spotObjects.Count - 1; i >= 0; i--)
         {
@@ -208,7 +208,7 @@ public class Tube : MonoBehaviour
         return false;
     }
 
-    public void NewBallsToBottom(GameObject ball, LineRenderer newLine)
+    public void NewBallsToBottom(GameObject ball)
     {
         for (int i = 1; i < spotObjects.Count; ++i)
         {

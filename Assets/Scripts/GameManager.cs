@@ -91,7 +91,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject ballPathPrefab;
 
-    public TMP_Text solveText;
+    public GameObject solveText;
+    public Button solve;
 
     // Start is called before the first frame update
     void Start()
@@ -167,7 +168,8 @@ public class GameManager : MonoBehaviour
 
     public void ResetGame()
     {
-        solveText.text = "";
+        solveText.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = "";
+        solve.interactable = false;
 
         //Debug.Log("reset game");
         undosLeft = givenUndos;
@@ -305,10 +307,7 @@ public class GameManager : MonoBehaviour
 
     public void Clicked(GameObject tube)
     {
-        GameObject newPath = Instantiate(ballPathPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        newPath.transform.SetParent(gameBackground.gameObject.transform);
-        newPath.transform.localScale = new Vector3(0, 0, 0);
-        LineRenderer newLine = newPath.GetComponent<LineRenderer>();
+        
 
         if (!tube.GetComponent<Tube>().corked)
         {
@@ -318,13 +317,8 @@ public class GameManager : MonoBehaviour
                 clickState = true;
                 firstTubeClicked = tube;
                 Tube t = firstTubeClicked.GetComponent<Tube>();
-
-                newLine.positionCount = 2;
-                newLine.SetPosition(0, t.spotObjects[t.BottomIndex()].transform.localPosition);
-                newLine.SetPosition(1, t.spotObjects[0].transform.localPosition);
-
                 
-                t.MoveBottomToTop(newLine);
+                t.MoveBottomToTop();
             }
             else if (!tinyTubeTime && clickState && firstTubeClicked != tube) // move balls into empty tube
             {
@@ -338,18 +332,9 @@ public class GameManager : MonoBehaviour
                 {
 
                     clickState = false;
-
-                    //Debug.Log("tubeSecondClick");
-                    Tube t = firstTubeClicked.GetComponent<Tube>();
-
-                    newLine.positionCount = 3;
-
-                    newLine.SetPosition(0, second.spotObjects[4].transform.localPosition - GetRelativePoint(t.spotObjects[0], second.spotObjects[0]));
-                    newLine.SetPosition(1, second.spotObjects[0].transform.localPosition);
-                    newLine.SetPosition(2, second.spotObjects[4].transform.localPosition);
                     
 
-                    second.NewBallsToBottom(ball, newLine);
+                    second.NewBallsToBottom(ball);
 
 
 
@@ -359,22 +344,9 @@ public class GameManager : MonoBehaviour
                         if (firstTubeClicked.GetComponent<Tube>().ReturnNext() != null)
                         {
                             if (firstTubeClicked.GetComponent<Tube>().CheckTwo(firstTubeClicked.GetComponent<Tube>().ReturnNext(), ball))
-                            {
+                            { 
 
-                                
-
-                                GameObject p2 = Instantiate(ballPathPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                                p2.transform.SetParent(gameBackground.gameObject.transform);
-                                p2.transform.localScale = new Vector3(0, 0, 0);
-                                LineRenderer l2 = p2.GetComponent<LineRenderer>();
-
-                                l2.positionCount = 3;
-
-                                l2.SetPosition(0, t.spotObjects[0].transform.localPosition);
-                                l2.SetPosition(0, second.spotObjects[0].transform.localPosition);
-                                l2.SetPosition(0, second.spotObjects[second.BottomIndex()].transform.localPosition);
-
-                                second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), l2);
+                                second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
                             }
                         }
                     }
@@ -394,15 +366,7 @@ public class GameManager : MonoBehaviour
 
                     Tube t = firstTubeClicked.GetComponent<Tube>();
 
-                    newLine.positionCount = 3;
-
-                    newLine.SetPosition(0, t.spotObjects[0].transform.localPosition);
-                    newLine.SetPosition(0, second.spotObjects[0].transform.localPosition);
-                    newLine.SetPosition(0, second.spotObjects[second.BottomIndex() + 1].transform.localPosition);
-
-                    second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), newLine);
-
-                    second.NewBallsToBottom(ball, newLine);
+                    second.NewBallsToBottom(ball);
 
                     /*if (firstTubeClicked.GetComponent<Tube>().CheckIfNextIsSameColor(ball)) // fix this for only going to the last ball to get rid of error
                     {
@@ -437,18 +401,7 @@ public class GameManager : MonoBehaviour
                             {
 
 
-
-                                GameObject p2 = Instantiate(ballPathPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                                p2.transform.SetParent(gameBackground.gameObject.transform);
-                                LineRenderer l2 = p2.GetComponent<LineRenderer>();
-
-                                l2.positionCount = 3;
-
-                                l2.SetPosition(0, t.spotObjects[0].transform.localPosition);
-                                l2.SetPosition(0, second.spotObjects[0].transform.localPosition);
-                                l2.SetPosition(0, second.spotObjects[second.BottomIndex() + 1].transform.localPosition);
-
-                                second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), l2);
+                                second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
                             }
                         }
                     }
@@ -461,26 +414,14 @@ public class GameManager : MonoBehaviour
                 else if (!second.FullTube())// move ball from different tube to the top
                 {
 
-                    GameObject p2 = Instantiate(ballPathPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                    p2.transform.SetParent(gameBackground.gameObject.transform);
-                    LineRenderer l2 = p2.GetComponent<LineRenderer>();
-                    Tube t = firstTubeClicked.GetComponent<Tube>();
-
-                    l2.positionCount = 2;
-                    l2.SetPosition(1, t.spotObjects[t.BottomIndex()].transform.localPosition);
-                    l2.SetPosition(0, t.spotObjects[0].transform.localPosition);
 
 
-                    firstTubeClicked.GetComponent<Tube>().MoveTopToBottom(l2);
+                    firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
 
                     firstTubeClicked = tube;
-                    t = firstTubeClicked.GetComponent<Tube>();
+                    
 
-                    newLine.positionCount = 2;
-                    newLine.SetPosition(0, t.spotObjects[t.BottomIndex()].transform.localPosition);
-                    newLine.SetPosition(1, t.spotObjects[0].transform.localPosition);
-
-                    firstTubeClicked.GetComponent<Tube>().MoveBottomToTop(newLine);
+                    firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
                 }
 
                 
@@ -499,17 +440,11 @@ public class GameManager : MonoBehaviour
                     clickState = false;
 
                     //Debug.Log("tubeSecondClick");
-                    Tube t = firstTubeClicked.GetComponent<Tube>();
+                    
 
-                    newLine.positionCount = 3;
+                    
 
-                    newLine.SetPosition(0, t.spotObjects[0].transform.localPosition);
-                    newLine.SetPosition(0, second.spotObjects[0].transform.localPosition);
-                    newLine.SetPosition(0, second.spotObjects[second.BottomIndex() + 1].transform.localPosition);
-
-                    second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), newLine);
-
-                    second.NewBallsToBottom(ball, newLine);
+                    second.NewBallsToBottom(ball);
 
 
 
@@ -521,17 +456,9 @@ public class GameManager : MonoBehaviour
                             if (firstTubeClicked.GetComponent<TinyTube>().CheckTwo(firstTubeClicked.GetComponent<TinyTube>().ReturnNext(), ball))
                             {
 
-                                GameObject p2 = Instantiate(ballPathPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                                p2.transform.SetParent(gameBackground.gameObject.transform);
-                                LineRenderer l2 = p2.GetComponent<LineRenderer>();
+                                
 
-                                l2.positionCount = 3;
-
-                                l2.SetPosition(0, t.spotObjects[0].transform.localPosition);
-                                l2.SetPosition(0, second.spotObjects[0].transform.localPosition);
-                                l2.SetPosition(0, second.spotObjects[second.BottomIndex() + 1].transform.localPosition);
-
-                                second.NewBallsToBottom(firstTubeClicked.GetComponent<TinyTube>().ReturnNext(), l2);
+                                second.NewBallsToBottom(firstTubeClicked.GetComponent<TinyTube>().ReturnNext());
                             }
                         }
                     }
@@ -550,17 +477,9 @@ public class GameManager : MonoBehaviour
 
 
 
-                    Tube t = firstTubeClicked.GetComponent<Tube>();
+                    
 
-                    newLine.positionCount = 3;
-
-                    newLine.SetPosition(0, t.spotObjects[0].transform.localPosition);
-                    newLine.SetPosition(0, second.spotObjects[0].transform.localPosition);
-                    newLine.SetPosition(0, second.spotObjects[second.BottomIndex() + 1].transform.localPosition);
-
-                    second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), newLine);
-
-                    second.NewBallsToBottom(ball, newLine);
+                    second.NewBallsToBottom(ball);
 
                     for (int i = 0; i <= firstTubeClicked.GetComponent<TinyTube>().CheckHowManyNextIsSameColor(ball); ++i)
                     {
@@ -572,17 +491,9 @@ public class GameManager : MonoBehaviour
 
 
 
-                                GameObject p2 = Instantiate(ballPathPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                                p2.transform.SetParent(gameBackground.gameObject.transform);
-                                LineRenderer l2 = p2.GetComponent<LineRenderer>();
+                                
 
-                                l2.positionCount = 3;
-
-                                l2.SetPosition(0, t.spotObjects[0].transform.localPosition);
-                                l2.SetPosition(0, second.spotObjects[0].transform.localPosition);
-                                l2.SetPosition(0, second.spotObjects[second.BottomIndex() + 1].transform.localPosition);
-
-                                second.NewBallsToBottom(firstTubeClicked.GetComponent<TinyTube>().ReturnNext(), l2);
+                                second.NewBallsToBottom(firstTubeClicked.GetComponent<TinyTube>().ReturnNext());
                             }
                         }
                     }
@@ -594,26 +505,14 @@ public class GameManager : MonoBehaviour
                 }
                 else if (!second.FullTube())// move ball from different tube to the top
                 {
-                    GameObject p2 = Instantiate(ballPathPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                    p2.transform.SetParent(gameBackground.gameObject.transform);
-                    LineRenderer l2 = p2.GetComponent<LineRenderer>();
-                    Tube t = firstTubeClicked.GetComponent<Tube>();
+                  
 
-                    l2.positionCount = 2;
-                    l2.SetPosition(1, t.spotObjects[t.BottomIndex()].transform.localPosition);
-                    l2.SetPosition(0, t.spotObjects[0].transform.localPosition);
-
-
-                    firstTubeClicked.GetComponent<Tube>().MoveTopToBottom(l2);
+                    firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
 
                     firstTubeClicked = tube;
-                    t = firstTubeClicked.GetComponent<Tube>();
+                    
 
-                    newLine.positionCount = 2;
-                    newLine.SetPosition(0, t.spotObjects[t.BottomIndex()].transform.localPosition);
-                    newLine.SetPosition(1, t.spotObjects[0].transform.localPosition);
-
-                    firstTubeClicked.GetComponent<Tube>().MoveBottomToTop(newLine);
+                    firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
                 }
 
                 //else { Debug.Log("not win"); }
@@ -626,13 +525,9 @@ public class GameManager : MonoBehaviour
             
             else if (clickState && firstTubeClicked == tube) // move ball back into the tube
             {
-                Tube t = firstTubeClicked.GetComponent<Tube>();
+                
 
-                newLine.positionCount = 2;
-                newLine.SetPosition(1, t.spotObjects[t.BottomIndex()].transform.localPosition);
-                newLine.SetPosition(0, t.spotObjects[0].transform.localPosition);
-
-                tube.GetComponent<Tube>().MoveTopToBottom(newLine);
+                tube.GetComponent<Tube>().MoveTopToBottom();
 
                 //Debug.Log("same tube");
                 undoHolster.RemoveAt(undoHolster.Count - 1);
@@ -717,16 +612,8 @@ public class GameManager : MonoBehaviour
             else if (!second.EmptyTube())// move ball from different tube to the top
             {
 
-                GameObject p2 = Instantiate(ballPathPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                p2.transform.SetParent(gameBackground.gameObject.transform);
-                LineRenderer l2 = p2.GetComponent<LineRenderer>();
-                Tube t = firstTubeClicked.GetComponent<Tube>();
-
-                l2.positionCount = 2;
-                l2.SetPosition(1, t.spotObjects[t.BottomIndex()].transform.localPosition);
-                l2.SetPosition(0, t.spotObjects[0].transform.localPosition);
-
-                firstTubeClicked.GetComponent<Tube>().MoveTopToBottom(l2);
+                
+                firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
 
                 //Debug.Log("move from dif");
 
@@ -1150,10 +1037,10 @@ public class GameManager : MonoBehaviour
 
     public void ShowSolveText()
     {
-        if (solveText.gameObject.activeSelf)
+        if (solveText.activeSelf)
         {
-            solveText.gameObject.SetActive(false);
+            solveText.SetActive(false);
         }
-        else { solveText.gameObject.SetActive(true); }
+        else { solveText.SetActive(true); }
     }
 }

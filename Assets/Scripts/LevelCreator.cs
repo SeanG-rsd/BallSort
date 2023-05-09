@@ -1302,7 +1302,7 @@ public class LevelCreator : MonoBehaviour
                         //Debug.Log("Level Count = " + levels.Count);
 
                         levels.Add(newLevel);
-
+                        
                         loadLevel = new List<List<int>>();
                     }
                     else

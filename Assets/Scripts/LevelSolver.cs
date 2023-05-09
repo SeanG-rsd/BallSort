@@ -71,7 +71,7 @@ public class LevelSolver : MonoBehaviour
 
 
         SolveLevel();
-        Debug.Log("found possible win");
+        
     }
 
 
@@ -160,22 +160,22 @@ public class LevelSolver : MonoBehaviour
                 stepBack = false;
                 if (CheckForWin(currentState))
                 {
-                    bool other = false;
+                    int other = 0;
                     Debug.LogError("found win");
                     Debug.Log(iteration);
                     for (int i = 0; i < statesMade.Count; ++i)
                     {
                         Debug.Log(movesForEachState[i][indexForState[i]]);
                         winText.text = winText.text + movesForEachState[i][indexForState[i]];
-                        if (!other)
+                        if (other != 2)
                         {
                             winText.text = winText.text + "  ";
-                            other = true;
+                            other++;
                         }
                         else
                         {
                             winText.text = winText.text + "\n";
-                            other = false;
+                            other = 0;
                         }
 
                     }

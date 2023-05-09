@@ -62,7 +62,7 @@ public class Ball : MonoBehaviour
     {
         initialPos = transform.localPosition;
         if (!move) { line = newLine; }
-        move = true;
+        //move = true;
         index = 0;
     }
 
@@ -70,7 +70,7 @@ public class Ball : MonoBehaviour
     {
         //topPoint = moveTo;
         //initialPos = transform.localPosition;
-        move = true;
+        //move = true;
         //other = true;
     }
 }
