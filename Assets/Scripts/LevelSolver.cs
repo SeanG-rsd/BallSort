@@ -115,6 +115,7 @@ public class LevelSolver : MonoBehaviour
             currentState[i] = new List<int>(initialLevel[i]);
         }
 
+        // Initialize all lists for use
         List<List<List<int>>> statesMade = new List<List<List<int>>>();
         List<List<Vector2>> movesForEachState = new List<List<Vector2>>();
         List<int> indexForState = new List<int>();
@@ -122,7 +123,10 @@ public class LevelSolver : MonoBehaviour
 
         List<List<List<int>>> statesVisited = new List<List<List<int>>>();
 
+        // the iteration count so the solver doesn't go on for too long
         int iteration = 0;
+
+        // all bools help move to the next branch and not go into a loop
         bool same = false;
 
         bool stepBack = false;
@@ -132,6 +136,7 @@ public class LevelSolver : MonoBehaviour
         {
             List<List<int>> add = new List<List<int>>(currentState);
 
+            // Create a copy of CurrentState
             for (int i = 0; i < add.Count; ++i)
             {
                 add[i] = new List<int>(currentState[i]);
@@ -160,7 +165,9 @@ public class LevelSolver : MonoBehaviour
                     }
                 }
             }*/
+            
 
+            // Add a new state to all lists
             if (!same && !stepBack)
             {
                 statesMade.Add(add);
@@ -171,18 +178,20 @@ public class LevelSolver : MonoBehaviour
                 movesForEachState.Add(new List<Vector2>(possibleMoves));
             }
 
+            // If the number of moves in the last state is greater than the index of the last state then create a new state
             if (movesForEachState[movesForEachState.Count - 1].Count >= indexForState[indexForState.Count - 1] + 1 && !same)
             {
                 Debug.Log("move");
                 Debug.Log(possibleMoves[indexForState[indexForState.Count - 1]]);
                 Debug.Log(possibleMoves.Count);
 
+                // make a move on currentState based on the index of its possible moves and edit current state
                 MakeMove(currentState, possibleMoves[indexForState[indexForState.Count - 1]]);
                 OutputState(currentState);
 
 
                 // checks if this board is creating a loop in the statesMade
-
+                // same portion
                 for (int j = 0; j < statesMade.Count; ++j)
                 {
                     if (CheckIfEqualStates(statesMade[j], currentState))
@@ -200,6 +209,7 @@ public class LevelSolver : MonoBehaviour
 
                 stepBack = false;
 
+                // check if the new state made is winning
                 if (CheckForWin(currentState))
                 {
                     int other = 0;
@@ -227,6 +237,8 @@ public class LevelSolver : MonoBehaviour
             }
             else
             {
+                // if there are no moves then remove the last item in each list and get the new moves for the new last state
+
                 Debug.Log("no moves on current state");
                 Debug.Log(movesForEachState[movesForEachState.Count - 1].Count + "   " + indexForState[indexForState.Count - 1]);
 
@@ -240,7 +252,7 @@ public class LevelSolver : MonoBehaviour
                 indexForState[indexForState.Count - 1]++;
                 Debug.Log(movesForEachState[movesForEachState.Count - 1].Count + "   " + indexForState[indexForState.Count - 1]);
 
-
+                // if the new index for the first state is greater than the number of moves, there is no win
                 if (movesForEachState[0].Count < indexForState[0] + 1)
                 {
                     Debug.Log("no win");
@@ -249,11 +261,13 @@ public class LevelSolver : MonoBehaviour
 
                 }
 
+                // Create a copy of current state
                 for (int i = 0; i < currentState.Count; ++i)
                 {
                     currentState[i] = new List<int>(statesMade[statesMade.Count - 1][i]);
                 }
 
+                // step backwards if the last "same" portion was not triggered ^^ and do not step backwards if it was triggered
                 same = false;
                 if (dontStepBack)
                 {
