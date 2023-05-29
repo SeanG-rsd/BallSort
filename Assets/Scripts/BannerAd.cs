@@ -56,7 +56,7 @@ public class BannerAd : MonoBehaviour
     void OnBannerLoaded()
     {
         ShowBannerAd();
-        Debug.Log("Banner loaded");
+        //Debug.Log("Banner loaded");
 
         // Configure the Show Banner button to call the ShowBannerAd() method when clicked:
         //_showBannerButton.onClick.AddListener(ShowBannerAd);

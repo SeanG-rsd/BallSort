@@ -243,7 +243,7 @@ public class GameManager : MonoBehaviour
     {
         ResetGame();
         gameObject.GetComponent<LevelCreator>().LoadLastLevel();
-        SetUndoTubes();
+        
         canUndo = false;
 
         for (int i = 0; i < moveHolder.transform.childCount; ++i)
@@ -253,6 +253,8 @@ public class GameManager : MonoBehaviour
         }
         undoHolster.Clear();
         TTHolster.Clear();
+        SetUndoTubes();
+        Debug.Log("reset current");
     }
 
     public void ResetChallenge()
@@ -313,7 +315,7 @@ public class GameManager : MonoBehaviour
         {
             if (!clickState && !tube.GetComponent<Tube>().FullTube() && !tube.GetComponent<Tube>().EmptyTube()) // move ball to the top
             {
-                SetUndoTubes();
+                //SetUndoTubes();
                 clickState = true;
                 firstTubeClicked = tube;
                 Tube t = firstTubeClicked.GetComponent<Tube>();
@@ -357,6 +359,7 @@ public class GameManager : MonoBehaviour
                     canUndo = true;
                     Cork();
                     if (CheckForWin()) { Win(); }
+                    SetUndoTubes();
                 }
                 else if (ball.tag == second.GetBottomBall().tag && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
                 {
@@ -410,6 +413,7 @@ public class GameManager : MonoBehaviour
                     canUndo = true;
                     Cork();
                     if (CheckForWin()) { Win(); }
+                    SetUndoTubes();
                 }
                 else if (!second.FullTube())// move ball from different tube to the top
                 {
@@ -469,6 +473,7 @@ public class GameManager : MonoBehaviour
                     canUndo = true;
                     Cork();
                     if (CheckForWin()) { Win(); }
+                    SetUndoTubes();
                 }
 
                 else if (ball.tag == second.GetBottomBall().tag && !second.FullTube() && firstTubeClicked.GetComponent<TinyTube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
@@ -502,6 +507,7 @@ public class GameManager : MonoBehaviour
                     canUndo = true;
                     Cork();
                     if (CheckForWin()) { Win(); }
+                    SetUndoTubes();
                 }
                 else if (!second.FullTube())// move ball from different tube to the top
                 {
@@ -530,8 +536,8 @@ public class GameManager : MonoBehaviour
                 tube.GetComponent<Tube>().MoveTopToBottom();
 
                 //Debug.Log("same tube");
-                undoHolster.RemoveAt(undoHolster.Count - 1);
-                if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
+                //undoHolster.RemoveAt(undoHolster.Count - 1);
+                //if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
                 tube = null;
                 clickState = false;
             }
@@ -543,7 +549,7 @@ public class GameManager : MonoBehaviour
     {
         if (!clickState && !tube.GetComponent<TinyTube>().EmptyTube()) // move ball to the top
         {
-            SetUndoTubes();
+            //SetUndoTubes();
             clickState = true;
             firstTubeClicked = tube;
             //Debug.Log("tubeFirstClicked");
@@ -625,6 +631,7 @@ public class GameManager : MonoBehaviour
             }
             canUndo = true;
             Cork();
+            SetUndoTubes();
             if (CheckForWin()) { Win(); }
 
 
@@ -639,8 +646,8 @@ public class GameManager : MonoBehaviour
             tube.GetComponent<TinyTube>().MoveTopToBottom();
 
             //Debug.Log("same tube");
-            undoHolster.RemoveAt(undoHolster.Count - 1);
-            if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
+            //undoHolster.RemoveAt(undoHolster.Count - 1);
+            //if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
             tube = null;
             clickState = false;
         }
@@ -764,10 +771,15 @@ public class GameManager : MonoBehaviour
             //if (insultTimer == insultTime) { doInsult = true; }
 
             GameObject undoTT = new GameObject();
-            undoTubes = undoHolster[undoHolster.Count - 1];
-            if (TinyTube.activeSelf) { undoTT = TTHolster[TTHolster.Count - 1]; }
+            if (undoHolster.Count > 1) { undoTubes = undoHolster[undoHolster.Count - 2]; }
+            else { undoTubes = undoHolster[undoHolster.Count - 2]; }
+            if (TinyTube.activeSelf)
+            {
+                if (TTHolster.Count > 1) { undoTT = TTHolster[TTHolster.Count - 2]; }
+                else { undoTT = TTHolster[TTHolster.Count - 1]; }
+            }
 
-                List<GameObject> testTubes = new List<GameObject>();
+            List<GameObject> testTubes = new List<GameObject>();
 
             for (int i = 0; i < undoTubes.Count; ++i)
             {
@@ -819,8 +831,13 @@ public class GameManager : MonoBehaviour
             //if (insultTimer == insultTime) { doInsult = true; }
 
             GameObject undoTT = new GameObject();
-            undoTubes = undoHolster[undoHolster.Count - 1];
-            if (TinyTube.activeSelf) { undoTT = TTHolster[TTHolster.Count - 1]; }
+            if (undoHolster.Count > 1) { undoTubes = undoHolster[undoHolster.Count - 2]; }
+            else { undoTubes = undoHolster[undoHolster.Count - 2]; }
+            if (TinyTube.activeSelf)
+            {
+                if (TTHolster.Count > 1) { undoTT = TTHolster[TTHolster.Count - 2]; }
+                else { undoTT = TTHolster[TTHolster.Count - 1]; }
+            }
 
             List<GameObject> testTubes = new List<GameObject>();
 
@@ -1016,7 +1033,7 @@ public class GameManager : MonoBehaviour
     {
         if (PlayerPrefs.HasKey("lastBackground"))
         {
-            Debug.Log(PlayerPrefs.GetInt("lastBackground"));
+            //Debug.Log(PlayerPrefs.GetInt("lastBackground"));
             SetBackground(PlayerPrefs.GetInt("lastBackground"));
         }
         else

@@ -36,46 +36,80 @@ public class LevelSolver : MonoBehaviour
 
     public void InitiateLevel(List<List<int>> input)
     {
-        for (int i = 0; i < 12; ++i)
+        for (int i = 0; i < input.Count; ++i)
         {
-           for (int ii = 0; ii < 4; ++ii)
-           {
-              initialLevel[i][ii] = input[i][ii] + 1;
-              
-           }
+            for (int ii = 0; ii < input[i].Count; ++ii)
+            {
+                initialLevel[i][ii] = input[i][ii];
+
+            }
         }
 
-        /*int slot = 0;
-        initialLevel[0][slot++] = 2;
-        initialLevel[0][slot++] = 3;
-        initialLevel[0][slot++] = 3;
+        // Test to see if "Board Equal Function" works
+
+        /*List<List<int>> trivial = new List<List<int>>(initialLevel);
+
+        for (int i = 0; i < trivial.Count; ++i)
+        {
+            trivial[i] = new List<int>(initialLevel[i]);
+        }
+
+        int slot = 0;
         initialLevel[0][slot++] = 1;
+        initialLevel[0][slot++] = 4;
+        initialLevel[0][slot++] = 4;
+        initialLevel[0][slot++] = 2;
 
         slot = 0;
+        initialLevel[1][slot++] = 2;
+        initialLevel[1][slot++] = 3;
         initialLevel[1][slot++] = 1;
-        initialLevel[1][slot++] = 2;
-        initialLevel[1][slot++] = 4;
-        initialLevel[1][slot++] = 2;
+        initialLevel[1][slot++] = 3;
 
         slot = 0;
         initialLevel[2][slot++] = 1;
-        initialLevel[2][slot++] = 4;
-        initialLevel[2][slot++] = 4;
+        initialLevel[2][slot++] = 2;
         initialLevel[2][slot++] = 3;
+        initialLevel[2][slot++] = 4;
 
         slot = 0;
         initialLevel[3][slot++] = 1;
+        initialLevel[3][slot++] = 3;
         initialLevel[3][slot++] = 2;
         initialLevel[3][slot++] = 4;
-        initialLevel[3][slot++] = 3;*/
 
+        slot = 0;
+        trivial[0][slot++] = 2;
+        trivial[0][slot++] = 3;
+        trivial[0][slot++] = 1;
+        trivial[0][slot++] = 3;
+
+        slot = 0;
+        trivial[1][slot++] = 1;
+        trivial[1][slot++] = 4;
+        trivial[1][slot++] = 4;
+        trivial[1][slot++] = 2;
+
+        slot = 0;
+        trivial[2][slot++] = 1;
+        trivial[2][slot++] = 3;
+        trivial[2][slot++] = 2;
+        trivial[2][slot++] = 4;
+
+        slot = 0;
+        trivial[3][slot++] = 1;
+        trivial[3][slot++] = 2;
+        trivial[3][slot++] = 3;
+        trivial[3][slot++] = 4;
+
+        Debug.Log(CheckIfEqualStates(trivial, initialLevel));*/
 
         SolveLevel();
-        
+
     }
 
 
-    void SolveLevel()
+    private void SolveLevel()
     {
         List<List<int>> currentState = new List<List<int>>(initialLevel);
 
@@ -96,10 +130,11 @@ public class LevelSolver : MonoBehaviour
         bool same = false;
 
         bool stepBack = false;
+        bool dontStepBack = false;
 
         while (!CheckForWin(currentState))
         {
-            
+
 
 
             List<List<int>> add = new List<List<int>>(currentState);
@@ -110,6 +145,34 @@ public class LevelSolver : MonoBehaviour
 
             }
 
+            // attempt at statesVisited list
+
+            /*for (int i = 0; i < statesVisited.Count; ++i)
+            {
+                if (CheckIfEqualStates(statesVisited[i], currentState) && !stepBack)
+                {
+                    for (int j = 0; j < statesMade.Count; ++j)
+                    {
+                        if (CheckIfEqualStates(statesMade[j], currentState))
+                        {
+                            Debug.Log("same");
+                            OutputState(statesMade[j]);
+                            OutputState(currentState);
+
+                            same = true;
+                            dontStepBack = true;
+
+                            break;
+                        }
+
+                        if (same) { break; }
+                    }
+                }
+            }*/
+
+            
+
+
             if (!same && !stepBack)
             {
                 statesMade.Add(add);
@@ -118,7 +181,8 @@ public class LevelSolver : MonoBehaviour
                 possibleMoves = ReturnPossibleMoves(statesMade[statesMade.Count - 1]);
                 indexForState.Add(0);
                 movesForEachState.Add(new List<Vector2>(possibleMoves));
-                
+
+
             }
 
             if (movesForEachState[movesForEachState.Count - 1].Count >= indexForState[indexForState.Count - 1] + 1 && !same)
@@ -126,38 +190,36 @@ public class LevelSolver : MonoBehaviour
                 Debug.Log("move");
                 Debug.Log(possibleMoves[indexForState[indexForState.Count - 1]]);
                 Debug.Log(possibleMoves.Count);
-                Debug.Log(indexForState[indexForState.Count - 1]);
+
                 MakeMove(currentState, possibleMoves[indexForState[indexForState.Count - 1]]);
                 OutputState(currentState);
-                //OutputState(statesMade[0]);
+
+
+                // checks if this board is creating a loop in the statesMade
 
                 for (int j = 0; j < statesMade.Count; ++j)
                 {
-                    if (CheckIfEqualStates(currentState, statesMade[j]))
+                    if (CheckIfEqualStates(statesMade[j], currentState))
                     {
-                        
                         Debug.Log("same");
                         OutputState(statesMade[j]);
                         OutputState(currentState);
-                        Debug.Log(j);
 
-                        List<List<int>> haveSeen = new List<List<int>>(statesMade[j]);
-
-                        for (int i = 0; i < add.Count; ++i)
-                        {
-                            haveSeen[i] = new List<int>(statesMade[j][i]);
-
-                        }
-
-                        statesVisited.Add(haveSeen);
                         same = true;
+                        dontStepBack = true;
+
                         break;
                     }
-                    
+
+
                 }
 
-                Debug.Log("made move");
+
                 stepBack = false;
+
+
+
+
                 if (CheckForWin(currentState))
                 {
                     int other = 0;
@@ -165,7 +227,7 @@ public class LevelSolver : MonoBehaviour
                     Debug.Log(iteration);
                     for (int i = 0; i < statesMade.Count; ++i)
                     {
-                        Debug.Log(movesForEachState[i][indexForState[i]]);
+                        //Debug.Log(movesForEachState[i][indexForState[i]]);
                         winText.text = winText.text + movesForEachState[i][indexForState[i]];
                         if (other != 2)
                         {
@@ -177,269 +239,343 @@ public class LevelSolver : MonoBehaviour
                             winText.text = winText.text + "\n";
                             other = 0;
                         }
-
+                        //StopCoroutine(SolveLevel());
                     }
                     showButton.interactable = true;
-                    return;
+
                 }
             }
             else
             {
                 Debug.Log("no moves on current state");
+                Debug.Log(movesForEachState[movesForEachState.Count - 1].Count + "   " + indexForState[indexForState.Count - 1]);
+
                 statesMade.RemoveAt(statesMade.Count - 1);
 
-                for (int i = 0; i < currentState.Count; ++i)
-                {
 
-                    currentState[i] = new List<int>(statesMade[statesMade.Count - 1][i]);
-
-                }
 
                 movesForEachState.RemoveAt(movesForEachState.Count - 1);
                 possibleMoves = movesForEachState[movesForEachState.Count - 1];
                 indexForState.RemoveAt(indexForState.Count - 1);
                 indexForState[indexForState.Count - 1]++;
-                
+                Debug.Log(movesForEachState[movesForEachState.Count - 1].Count + "   " + indexForState[indexForState.Count - 1]);
+
+
+                if (movesForEachState[0].Count < indexForState[0] + 1)
+                {
+                    Debug.Log("no win");
+                    Debug.Log(iteration);
+                    Debug.Log(movesForEachState[0].Count + "   " + indexForState[0]);
+
+                }
+
+                for (int i = 0; i < currentState.Count; ++i)
+                {
+                    currentState[i] = new List<int>(statesMade[statesMade.Count - 1][i]);
+                }
+
                 same = false;
-                stepBack = true;
-                Debug.Log("removed last index. new index is: " + indexForState[indexForState.Count - 1]);
+                if (dontStepBack)
+                {
+                    stepBack = false;
+                    dontStepBack = false;
+                }
+                else
+                {
+                    stepBack = true;
+                }
+                Debug.Log("removed last index.");
                 OutputState(currentState);
-                //StepBack(statesMade, currentState, movesForEachState, indexForState, same, possibleMoves);
+
                 
             }
+
             Debug.LogWarning(statesMade.Count);
-            
+            Debug.Log(iteration);
             iteration++;
 
-            if (iteration > 1000000)
+            if (iteration > 10000)
             {
-                Debug.LogError("error");
-                
+                Debug.LogError(movesForEachState[0].Count + "   " + indexForState[0]);
+                Debug.LogError("no solution");
+
+
                 break;
             }
 
+            //yield return null;
+
+
         }
 
 
-    }
 
-    void StepBack(List<List<List<int>>> statesMade, List<List<int>> current, List<List<Vector2>> moves, List<int> index, bool same, List<Vector2> possible)
-    {
-        Debug.Log("no moves on current state");
-        statesMade.RemoveAt(statesMade.Count - 1);
-
-        current = statesMade[statesMade.Count - 1];
-
-        moves.RemoveAt(moves.Count - 1);
-        possible = moves[moves.Count - 1];
-        index.RemoveAt(index.Count - 1);
-        index[index.Count - 1]++;
-        same = false;
-        Debug.Log("removed last index");
-    }
-
-    bool CheckIfEqualStates(List<List<int>> first, List<List<int>> second)
-    {
-        
-        for (int i = 0; i < first.Count; ++i)
+        bool CheckIfEqualStates(List<List<int>> first, List<List<int>> second)
         {
-            for (int ii = 0; ii < first[i].Count; ++ii)
+
+            List<int> sameOnFirst = new List<int>();
+            List<int> sameOnSecond = new List<int>();
+
+            bool same = false;
+
+
+            for (int i = 0; i < first.Count; ++i)
             {
-                if (first[i][ii] != second[i][ii]) { return false; }
-            }
-        }
-
-        return true;
-    }
-
-    void MakeMove(List<List<int>> initial, Vector2 move)
-    {
-        
-
-
-        int numMoving = NumSameAtTop(initial, (int)move.x);
-
-
-
-        for (int i = 0; i < numMoving; ++i)
-        {
-            int bottom1 = BottomIndex(initial, (int)move.x);
-            int bottom2 = BottomIndex(initial, (int)move.y);
-            if (bottom2 != 5)
-            {
-
-
-                initial[(int)move.y][bottom2 - 1] = initial[(int)move.x][bottom1];
-                initial[(int)move.x][bottom1] = 0;
-            }
-            else
-            {
-                initial[(int)move.y][initial[(int)move.y].Count - 1] = initial[(int)move.x][bottom1];
-                initial[(int)move.x][bottom1] = 0;
-            }
-        }
-
-        
-    }
-
-    bool CheckForWin(List<List<int>> initial)
-    {
-        for (int i = 0; i < initial.Count; ++i)
-        {
-            if (!FullTube(initial, i) && !EmptyTube(initial, i)) { return false; }
-        }
-        Debug.Log("win");
-        return true;
-    }
-
-    List<Vector2> ReturnPossibleMoves(List<List<int>> state)
-    {
-        List<Vector2> moves = new List<Vector2>();
-        bool oneEmpty = false;
-        int emptyIndex = 0;
-
-        for (int i = 0; i < state.Count; ++i)
-        {
-            for (int ii = 0; ii < state.Count; ++ii)
-            {
-                if (ii != i)
+                for (int j = 0; j < second.Count; ++j)
                 {
-                    if (!FullTube(state, i))
+                    if (!sameOnFirst.Contains(i) && !sameOnSecond.Contains(j))
                     {
-                        if (!EmptyTube(state, i) && !EmptyTube(state, ii))
+                        for (int ii = 0; ii < first[i].Count; ++ii)
                         {
-                            //Debug.Log("num same at top: " + NumSameAtTop(i));
-                            //Debug.Log("open spots: " + ReturnNumOpenSpots(ii));
-
-                            if (state[i][BottomIndex(state, i)] == state[ii][BottomIndex(state, ii)])
+                            if (first[i][ii] != second[j][ii])
                             {
-                                if (NumSameAtTop(state, i) <= ReturnNumOpenSpots(state, ii))
-                                {
-                                    //Debug.Log(i + " " + ii);
-                                    //Debug.LogWarning("there is a move");
-                                    moves.Add(new Vector2(i, ii));
-                                }
-
+                                same = false;
+                                break;
                             }
+
+                            same = true;
+
                         }
-                        else if (!EmptyTube(state, i) && EmptyTube(state, ii))
+                        if (same)
                         {
-                            if (!oneEmpty)
-                            {
-                                emptyIndex = ii;
-                                oneEmpty = true;
-                            }
+                            sameOnFirst.Add(i);
+                            sameOnSecond.Add(j);
+                        }
+                    }
+                }
+            }
 
-                            if (ii == emptyIndex)
+            if (sameOnFirst.Count < 14)
+            {
+                return false;
+            }
+
+            return true;
+
+            /*for (int i = 0; i < first.Count; ++i)
+            {
+                for (int ii = 0; ii < first[i].Count; ++ii)
+                {
+                    if (first[i][ii] != second[i][ii])
+                    {
+                        return false;
+
+                    }
+
+
+
+                }
+            }
+
+            return true;*/
+        }
+
+        void MakeMove(List<List<int>> initial, Vector2 move)
+        {
+
+
+
+            int numMoving = NumSameAtTop(initial, (int)move.x);
+
+
+
+            for (int i = 0; i < numMoving; ++i)
+            {
+                int bottom1 = BottomIndex(initial, (int)move.x);
+                int bottom2 = BottomIndex(initial, (int)move.y);
+                if (bottom2 != 5)
+                {
+
+
+                    initial[(int)move.y][bottom2 - 1] = initial[(int)move.x][bottom1];
+                    initial[(int)move.x][bottom1] = 0;
+                }
+                else
+                {
+                    initial[(int)move.y][initial[(int)move.y].Count - 1] = initial[(int)move.x][bottom1];
+                    initial[(int)move.x][bottom1] = 0;
+                }
+            }
+
+
+        }
+
+        bool CheckForWin(List<List<int>> initial)
+        {
+            for (int i = 0; i < initial.Count; ++i)
+            {
+                if (!FullTube(initial, i) && !EmptyTube(initial, i)) { return false; }
+            }
+            //Debug.Log("win");
+            return true;
+        }
+
+        List<Vector2> ReturnPossibleMoves(List<List<int>> state)
+        {
+            List<Vector2> moves = new List<Vector2>();
+            bool oneEmpty = false;
+            int emptyIndex = 0;
+
+            for (int i = 0; i < state.Count; ++i)
+            {
+                for (int ii = 0; ii < state.Count; ++ii)
+                {
+                    if (ii != i)
+                    {
+                        if (!FullTube(state, i))
+                        {
+                            if (!EmptyTube(state, i) && !EmptyTube(state, ii))
                             {
-                                //Debug.Log(i + " " + ii);
-                                //Debug.LogWarning("there is a move");
-                                oneEmpty = true;
-                                moves.Add(new Vector2(i, ii));
+                                //Debug.Log("num same at top: " + NumSameAtTop(i));
+                                //Debug.Log("open spots: " + ReturnNumOpenSpots(ii));
+
+                                if (state[i][BottomIndex(state, i)] == state[ii][BottomIndex(state, ii)])
+                                {
+                                    if (NumSameAtTop(state, i) <= ReturnNumOpenSpots(state, ii))
+                                    {
+                                        //Debug.Log(i + " " + ii);
+                                        //Debug.LogWarning("there is a move");
+                                        moves.Add(new Vector2(i, ii));
+                                    }
+
+                                }
+                            }
+                            else if (!EmptyTube(state, i) && EmptyTube(state, ii))
+                            {
+                                if (NumSameAtTop(state, i) != NumBallInTube(state, i))
+                                {
+                                    //Debug.Log(NumSameAtTop(state, i) + "   " + NumBallInTube(state, i));
+
+                                    if (!oneEmpty)
+                                    {
+                                        emptyIndex = ii;
+                                        oneEmpty = true;
+                                    }
+
+                                    if (ii == emptyIndex)
+                                    {
+                                        //Debug.Log(i + " " + ii);
+                                        //Debug.LogWarning("there is a move");
+                                        oneEmpty = true;
+                                        moves.Add(new Vector2(i, ii));
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+
+            return moves;
         }
 
-        return moves;
-    }
-
-    void OutputState(List<List<int>> state)
-    {
-        string level = "";
-
-        for (int i = 0; i < 4; ++i)
+        void OutputState(List<List<int>> state)
         {
-            for (int ii = 0; ii < 14; ++ii)
+            string level = "";
+
+            for (int i = 0; i < 4; ++i)
             {
-                level = level + state[ii][i].ToString() + " ";
-                if (state[ii][i] < 10) { level += "  "; }
+                for (int ii = 0; ii < 14; ++ii)
+                {
+                    level = level + state[ii][i].ToString() + " ";
+                    if (state[ii][i] < 10) { level += "  "; }
+                }
+
+                level += "\n";
             }
 
-            level += "\n";
+            Debug.Log(level);
         }
 
-        Debug.Log(level);
-    }
-
-    int ReturnNumOpenSpots(List<List<int>> initial, int tube)
-    {
-        int num = 0;
-
-        for (int i = 0; i < initial[tube].Count; ++i)
+        int NumBallInTube(List<List<int>> initial, int tube)
         {
-            if (initial[tube][i] == 0) { num++; }
-        }
-        return num;
-    }
+            int num = 0;
 
-    int NumSameAtTop(List<List<int>> initial, int tube)
-    {
-        int num = 0;
-        if (initial[tube][initial[tube].Count - 1] == 0) { return 0; }
-
-        for (int i = 0; i < initial[tube].Count; ++i)
-        {
-            if (initial[tube][i] != 0)
+            for (int i = 0; i < initial[tube].Count; ++i)
             {
-                if (initial[tube][i] == initial[tube][BottomIndex(initial, tube)])
+                if (initial[tube][i] != 0) { num++; }
+            }
+
+            return num;
+        }
+
+        int ReturnNumOpenSpots(List<List<int>> initial, int tube)
+        {
+            int num = 0;
+
+            for (int i = 0; i < initial[tube].Count; ++i)
+            {
+                if (initial[tube][i] == 0) { num++; }
+            }
+            return num;
+        }
+
+        int NumSameAtTop(List<List<int>> initial, int tube)
+        {
+            int num = 0;
+            if (initial[tube][initial[tube].Count - 1] == 0) { return 0; }
+
+            for (int i = 0; i < initial[tube].Count; ++i)
+            {
+                if (initial[tube][i] != 0)
                 {
-                    num++;
+                    if (initial[tube][i] == initial[tube][BottomIndex(initial, tube)])
+                    {
+                        num++;
+                    }
+                    else
+                    {
+                        return num;
+                    }
+                }
+            }
+            //Debug.Log("num same at top: " + num);
+
+            return num;
+        }
+
+        int BottomIndex(List<List<int>> initial, int tube)
+        {
+            for (int i = 0; i < initial[tube].Count; ++i)
+            {
+                if (initial[tube][i] != 0)
+                {
+                    return i;
+                }
+            }
+            //Debug.Log("empty");
+            return 5;
+        }
+
+        bool EmptyTube(List<List<int>> initial, int tube) // check if the tube is empty
+        {
+            if (initial[tube][initial[tube].Count - 1] == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        bool FullTube(List<List<int>> initial, int tube) // check if the tube is completed
+        {
+            for (int i = 0; i < initial[tube].Count; ++i)
+            {
+
+
+                if (initial[tube][i] == 0)
+                {
+                    return false;
                 }
                 else
                 {
-                    return num;
+                    if (initial[tube][0] != 0 && initial[tube][i] != 0)
+                    {
+                        if (initial[tube][0] != initial[tube][i]) { return false; }
+
+                    }
                 }
             }
-        }
-        //Debug.Log("num same at top: " + num);
-
-        return num;
-    }
-
-    int BottomIndex(List<List<int>> initial, int tube)
-    {
-        for (int i = 0; i < initial[tube].Count; ++i)
-        {
-            if (initial[tube][i] != 0)
-            {
-                return i;
-            }
-        }
-        //Debug.Log("empty");
-        return 5;
-    }
-
-    bool EmptyTube(List<List<int>> initial, int tube) // check if the tube is empty
-    {
-        if (initial[tube][initial[tube].Count - 1] == 0)
-        {
             return true;
         }
-        return false;
-    }
-
-    public bool FullTube(List<List<int>> initial, int tube) // check if the tube is completed
-    {
-        for (int i = 0; i < initial[tube].Count; ++i)
-        {
-
-
-            if (initial[tube][i] == 0)
-            {
-                return false;
-            }
-            else
-            {
-                if (initial[tube][0] != 0 && initial[tube][i] != 0)
-                {
-                    if (initial[tube][0] != initial[tube][i]) { return false; }
-
-                }
-            }
-        }
-        return true;
     }
 }

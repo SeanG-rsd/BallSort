@@ -98,6 +98,8 @@ public class LevelCreator : MonoBehaviour
 
     DateTime challengeStart;
 
+    public List<string> ballTags;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -115,6 +117,8 @@ public class LevelCreator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        SaveCompleted();
+
         saveButton.GetComponent<Button>().interactable = FinishedMaking();
         UpdateCoins();
 
@@ -954,9 +958,9 @@ public class LevelCreator : MonoBehaviour
 
         }
 
-        gameObject.GetComponent<GameManager>().menuNum = 2;
+        gameManager.menuNum = 2;
         lastLevelLoaded = index;
-
+        gameManager.SetUndoTubes();
         
     }
 
@@ -1114,7 +1118,7 @@ public class LevelCreator : MonoBehaviour
         if (PlayerPrefs.HasKey("SavedString"))
         {
             completedSave = PlayerPrefs.GetString("SavedString");
-            Debug.Log(completedSave);
+            //Debug.Log(completedSave);
         }
         if (PlayerPrefs.HasKey("CoinCount"))
         {
@@ -1352,6 +1356,48 @@ public class LevelCreator : MonoBehaviour
 
     public void Test()
     {
-        gameObject.GetComponent<LevelSolver>().InitiateLevel(levels[lastLevelLoaded]);
+        List<List<int>> solvePoint = new List<List<int>>();
+        List<GameObject> gameTubes = new List<GameObject>();
+
+        if (gameManager.undoHolster.Count > 0) { gameTubes = gameManager.undoHolster[gameManager.undoHolster.Count - 1]; }
+        else
+        {
+            solvePoint = levels[lastLevelLoaded];
+            solvePoint.Add(new List<int>(4));
+            solvePoint.Add(new List<int>(4));
+            gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint);
+            return;
+        }
+
+        //Debug.Log(gameTubes.Count);
+
+        for (int i = 0; i < gameTubes.Count; ++i)
+        {
+            solvePoint.Add(new List<int>());
+            for (int j = 1; j < gameTubes[i].transform.childCount; ++j)
+            {
+                
+                if (gameTubes[i].transform.GetChild(j).childCount != 0)
+                {
+
+                    for (int index = 0; index < ballTags.Count; ++index)
+                    {
+                        if (ballTags[index] == gameTubes[i].transform.GetChild(j).GetChild(0).gameObject.tag)
+                        {
+                            solvePoint[i].Add(index + 1);
+                            //Debug.Log(j);
+                            break;
+                        }
+
+                    }
+                }
+                else
+                {
+                    //Debug.Log("emptySlot");
+                    solvePoint[i].Add(0);
+                }
+            }
+        }
+        gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint);
     }
 }
