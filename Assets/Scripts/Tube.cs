@@ -11,6 +11,8 @@ public class Tube : MonoBehaviour
 
     public bool GameTube;
 
+    public bool TutorialTube;
+
     public bool isFull;
 
     public GameObject gm;
@@ -30,11 +32,20 @@ public class Tube : MonoBehaviour
 
     void Awake()
     {
-        gm = GameObject.Find("GameManager");
+        
         
         
         GameTube = true;
-        button.onClick.AddListener(Clicked);
+        if (!TutorialTube)
+        {
+            gm = GameObject.Find("GameManager");
+            button.onClick.AddListener(Clicked);
+        }
+        else
+        {
+            gm = GameObject.Find("Manager");
+            button.onClick.AddListener(TutorialClicked);
+        }
         corked = false;
     }
 
@@ -366,6 +377,11 @@ public class Tube : MonoBehaviour
         
         gm.GetComponent<GameManager>().Clicked(gameObject);
 
+    }
+
+    void TutorialClicked()
+    {
+        gm.GetComponent<TutorialManager>().Clicked(gameObject);
     }
 
     public void Cork()
