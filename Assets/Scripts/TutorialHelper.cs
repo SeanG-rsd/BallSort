@@ -39,6 +39,7 @@ public class TutorialHelper : MonoBehaviour
         }
         else
         {
+            infoText.text = infoStrings[index];
             moveOnButton.SetActive(false);
             startGameButton.SetActive(true);
         }
