@@ -146,7 +146,7 @@ public class LevelCreator : MonoBehaviour
 
     void UpdateCoins()
     {
-        coinsText.text = "Coins: " + coins.ToString();
+        coinsText.text = coins.ToString();
         PlayerPrefs.SetInt("CoinCount", coins);
         PlayerPrefs.Save();
     }

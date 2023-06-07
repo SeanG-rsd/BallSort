@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 { 
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
     public int givenUndos;
     public int undoCost;
     public TMP_Text undosLeftText;
+    public GameObject undosLeftCoin;
 
     public GameObject insult;
     public TMP_Text insultText;
@@ -93,6 +95,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject solveText;
     public Button solve;
+
+    public GameObject HowToScreen;
 
     // Start is called before the first frame update
     void Start()
@@ -173,9 +177,14 @@ public class GameManager : MonoBehaviour
 
         //Debug.Log("reset game");
         undosLeft = givenUndos;
-        undosLeftText.text = "Free Undos Left: " + undosLeft.ToString();
-        if (undosLeft == 0) { undosLeftText.text = "No Undos Left: " + undoCost.ToString() + " coins"; }
-        TTTExt.text = "Buy Tiny Tube for " + TinyTubeCost.ToString() + " coins";
+        undosLeftText.text = undosLeft.ToString() + " Free";
+        undosLeftCoin.SetActive(false);
+        if (undosLeft == 0)
+        {
+            undosLeftCoin.SetActive(true);
+            undosLeftText.text = "     " + undoCost.ToString();
+        }
+        TTTExt.text = "     " + TinyTubeCost.ToString();
 
         noMoves = false;
         NoMovesLeftBox.SetActive(false);
@@ -212,7 +221,7 @@ public class GameManager : MonoBehaviour
         {
             tinyTubeActive = false;
             TinyTube.SetActive(false);
-            TinyTubeButton.interactable = true;
+            TinyTubeButton.gameObject.SetActive(true);
 
             if (TinyTube.GetComponent<TinyTube>().FullTube()) { Destroy(TinyTube.GetComponent<TinyTube>().GetBottomBall()); }
         }
@@ -882,8 +891,14 @@ public class GameManager : MonoBehaviour
             if (undoHolster.Count == 0) { canUndo = false; }
         }
 
-        undosLeftText.text = "Free Undos Left: " + undosLeft.ToString();
-        if (undosLeft == 0) { undosLeftText.text = "No Undos Left: " + undoCost.ToString() + " coins"; }
+        undosLeftText.text = undosLeft.ToString() + " Free";
+        undosLeftCoin.SetActive(false);
+        if (undosLeft == 0)
+        {
+            undosLeftCoin.SetActive(true);
+            undosLeftText.text = "     " + undoCost.ToString();
+        }
+        
         
     }
 
@@ -895,8 +910,8 @@ public class GameManager : MonoBehaviour
         {
             //if (insultTimer == insultTime) { doInsult = true; }
 
-            
-            TinyTubeButton.interactable = false;
+
+            TinyTubeButton.gameObject.SetActive(false);
 
             TinyTube.SetActive(true);
             coins -= TinyTubeCost;
@@ -1059,5 +1074,24 @@ public class GameManager : MonoBehaviour
             solveText.SetActive(false);
         }
         else { solveText.SetActive(true); }
+    }
+
+    public void ShowHowToPlay()
+    {
+        if (!HowToScreen.activeSelf)
+        {
+            HowToScreen.SetActive(true);
+        }
+        else
+        {
+            HowToScreen.SetActive(false);
+        }
+    }
+
+    public void PlayTutorial()
+    {
+        PlayerPrefs.SetInt("Tutorial", 0);
+
+        SceneManager.LoadScene(1);
     }
 }

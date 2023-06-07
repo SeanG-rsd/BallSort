@@ -29,7 +29,7 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
 
     private void Start()
     {
-        _showAdButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = "+" + reward.ToString() + " Coins (Ad)";
+        _showAdButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = "+" + reward.ToString() + "         (Ad)";
     }
 
     // Load content to the Ad Unit:

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
 
-    bool move;
+    bool move = false;
     
     public float speed = 500.0f; // time it takes to get there
 
@@ -23,7 +23,22 @@ public class Ball : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (move && index < line.positionCount)
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            move = true;
+        }
+
+        if (move)
+        {
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, (new Vector3(0, 0, 0) - transform.parent.localPosition), speed * Time.deltaTime);
+            if (Vector3.Distance(transform.localPosition, transform.parent.localPosition) < 1.0f)
+            {
+                move = false;
+                Debug.Log("made it");
+            }
+        }
+
+        /*if (move && index < line.positionCount)
         {
             float diffX = line.GetPosition(index).x - line.GetPosition(index + 1).x;
             float diffY = line.GetPosition(index).y - line.GetPosition(index + 1).y;
@@ -55,7 +70,7 @@ public class Ball : MonoBehaviour
                     Destroy(line.gameObject);
                 }
             }
-        }
+        }*/
     }
 
     public void MoveToPoint(LineRenderer newLine)
