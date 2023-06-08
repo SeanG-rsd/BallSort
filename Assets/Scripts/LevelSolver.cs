@@ -192,12 +192,12 @@ public class LevelSolver : MonoBehaviour
 
                 // checks if this board is creating a loop in the statesMade
                 // same portion
-                for (int j = 0; j < statesMade.Count; ++j)
+                for (int j = 0; j < statesVisited.Count; ++j)
                 {
-                    if (CheckIfEqualStates(statesMade[j], currentState))
+                    if (CheckIfEqualStates(statesVisited[j], currentState))
                     {
                         Debug.Log("same");
-                        OutputState(statesMade[j]);
+                        OutputState(statesVisited[j]);
                         OutputState(currentState);
 
                         same = true;

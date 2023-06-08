@@ -221,6 +221,9 @@ public class Tube : MonoBehaviour
 
     public void NewBallsToBottom(GameObject ball)
     {
+        ball.transform.SetParent(spotObjects[BottomIndex() - 1].transform);
+        ball.transform.localPosition = Vector3.zero;
+
         for (int i = 1; i < spotObjects.Count; ++i)
         {
             if (!spots[i])
