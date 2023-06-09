@@ -213,7 +213,7 @@ public class LevelCreator : MonoBehaviour
 
     public void WriteLevels(string path) // save the string of levels to a text file
     {
-        StreamWriter writer = new StreamWriter(path);
+        StreamWriter writer = new (path);
 
         writer.WriteLine(savedLevels);
 
@@ -1356,6 +1356,7 @@ public class LevelCreator : MonoBehaviour
 
     public void Test()
     {
+        
         List<List<int>> solvePoint = new List<List<int>>();
         List<GameObject> gameTubes = new List<GameObject>();
 
@@ -1365,7 +1366,8 @@ public class LevelCreator : MonoBehaviour
             solvePoint = levels[lastLevelLoaded];
             solvePoint.Add(new List<int>(4));
             solvePoint.Add(new List<int>(4));
-            gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint);
+            gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, lastLevelLoaded);
+            
             return;
         }
 
@@ -1398,6 +1400,38 @@ public class LevelCreator : MonoBehaviour
                 }
             }
         }
-        gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint);
+        gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, lastLevelLoaded);
+        
+    }
+
+    public void SolveAll()
+    {
+        string add = "";
+        List<List<int>> solvePoint = new List<List<int>>();
+
+        for (int i = 0; i < levels.Count; ++i)
+        {
+            
+            solvePoint = levels[i];
+
+            for (int j = 0; j < solvePoint.Count; ++j)
+            {
+                for (int ii = 0; ii < solvePoint[j].Count; ++ii)
+                {
+                    solvePoint[j][ii]++;
+                }
+            }
+
+            solvePoint.Add(new List<int>(4));
+            solvePoint.Add(new List<int>(4));
+            
+            add = add + gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, i);
+        }
+
+        StreamWriter writer = new("Assets/Resources/SolveCheck.txt");
+
+        writer.WriteLine(add);
+
+        writer.Close();
     }
 }

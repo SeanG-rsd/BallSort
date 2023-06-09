@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.IO;
 
 public class LevelSolver : MonoBehaviour
 {
@@ -13,6 +14,12 @@ public class LevelSolver : MonoBehaviour
 
     public TMP_Text winText;
     public Button showButton;
+
+    public TextAsset solveCheck;
+
+    int levelIndex;
+    string path = "Assets/Resources/SolveCheck.txt";
+    string original = "";
 
     // Start is called before the first frame update
     void Start()
@@ -31,8 +38,10 @@ public class LevelSolver : MonoBehaviour
         }
     }
 
-    public void InitiateLevel(List<List<int>> input)
+    public string InitiateLevel(List<List<int>> input, int index)
     {
+        levelIndex = index;
+
         for (int i = 0; i < input.Count; ++i)
         {
             for (int ii = 0; ii < input[i].Count; ++ii)
@@ -42,71 +51,19 @@ public class LevelSolver : MonoBehaviour
             }
         }
 
-        // Test to see if "Board Equal Function" works
+        OutputState(initialLevel);
 
-        /*List<List<int>> trivial = new List<List<int>>(initialLevel);
-
-        for (int i = 0; i < trivial.Count; ++i)
-        {
-            trivial[i] = new List<int>(initialLevel[i]);
-        }
-
-        int slot = 0;
-        initialLevel[0][slot++] = 1;
-        initialLevel[0][slot++] = 4;
-        initialLevel[0][slot++] = 4;
-        initialLevel[0][slot++] = 2;
-
-        slot = 0;
-        initialLevel[1][slot++] = 2;
-        initialLevel[1][slot++] = 3;
-        initialLevel[1][slot++] = 1;
-        initialLevel[1][slot++] = 3;
-
-        slot = 0;
-        initialLevel[2][slot++] = 1;
-        initialLevel[2][slot++] = 2;
-        initialLevel[2][slot++] = 3;
-        initialLevel[2][slot++] = 4;
-
-        slot = 0;
-        initialLevel[3][slot++] = 1;
-        initialLevel[3][slot++] = 3;
-        initialLevel[3][slot++] = 2;
-        initialLevel[3][slot++] = 4;
-
-        slot = 0;
-        trivial[0][slot++] = 2;
-        trivial[0][slot++] = 3;
-        trivial[0][slot++] = 1;
-        trivial[0][slot++] = 3;
-
-        slot = 0;
-        trivial[1][slot++] = 1;
-        trivial[1][slot++] = 4;
-        trivial[1][slot++] = 4;
-        trivial[1][slot++] = 2;
-
-        slot = 0;
-        trivial[2][slot++] = 1;
-        trivial[2][slot++] = 3;
-        trivial[2][slot++] = 2;
-        trivial[2][slot++] = 4;
-
-        slot = 0;
-        trivial[3][slot++] = 1;
-        trivial[3][slot++] = 2;
-        trivial[3][slot++] = 3;
-        trivial[3][slot++] = 4;
-
-        Debug.Log(CheckIfEqualStates(trivial, initialLevel));*/
-
-        SolveLevel();
-
+        return SolveLevel();
     }
 
-    private void SolveLevel()
+    public string GetLevels() // open the text file containing the string of levels
     {
+
+        return solveCheck.text;
+    }
+    private string SolveLevel()
+    {
+        original = GetLevels();
         List<List<int>> currentState = new List<List<int>>(initialLevel);
 
         // Create a copy of InitialLevel
@@ -130,41 +87,14 @@ public class LevelSolver : MonoBehaviour
         bool same = false;
 
         bool stepBack = false;
-        bool dontStepBack = false;
 
         while (!CheckForWin(currentState))
         {
-            List<List<int>> add = new List<List<int>>(currentState);
+            
+            List<List<int>> add = CopyBoard(currentState);
 
             // Create a copy of CurrentState
-            for (int i = 0; i < add.Count; ++i)
-            {
-                add[i] = new List<int>(currentState[i]);
-            }
 
-            // attempt at statesVisited list
-            /*for (int i = 0; i < statesVisited.Count; ++i)
-            {
-                if (CheckIfEqualStates(statesVisited[i], currentState) && !stepBack)
-                {
-                    for (int j = 0; j < statesMade.Count; ++j)
-                    {
-                        if (CheckIfEqualStates(statesMade[j], currentState))
-                        {
-                            Debug.Log("same");
-                            OutputState(statesMade[j]);
-                            OutputState(currentState);
-
-                            same = true;
-                            dontStepBack = true;
-
-                            break;
-                        }
-
-                        if (same) { break; }
-                    }
-                }
-            }*/
             
 
             // Add a new state to all lists
@@ -179,7 +109,7 @@ public class LevelSolver : MonoBehaviour
             }
 
             // If the number of moves in the last state is greater than the index of the last state then create a new state
-            if (movesForEachState[movesForEachState.Count - 1].Count >= indexForState[indexForState.Count - 1] + 1 && !same)
+            if (movesForEachState[movesForEachState.Count - 1].Count >= indexForState[indexForState.Count - 1] + 1)
             {
                 Debug.Log("move");
                 Debug.Log(possibleMoves[indexForState[indexForState.Count - 1]]);
@@ -199,11 +129,16 @@ public class LevelSolver : MonoBehaviour
                         Debug.Log("same");
                         OutputState(statesVisited[j]);
                         OutputState(currentState);
-
+                        indexForState[indexForState.Count - 1]++;
+                        currentState = CopyBoard(statesMade[statesMade.Count - 1]);
                         same = true;
-                        dontStepBack = true;
+                        
 
                         break;
+                    }
+                    else
+                    {
+                        same = false;
                     }
                 }
 
@@ -233,6 +168,13 @@ public class LevelSolver : MonoBehaviour
                     }
                     showButton.interactable = true;
 
+
+
+
+                    return "Level " + (levelIndex + 1).ToString() + ": Solution in " + (statesMade.Count + 1).ToString() + " Moves and Iteration = " + iteration.ToString() + "\n";
+
+                    //WriteLevels();
+
                 }
             }
             else
@@ -258,26 +200,20 @@ public class LevelSolver : MonoBehaviour
                     Debug.Log("no win");
                     Debug.Log(iteration);
                     Debug.Log(movesForEachState[0].Count + "   " + indexForState[0]);
+                    
+                    return "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
+
+                    
 
                 }
 
+
+                currentState = CopyBoard(statesMade[statesMade.Count - 1]);
                 // Create a copy of current state
-                for (int i = 0; i < currentState.Count; ++i)
-                {
-                    currentState[i] = new List<int>(statesMade[statesMade.Count - 1][i]);
-                }
 
                 // step backwards if the last "same" portion was not triggered ^^ and do not step backwards if it was triggered
                 same = false;
-                if (dontStepBack)
-                {
-                    stepBack = false;
-                    dontStepBack = false;
-                }
-                else
-                {
-                    stepBack = true;
-                }
+                stepBack = true;
                 Debug.Log("removed last index.");
                 OutputState(currentState);
 
@@ -292,14 +228,35 @@ public class LevelSolver : MonoBehaviour
             {
                 Debug.LogError(movesForEachState[0].Count + "   " + indexForState[0]);
                 Debug.LogError("no solution");
-                break;
+                return "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
             }
 
             //yield return null;
         }
+        return "";
+    }
+
+    public void WriteLevels() // save the string of levels to a text file
+    {
+        StreamWriter writer = new(path);
+
+        writer.WriteLine(original);
+
+        writer.Close();
 
     }
 
+    List<List<int>> CopyBoard(List<List<int>> board)
+    {
+        List<List<int>> copy = new List<List<int>>(board);
+
+        for (int i = 0; i < copy.Count; ++i)
+        {
+            copy[i] = new List<int>(board[i]);
+        }
+
+        return copy;
+    }
 
     bool CheckIfEqualStates(List<List<int>> first, List<List<int>> second)
     {

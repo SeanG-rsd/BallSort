@@ -19150,8 +19150,8 @@ RectTransform:
   - {fileID: 416065402}
   - {fileID: 2130881608}
   - {fileID: 851301766}
-  - {fileID: 132669676}
   - {fileID: 1920459096753748827}
+  - {fileID: 132669676}
   m_Father: {fileID: 409195919}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -20153,6 +20153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   winText: {fileID: 1479599582}
   showButton: {fileID: 1201414471}
+  solveCheck: {fileID: 4900000, guid: 0695f9c5f87454d4b8fc1ab546a12a20, type: 3}
 --- !u!1001 &1291100480
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31238,7 +31239,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2011878088
 RectTransform:
   m_ObjectHideFlags: 0
@@ -34235,7 +34236,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 14857357246590468, guid: 0ccdc39e9643e994da72e80d016a9439, type: 3}
       propertyPath: m_RootOrder
-      value: 15
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 14857357246590468, guid: 0ccdc39e9643e994da72e80d016a9439, type: 3}
       propertyPath: m_AnchorMax.x
@@ -34295,7 +34296,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 14857357246590468, guid: 0ccdc39e9643e994da72e80d016a9439, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -219.7
+      value: -257
       objectReference: {fileID: 0}
     - target: {fileID: 14857357246590468, guid: 0ccdc39e9643e994da72e80d016a9439, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -34537,6 +34538,10 @@ PrefabInstance:
       propertyPath: saveButton
       value: 
       objectReference: {fileID: 2087600707}
+    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: solveCheck
+      value: 
+      objectReference: {fileID: 4900000, guid: 0695f9c5f87454d4b8fc1ab546a12a20, type: 3}
     - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: spotPrefab
       value: 
