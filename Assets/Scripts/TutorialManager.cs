@@ -18,6 +18,8 @@ public class TutorialManager : MonoBehaviour
 
     public List<Material> mats;
 
+    private int InvalidIndex = -1;
+
     List<List<int>> level = new List<List<int>>();
 
     // Start is called before the first frame update
@@ -116,7 +118,7 @@ public class TutorialManager : MonoBehaviour
             else if (clickState && firstTubeClicked != tube) // move balls into empty tube
             {
 
-                GameObject ball = firstTubeClicked.GetComponent<Tube>().GetTopBall();
+                int ball = firstTubeClicked.GetComponent<Tube>().GetTopBall();
 
                 Tube second = tube.GetComponent<Tube>();
                 //Debug.Log(ball.GetComponent<Image>().color);
@@ -127,19 +129,19 @@ public class TutorialManager : MonoBehaviour
                     clickState = false;
 
 
-                    second.NewBallsToBottom(ball);
+                    second.NewBallsToBottom(ball, firstTubeClicked.GetComponent<Tube>(), 0);
 
 
 
                     for (int i = 0; i <= firstTubeClicked.GetComponent<Tube>().CheckHowManyNextIsSameColor(ball); ++i)
                     {
 
-                        if (firstTubeClicked.GetComponent<Tube>().ReturnNext() != null)
+                        if (firstTubeClicked.GetComponent<Tube>().ReturnNext() != InvalidIndex)
                         {
                             if (firstTubeClicked.GetComponent<Tube>().CheckTwo(firstTubeClicked.GetComponent<Tube>().ReturnNext(), ball))
                             {
 
-                                second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
+                                second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), firstTubeClicked.GetComponent<Tube>(), firstTubeClicked.GetComponent<Tube>().BottomIndex());
                             }
                         }
                     }
@@ -152,7 +154,7 @@ public class TutorialManager : MonoBehaviour
                     if (CheckForWin()) { Win(); }
 
                 }
-                else if (ball.tag == second.GetBottomBall().tag && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
+                else if (ball == second.GetBottomBall() && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
                 {
                     clickState = false;
 
@@ -160,18 +162,18 @@ public class TutorialManager : MonoBehaviour
 
                     Tube t = firstTubeClicked.GetComponent<Tube>();
 
-                    second.NewBallsToBottom(ball);
+                    second.NewBallsToBottom(ball, firstTubeClicked.GetComponent<Tube>(), 0);
 
                     for (int i = 0; i <= firstTubeClicked.GetComponent<Tube>().CheckHowManyNextIsSameColor(ball); ++i)
                     {
 
-                        if (firstTubeClicked.GetComponent<Tube>().ReturnNext() != null)
+                        if (firstTubeClicked.GetComponent<Tube>().ReturnNext() != InvalidIndex)
                         {
                             if (firstTubeClicked.GetComponent<Tube>().CheckTwo(firstTubeClicked.GetComponent<Tube>().ReturnNext(), ball))
                             {
 
 
-                                second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
+                                second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), firstTubeClicked.GetComponent<Tube>(), firstTubeClicked.GetComponent<Tube>().BottomIndex());
                             }
                         }
                     }
@@ -204,9 +206,7 @@ public class TutorialManager : MonoBehaviour
 
                 tube.GetComponent<Tube>().MoveTopToBottom();
 
-                //Debug.Log("same tube");
-                //undoHolster.RemoveAt(undoHolster.Count - 1);
-                //if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
+                
                 tube = null;
                 clickState = false;
             }

@@ -933,16 +933,23 @@ public class LevelCreator : MonoBehaviour
         {
             for (int i = 0; i < levels[index].Count; ++i) // each tube
             {
-                int mat = 0;
-                for (int ii = 1; ii <= levels[index][i].Count; ++ii) // each ball
+                
+                for (int ii = 1; ii <= levels[index][i].Count; ii++) // each ball
                 {
                     
 
-                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[levels[index][i][mat]].color;
-                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (levels[index][i][mat] + 1).ToString();
-                    if (!Gametubes[i].GetComponent<Tube>().corked) { if (Gametubes[i].GetComponent<Tube>().FullTube() && !Gametubes[i].GetComponent<Tube>().EmptyTube()) { Gametubes[i].GetComponent<Tube>().Cork(); } }
+                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[levels[index][i][ii - 1]].color;
+                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (levels[index][i][ii - 1] + 1).ToString();
+                    Gametubes[i].GetComponent<Tube>().SetSpot(levels[index][i][ii - 1] + 1, ii);
+                    if (!Gametubes[i].GetComponent<Tube>().corked)
+                    {
+                        if (Gametubes[i].GetComponent<Tube>().FullTube())
+                        {
+                            Gametubes[i].GetComponent<Tube>().Cork(); 
+                        }
+                    }
                     else { Debug.Log("dont cork"); }
-                    mat++;
+                    
 
                     //Debug.Log("changed color");
                 }

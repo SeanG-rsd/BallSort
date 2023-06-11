@@ -12,7 +12,7 @@ public class Ball : MonoBehaviour
     bool ballMadeIt = false;
     bool readyToSet = false;
     
-    public float speed = 1200.0f; // time it takes to get there
+    public float speed = 1500.0f; // time it takes to get there
 
     bool hasBeenAtTop = false;
 
@@ -38,6 +38,7 @@ public class Ball : MonoBehaviour
 
     public void MoveBall(int tubeNum, GameObject targetTube, int spotIndex)
     {
+        Debug.Log(spotIndex);
         index = tubeNum;
         move = true;
         targetSpot = targetTube.transform.GetChild(spotIndex).gameObject;
@@ -153,11 +154,8 @@ public class Ball : MonoBehaviour
                     //Debug.Log("close");
                     transform.SetParent(targetSpot.transform);
                     transform.localPosition = Vector3.zero;
-                    if (index != tinyTubeIndex && index != -2) { transform.parent.parent.gameObject.GetComponent<Tube>().UpdateSpots(); }
-                    else
-                    {
-                        transform.parent.parent.gameObject.GetComponent<TinyTube>().UpdateSpots();
-                    }
+                    
+                    
                     if (gameManager.GetComponent<GameManager>().CheckForWin())
                     {
                         gameManager.GetComponent<GameManager>().Win();
