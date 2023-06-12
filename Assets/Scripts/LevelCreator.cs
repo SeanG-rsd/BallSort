@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.IO;
 using UnityEngine.Events;
+using System.Linq;
 
 // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
 
@@ -280,6 +281,7 @@ public class LevelCreator : MonoBehaviour
             if (newLevel != null)
             {
                 levels.Add(newLevel);
+                
                 AddToLevelList(newLevel);
 
                 AddToDatabase(levels.Count - 1);
@@ -1150,14 +1152,41 @@ public class LevelCreator : MonoBehaviour
                 else if (completedSave[i] == ',')
                 {
                     int add = System.Convert.ToInt32(set);
+                    if (!PlayerPrefs.HasKey("o"))
+                    {
+                        if (add > 477)
+                        {
+                            add -= 5;
+                        }
+                        else if (add > 433)
+                        {
+                            add -= 4;
+                        }
+                        else if (add > 4)
+                        {
+                            add -= 3;
+                        }
+
+                    }
+                    else
+                    {
+                        Debug.LogError("has key");
+                    }
+
+
+                    
+
                     completed.Add(add);
+                    
                     set = "";
                     //Debug.Log(completed.Count);
                 }
             }
+
+            PlayerPrefs.SetInt("o", 0);
         }
 
-        //Debug.Log(completed.Count);
+        
 
         for (int index = 0; index < completed.Count; ++index)
         {
@@ -1174,6 +1203,8 @@ public class LevelCreator : MonoBehaviour
                 }
             }
         }
+
+        UpdateCompleted();
     }
 
     public void ResetData(GameObject button) // reset database
@@ -1232,13 +1263,15 @@ public class LevelCreator : MonoBehaviour
         List<int> loadTube = new List<int>();
         List<List<int>> loadLevel = new List<List<int>>();
 
+        string level = "";
+
         // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
 
         if (savedLevels.Length > 0)
         {
             for (int index = 0; index < savedLevels.Length; index++)
             {
-
+                level += savedLevels[index];
                 //Debug.Log("index = " + index);
 
                 if (savedLevels[index] != '-')
@@ -1314,8 +1347,13 @@ public class LevelCreator : MonoBehaviour
                         //Debug.Log("Level Count = " + levels.Count);
 
                         levels.Add(newLevel);
+
+
                         
                         loadLevel = new List<List<int>>();
+                        
+
+                        level = "";
                     }
                     else
                     {
