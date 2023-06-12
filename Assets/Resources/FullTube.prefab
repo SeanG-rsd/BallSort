@@ -151,9 +151,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5bcac6ee001a2e4c9f945458c3a9259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spots: 0000000000
+  spots: 0000000000000000000000000000000000000000
   index: 0
   GameTube: 0
+  TutorialTube: 0
   isFull: 0
   gm: {fileID: 4918382706571430367, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
   button: {fileID: 2013661105700565378}
@@ -166,6 +167,7 @@ MonoBehaviour:
   - {fileID: 8742129656317682712}
   - {fileID: 7884623469738082068}
   confettiPrefab: {fileID: 3535071747406023843, guid: e703a86947bd2b6499e22c4cdc1d11f5, type: 3}
+  ballPrefab: {fileID: 1057911745711522576, guid: 6ef4958dbcc38cf4793439b6d89569c5, type: 3}
 --- !u!1 &7408563438138244360
 GameObject:
   m_ObjectHideFlags: 0

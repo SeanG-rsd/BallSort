@@ -206,10 +206,7 @@ public class GameManager : MonoBehaviour
 
 
             test.transform.position = tubes[i].transform.position;
-            test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
-
-            
-
+            test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);         
             testTubes.Add(test);
             Destroy(tubes[i]);
             
@@ -222,16 +219,19 @@ public class GameManager : MonoBehaviour
         tubes = testTubes;
 
         //menuNum = 2;
-        if (tinyTubeActive)
-        {
-            tinyTubeActive = false;
-            TinyTube.SetActive(false);
-            TinyTubeButton.gameObject.SetActive(true);
-
-            TinyTube.GetComponent<TinyTube>().ClearTube();
-        }
         
-        //menuNum = 1;
+
+        canUndo = false;
+
+        for (int i = 0; i < moveHolder.transform.childCount; ++i)
+        {
+            Destroy(moveHolder.transform.GetChild(i).gameObject);
+
+        }
+        undoHolster.Clear();
+        TTHolster.Clear();
+        
+        Debug.Log("reset current");
     }
 
     public void OpenMenuNum(int index)
@@ -250,25 +250,23 @@ public class GameManager : MonoBehaviour
         menuNum = 1;
         OpenMenuNum(menuNum);
         ResetGame();
-        canUndo = false;
+
+        if (tinyTubeActive)
+        {
+            tinyTubeActive = false;
+            TinyTube.SetActive(false);
+            TinyTubeButton.gameObject.SetActive(true);
+
+
+        }
     }
 
     public void ResetCurrent()
     {
         ResetGame();
         gameObject.GetComponent<LevelCreator>().LoadLastLevel();
-        
-        canUndo = false;
 
-        for (int i = 0; i < moveHolder.transform.childCount; ++i)
-        {
-            Destroy(moveHolder.transform.GetChild(i).gameObject);
-            
-        }
-        undoHolster.Clear();
-        TTHolster.Clear();
-        SetUndoTubes();
-        Debug.Log("reset current");
+        
     }
 
     public void ResetChallenge()
@@ -383,7 +381,7 @@ public class GameManager : MonoBehaviour
                     firstTubeClicked = null;
                     canUndo = true;
                     Cork();
-                    
+                    Debug.Log("set undo tubes");
                     SetUndoTubes();
                 }
                 else if (ball == second.GetBottomBall() && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
@@ -589,24 +587,15 @@ public class GameManager : MonoBehaviour
 
             for (int ii = 0; ii < 5; ++ii)
             {
-                if (tubes[i].transform.GetChild(ii).childCount != 0 && test.transform.GetChild(ii).childCount != 0) // is one in actual and in new
+                if (tubes[i].GetComponent<Tube>().spots[ii] != 0) // is one in actual and in new
                 {
-                    GameObject newBall = tubes[i].transform.GetChild(ii).GetChild(0).gameObject;
-                    test.transform.GetChild(ii).GetChild(0).gameObject.tag = newBall.tag;
-                    test.transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = newBall.GetComponent<Image>().color;
+                    
+                    tube.SetSpot(tubes[i].GetComponent<Tube>().spots[ii], ii);
                 }
-                else if (tubes[i].transform.GetChild(ii).childCount != 0 && test.transform.GetChild(ii).childCount == 0) // is one in actual but not in new
-                {
-                    GameObject newBall = tubes[i].transform.GetChild(ii).GetChild(0).gameObject;
-                    GameObject added = Instantiate(newBall, new Vector3(0, 0, 0), Quaternion.identity);
-
-                    added.transform.SetParent(test.transform.GetChild(ii));
-                    added.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                    added.transform.localPosition = new Vector3(0, 0, 0);
-                }
-                else if (tubes[i].transform.GetChild(ii).childCount == 0 && test.transform.GetChild(ii).childCount != 0) // in not one in actual but in new
+                else if (tubes[i].GetComponent<Tube>().spots[ii] == 0 && test.transform.GetChild(ii).childCount != 0) // in not one in actual but in new
                 {
                     Destroy(test.transform.GetChild(ii).GetChild(0).gameObject);
+                    tube.SetSpot(0, ii);
                 }
             }
 
@@ -615,36 +604,29 @@ public class GameManager : MonoBehaviour
             
         }
 
-        if (TinyTube.activeSelf)
+        GameObject tt = Instantiate(TinyTubePrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        tt.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        tt.transform.SetParent(moveHolder.transform);
+
+        TinyTube tinyTube = tt.GetComponent<TinyTube>();
+        //Debug.Log(TinyTube.GetComponent<TinyTube>().spots.Count);
+        
+
+        for (int ii = 0; ii < 2; ++ii)
         {
-            GameObject tt = Instantiate(TinyTubePrefab, new Vector3(0, 0, 0), Quaternion.identity);
-            tt.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            tt.transform.SetParent(moveHolder.transform);
-            for (int ii = 0; ii < 2; ++ii)
+            if (TinyTube.GetComponent<TinyTube>().spots[ii] != 0) // is one in actual and in new
             {
-                if (TinyTube.transform.GetChild(ii).childCount != 0 && tt.transform.GetChild(ii).childCount != 0) // is one in actual and in new
-                {
-                    GameObject newBall = TinyTube.transform.GetChild(ii).GetChild(0).gameObject;
-                    tt.transform.GetChild(ii).GetChild(0).gameObject.tag = newBall.tag;
-                    tt.transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = newBall.GetComponent<Image>().color;
-                }
-                else if (TinyTube.transform.GetChild(ii).childCount != 0 && tt.transform.GetChild(ii).childCount == 0) // is one in actual but not in new
-                {
-                    GameObject newBall = TinyTube.transform.GetChild(ii).GetChild(0).gameObject;
-                    GameObject added = Instantiate(newBall, new Vector3(0, 0, 0), Quaternion.identity);
-
-                    added.transform.SetParent(tt.transform.GetChild(ii));
-                    added.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                    added.transform.localPosition = new Vector3(0, 0, 0);
-                }
-                else if (TinyTube.transform.GetChild(ii).childCount == 0 && tt.transform.GetChild(ii).childCount != 0) // in not one in actual but in new
-                {
-                    Destroy(tt.transform.GetChild(ii).GetChild(0).gameObject);
-                }
+                tinyTube.SetSpot(TinyTube.GetComponent<TinyTube>().spots[ii], ii);
+                
             }
-
-            TTHolster.Add(tt);
+            else if (TinyTube.GetComponent<TinyTube>().spots[ii] != 0 && tt.transform.GetChild(ii).childCount != 0) // in not one in actual but in new
+            {
+                Destroy(tt.transform.GetChild(ii).GetChild(0).gameObject);
+                tinyTube.SetSpot(0, ii);
+            }
         }
+
+        TTHolster.Add(tt);
 
         undoHolster.Add(newTubes);
         
@@ -657,14 +639,9 @@ public class GameManager : MonoBehaviour
     {
         int coins = gameObject.GetComponent<LevelCreator>().coins;
 
-        
-
         if (canUndo && undoHolster.Count != 0 && undosLeft > 0)
         {
             undosLeft--;
-            //Debug.LogWarning("undo");
-            //insult.SetActive(true);
-            //if (insultTimer == insultTime) { doInsult = true; }
 
             GameObject undoTT = new GameObject();
             if (undoHolster.Count > 1)
@@ -675,6 +652,8 @@ public class GameManager : MonoBehaviour
             {
                 undoTubes = undoHolster[undoHolster.Count - 1];
             }
+
+            //undoTubes = undoHolster[undoHolster.Count - 1];
             if (TinyTube.activeSelf)
             {
                 if (TTHolster.Count > 1)
@@ -699,6 +678,12 @@ public class GameManager : MonoBehaviour
                 test.transform.position = tubes[i].transform.position;
                 test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
 
+                for (int ii = 0; ii < undoTubes[i].transform.childCount; ++ii)
+                {
+                    test.GetComponent<Tube>().SetSpot(undoTubes[i].GetComponent<Tube>().spots[ii], ii);
+                }
+                test.GetComponent<Tube>().ResetSelf();
+                
 
 
                 testTubes.Add(test);
@@ -721,6 +706,13 @@ public class GameManager : MonoBehaviour
 
                 test.transform.position = TinyTube.transform.position;
                 test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
+
+                for (int ii = 0; ii < undoTT.transform.childCount; ++ii)
+                {
+                    test.GetComponent<TinyTube>().SetSpot(undoTT.GetComponent<TinyTube>().spots[ii], ii);
+                }
+                test.GetComponent<TinyTube>().ResetSelf();
+
                 Destroy(TinyTube);
                 TinyTube = test;
                 TTHolster.RemoveAt(TTHolster.Count - 1);
@@ -759,7 +751,11 @@ public class GameManager : MonoBehaviour
                 test.transform.position = tubes[i].transform.position;
                 test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
 
-
+                for (int ii = 0; ii < undoTubes[i].transform.childCount; ++ii)
+                {
+                    test.GetComponent<Tube>().SetSpot(undoTubes[i].GetComponent<Tube>().spots[ii], ii);
+                }
+                test.GetComponent<Tube>().ResetSelf();
 
                 testTubes.Add(test);
                 Destroy(tubes[i]);
@@ -780,6 +776,13 @@ public class GameManager : MonoBehaviour
 
                 test.transform.position = TinyTube.transform.position;
                 test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
+
+                for (int ii = 0; ii < undoTT.transform.childCount; ++ii)
+                {
+                    test.GetComponent<TinyTube>().SetSpot(undoTT.GetComponent<TinyTube>().spots[ii], ii);
+                }
+                test.GetComponent<TinyTube>().ResetSelf();
+
                 Destroy(TinyTube);
                 TinyTube = test;
                 TTHolster.RemoveAt(TTHolster.Count - 1);

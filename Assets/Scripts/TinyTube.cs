@@ -20,6 +20,8 @@ public class TinyTube : MonoBehaviour
 
     public List<GameObject> spotObjects;
 
+    public GameObject ballPrefab;
+
     // Start is called before the first frame update
 
     void Awake()
@@ -28,12 +30,52 @@ public class TinyTube : MonoBehaviour
         GameTube = true;
         button.onClick.AddListener(Clicked);
 
-        spots.Clear();
-        spots.Add(0);
-        spots.Add(0);
+        
     }
 
     
+
+    public void SetSpot(int given, int where)
+    {
+
+        spots[where] = given;
+    }
+
+    public void ResetSelf()
+    {
+        Debug.Log("reset self");
+        for (int i = 0; i < spots.Count; ++i)
+        {
+            if (spots[i] != 0)
+            {
+                GameObject ball = Instantiate(ballPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                ball.GetComponent<Image>().color = gm.GetComponent<LevelCreator>().mats[spots[i] - 1].color;
+                ball.tag = "C" + spots[i].ToString();
+
+                if (transform.GetChild(i).childCount == 0 && i != 0)
+                {
+                    ball.transform.SetParent(transform.GetChild(i));
+                    ball.transform.localPosition = Vector3.zero;
+                    ball.transform.localScale = Vector3.one;
+                }
+                else if (transform.GetChild(i).childCount != 0 && i != 0)
+                {
+                    Destroy(transform.GetChild(i).GetChild(0).gameObject);
+
+                    ball.transform.SetParent(transform.GetChild(i));
+                    ball.transform.localPosition = Vector3.zero;
+                    ball.transform.localScale = Vector3.one;
+                }
+                else if (i == 0)
+                {
+                    Destroy(transform.GetChild(i).GetChild(0).gameObject);
+                }
+            }
+
+        }
+    }
+
+
     public void ClearTube()
     {
         for (int i = 0; i < spots.Count; i++)

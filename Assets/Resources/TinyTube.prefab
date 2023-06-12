@@ -208,7 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43e2df6a3ade8fe42b375ff4848ce6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spots: 0000
+  spots: 0000000000000000
   index: 0
   GameTube: 0
   isFull: 0
@@ -217,3 +217,4 @@ MonoBehaviour:
   spotObjects:
   - {fileID: 4006500289172957428}
   - {fileID: 5968700287347142467}
+  ballPrefab: {fileID: 1057911745711522576, guid: 6ef4958dbcc38cf4793439b6d89569c5, type: 3}

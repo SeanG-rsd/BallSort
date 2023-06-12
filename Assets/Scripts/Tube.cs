@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.Examples;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Tube : MonoBehaviour
 {
+
+
     public List<int> spots = new List<int>();
 
     public int index;
@@ -30,6 +33,8 @@ public class Tube : MonoBehaviour
     float loadedConfetti = 0.2f;
     bool canConfetti;
 
+    public GameObject ballPrefab;
+
     // Start is called before the first frame update
 
     void Awake()
@@ -49,13 +54,7 @@ public class Tube : MonoBehaviour
             button.onClick.AddListener(TutorialClicked);
         }
         corked = false;
-        spots.Clear();
-
-        spots.Add(0);
-        spots.Add(0);
-        spots.Add(0);
-        spots.Add(0);
-        spots.Add(0);
+        
     }
 
     
@@ -64,7 +63,7 @@ public class Tube : MonoBehaviour
 
     public void SetSpot(int given, int where)
     {
-        Debug.Log(spots.Count);
+        
         spots[where] = given;
     }
 
@@ -361,8 +360,37 @@ public class Tube : MonoBehaviour
     }
 
     public void ResetSelf()
-    { 
+    {
+        //Debug.Log("reset self");
+        for (int i = 0; i < spots.Count; ++i)
+        {
+            if (spots[i] != 0)
+            {
+                GameObject ball = Instantiate(ballPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                ball.GetComponent<Image>().color = gm.GetComponent<LevelCreator>().mats[spots[i] - 1].color;
+                ball.tag = "C" + spots[i].ToString();
 
+                if (transform.GetChild(i).childCount == 0 && i != 0)
+                {
+                    ball.transform.SetParent(transform.GetChild(i));
+                    ball.transform.localPosition = Vector3.zero;
+                    ball.transform.localScale = Vector3.one;
+                }
+                else if (transform.GetChild(i).childCount != 0 && i != 0)
+                {
+                    Destroy(transform.GetChild(i).GetChild(0).gameObject);
+
+                    ball.transform.SetParent(transform.GetChild(i));
+                    ball.transform.localPosition = Vector3.zero;
+                    ball.transform.localScale = Vector3.one;
+                }
+                else if (i == 0)
+                {
+                    Destroy(transform.GetChild(i).GetChild(0).gameObject);
+                }
+            }
+            
+        }
     }
 
     void Clicked()
