@@ -30,17 +30,28 @@ public class Ball : MonoBehaviour
 
     GameObject gameManager;
 
+    GameObject tutorialManager;
+    bool tutorial;
+
+    
+
     // Start is called before the first frame update
     void Start()
     {
         gameManager = GameObject.Find("GameManager");
+        tutorialManager = GameObject.Find("Manager");
+
     }
 
     public void MoveBall(int tubeNum, GameObject targetTube, int spotIndex)
     {
-        Debug.Log(spotIndex);
+        
         index = tubeNum;
         move = true;
+        if (targetTube.GetComponent<Tube>() != null)
+        {
+            tutorial = targetTube.GetComponent<Tube>().TutorialTube;
+        }
         targetSpot = targetTube.transform.GetChild(spotIndex).gameObject;
         
         targetPoint = FindPoint();
@@ -60,15 +71,14 @@ public class Ball : MonoBehaviour
         {
             thisIndex = transform.parent.parent.GetSiblingIndex();
             
+            
             transform.SetParent(transform.parent.parent.parent);
 
-            transform.localScale = Vector3.one;
+            //transform.localScale = Vector3.one;
             //Debug.Log(transform.localPosition);
             if (Vector3.Distance(transform.localPosition, topPoint) > 15.0f)
             {
                 hasBeenAtTop = false;
-                //Debug.Log("extra ball");
-
             }
             else
             {
@@ -76,13 +86,15 @@ public class Ball : MonoBehaviour
             }
 
             targetPoint = targetSpot.transform.parent.localPosition + targetSpot.transform.localPosition;
-            SetSecondPoint();
-            //Debug.Log("different tube");
-
-            //Debug.Log(targetPoint);
-            //Debug.Log(secondPoint);
-            //Debug.Log(topPoint);
-
+            if (!tutorial)
+            {
+                SetSecondPoint();
+            }
+            else
+            {
+                SetTutorialPoint();
+            }
+            
             otherTube = true;
         }
 
@@ -96,6 +108,7 @@ public class Ball : MonoBehaviour
             secondPoint.x = targetPoint.x;
             secondPoint.y = transform.localPosition.y;
             secondPoint.z = targetPoint.z;
+            
         }
         else if (index < 8 && thisIndex > 7 && index != -2)
         {
@@ -104,7 +117,7 @@ public class Ball : MonoBehaviour
             secondPoint.z = targetPoint.z;
 
             topPoint.x = transform.localPosition.x;
-            
+
             topPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y;
             topPoint.z = targetPoint.z;
 
@@ -123,7 +136,7 @@ public class Ball : MonoBehaviour
             topPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y;
             topPoint.z = targetPoint.z;
 
-            Debug.LogWarning("b to t");
+            //Debug.LogWarning("b to t");
 
             hasBeenAtTop = false;
         }
@@ -133,16 +146,24 @@ public class Ball : MonoBehaviour
             secondPoint.y = transform.localPosition.y;
             secondPoint.z = targetPoint.z;
         }
+
+        
+    }
+
+    void SetTutorialPoint()
+    {
+        secondPoint.x = targetPoint.x;
+        secondPoint.y = transform.localPosition.y;
+        secondPoint.z = targetPoint.z;
+
+        topPoint.x = transform.localPosition.x;
+
+        topPoint.y = (targetSpot.transform.parent.GetChild(0).localPosition.y * targetSpot.transform.parent.localScale.x) + targetSpot.transform.parent.localPosition.y;
+        topPoint.z = targetPoint.z;
     }
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            targetPoint = FindPoint();
-            move = true;
-        }
-
         if (move)
         {
             if (!otherTube)
@@ -154,13 +175,23 @@ public class Ball : MonoBehaviour
                     //Debug.Log("close");
                     transform.SetParent(targetSpot.transform);
                     transform.localPosition = Vector3.zero;
-                    
-                    
-                    if (gameManager.GetComponent<GameManager>().CheckForWin())
+                    transform.localScale = Vector3.one;
+
+                    if (!tutorial)
                     {
-                        gameManager.GetComponent<GameManager>().Win();
+                        if (gameManager.GetComponent<GameManager>().CheckForWin())
+                        {
+                            gameManager.GetComponent<GameManager>().Win();
+                        }
                     }
-                    ballMadeIt = true;
+                    else if (tutorial)
+                    {
+                        if (tutorialManager.GetComponent<TutorialManager>().CheckForWin())
+                        {
+                            tutorialManager.GetComponent<TutorialManager>().Win();
+                        }
+                    }
+                    gameManager.GetComponent<GameManager>().Cork();
                     move = false;
                 }
             }
@@ -180,21 +211,18 @@ public class Ball : MonoBehaviour
 
                 if (Vector3.Distance(transform.localPosition, topPoint) < 0.01f)
                 {
-                    //Debug.Log("reached top");
-                    SetSecondPoint();
-                    hasBeenAtTop = true;
+                    
+                    if (!tutorial)
+                    {
+                        SetSecondPoint();
+                    }
+                    else
+                    {
+                        SetTutorialPoint();
+                    }
+                    hasBeenAtTop = true;                  
                 }
             }
-        }
-
-        if (readyToSet && ballMadeIt)
-        {
-            gameManager.GetComponent<GameManager>().SetUndoTubes();
-        }
-    }
-
-    public void SetUndoTubes()
-    {
-        readyToSet = true;
+        }   
     }
 }

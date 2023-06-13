@@ -960,6 +960,7 @@ public class LevelCreator : MonoBehaviour
             }
 
             gameObject.GetComponent<GameManager>().Cork();
+            gameObject.GetComponent<GameManager>().Cork();
         }
         else
         {
@@ -1167,10 +1168,6 @@ public class LevelCreator : MonoBehaviour
                             add -= 3;
                         }
 
-                    }
-                    else
-                    {
-                        Debug.LogError("has key");
                     }
 
 

@@ -67,21 +67,9 @@ public class Tube : MonoBehaviour
         spots[where] = given;
     }
 
-    void UpdateCork()
-    {
-        if (FullTube() && !EmptyTube())
-        {
-            Cork();
-        }
-    }
-
     // Update is called once per frame
     void Update()
     {
-        if (!corked && GameTube)
-        {
-            UpdateCork();
-        }
 
         if (!canConfetti)
         {
