@@ -8,21 +8,16 @@ public class Ball : MonoBehaviour
 
     bool move = false;
     bool otherTube = false;
-
-    bool ballMadeIt = false;
-    bool readyToSet = false;
     
     public float speed = 1500.0f; // time it takes to get there
 
     bool hasBeenAtTop = false;
 
     private int tinyTubeIndex = -1;
-
-    LineRenderer line = new LineRenderer();
     Vector3 targetPoint = new Vector3();
     Vector3 secondPoint = new Vector3();
-    Vector3 topPoint = new Vector3();
-    public int index = 0;
+    Vector3 topPoint = new();
+    int index = 0;
 
     public GameObject targetSpot;
 
@@ -33,13 +28,17 @@ public class Ball : MonoBehaviour
     GameObject tutorialManager;
     bool tutorial;
 
-    
+    GameObject background;
+
+    public int destinationSpot;
 
     // Start is called before the first frame update
     void Start()
     {
         gameManager = GameObject.Find("GameManager");
         tutorialManager = GameObject.Find("Manager");
+
+        background = transform.parent.parent.parent.gameObject;
 
     }
 
@@ -48,9 +47,11 @@ public class Ball : MonoBehaviour
         
         index = tubeNum;
         move = true;
+        destinationSpot = spotIndex;
         if (targetTube.GetComponent<Tube>() != null)
         {
             tutorial = targetTube.GetComponent<Tube>().TutorialTube;
+            targetTube.GetComponent<Tube>().IncomingBall(gameObject);
         }
         targetSpot = targetTube.transform.GetChild(spotIndex).gameObject;
         

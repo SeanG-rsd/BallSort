@@ -342,6 +342,8 @@ public class GameManager : MonoBehaviour
                 
                 int ball = firstTubeClicked.GetComponent<Tube>().GetTopBall();
 
+                Tube first = firstTubeClicked.GetComponent<Tube>();
+
                 Tube second = tube.GetComponent<Tube>();
                 //Debug.Log(ball.GetComponent<Image>().color);
 
@@ -351,8 +353,14 @@ public class GameManager : MonoBehaviour
                     clickState = false;
                     int moveIndex = 4;
 
-                    //second.NewBallsToBottom(ball);
-                    firstTubeClicked.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
+                    if (firstTubeClicked.transform.GetChild(0).childCount != 0)
+                    {
+                        firstTubeClicked.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
+                    }
+                    else
+                    {
+                        first.GetBallsInMotion(0).GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
+                    }
                     second.NewBallsToBottom(ball, firstTubeClicked.GetComponent<Tube>(), 0);
 
                     for (int i = 0; i <= firstTubeClicked.GetComponent<Tube>().CheckHowManyNextIsSameColor(ball); ++i)

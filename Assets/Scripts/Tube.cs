@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Tube : MonoBehaviour
 {
-
+    public List<GameObject> ballsInMotion = new List<GameObject>();
 
     public List<int> spots = new List<int>();
 
@@ -57,9 +57,24 @@ public class Tube : MonoBehaviour
         
     }
 
-    
 
+    public void IncomingBall(GameObject ball)
+    {
+        ballsInMotion.Add(ball);
+    }
     
+    public GameObject GetBallsInMotion(int index)
+    {
+        for (int i = 0; i < ballsInMotion.Count; ++i)
+        {
+            if (ballsInMotion[i].GetComponent<Ball>().destinationSpot == index)
+            {
+                return ballsInMotion[i];
+            }
+        }
+
+        return null;
+    }
 
     public void SetSpot(int given, int where)
     {
