@@ -139,6 +139,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5bcac6ee001a2e4c9f945458c3a9259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ballObjects:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   spots: 0000000000000000000000000000000000000000
   index: 0
   GameTube: 0

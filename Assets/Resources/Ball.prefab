@@ -90,5 +90,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 100
-  index: 0
   targetSpot: {fileID: 0}
+  destinationSpot: 0

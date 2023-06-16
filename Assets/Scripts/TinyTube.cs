@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class TinyTube : MonoBehaviour
 {
     public List<int> spots = new List<int> { 0, 0 };
+    public List<GameObject> ballObjects = new List<GameObject>();
 
     private int InvalidIndex;
     public int index;
@@ -30,7 +31,17 @@ public class TinyTube : MonoBehaviour
         GameTube = true;
         button.onClick.AddListener(Clicked);
 
-        
+        for (int i = 0; i < ballObjects.Count; i++)
+        {
+            if (transform.GetChild(i).childCount != 0)
+            {
+                ballObjects[i] = transform.GetChild(i).GetChild(0).gameObject;
+            }
+            else
+            {
+                ballObjects[i] = null;
+            }
+        }
     }
 
     

@@ -6,7 +6,7 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
 
-    bool move = false;
+    public bool move = false;
     bool otherTube = false;
     
     public float speed = 1500.0f; // time it takes to get there
@@ -28,7 +28,7 @@ public class Ball : MonoBehaviour
     GameObject tutorialManager;
     bool tutorial;
 
-    GameObject background;
+    GameObject lastTube;
 
     public int destinationSpot;
 
@@ -38,20 +38,28 @@ public class Ball : MonoBehaviour
         gameManager = GameObject.Find("GameManager");
         tutorialManager = GameObject.Find("Manager");
 
-        background = transform.parent.parent.parent.gameObject;
+        
 
     }
 
     public void MoveBall(int tubeNum, GameObject targetTube, int spotIndex)
     {
-        
+        if (!move)
+        {
+            lastTube = transform.parent.parent.gameObject;
+        }
+        else
+        {
+            lastTube = targetSpot.transform.parent.gameObject;
+        }
+
         index = tubeNum;
         move = true;
         destinationSpot = spotIndex;
         if (targetTube.GetComponent<Tube>() != null)
         {
             tutorial = targetTube.GetComponent<Tube>().TutorialTube;
-            targetTube.GetComponent<Tube>().IncomingBall(gameObject);
+            
         }
         targetSpot = targetTube.transform.GetChild(spotIndex).gameObject;
         
@@ -60,7 +68,7 @@ public class Ball : MonoBehaviour
 
     Vector3 FindPoint()
     {
-        GameObject extraTop = transform.parent.parent.GetChild(0).gameObject;
+        GameObject extraTop = lastTube.transform.GetChild(0).gameObject;
         topPoint = extraTop.transform.parent.localPosition + extraTop.transform.localPosition;
 
         if (targetSpot.transform.parent == transform.parent.parent)
@@ -192,6 +200,8 @@ public class Ball : MonoBehaviour
                             tutorialManager.GetComponent<TutorialManager>().Win();
                         }
                     }
+
+
                     gameManager.GetComponent<GameManager>().Cork();
                     move = false;
                 }

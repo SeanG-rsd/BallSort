@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Tube : MonoBehaviour
 {
-    public List<GameObject> ballsInMotion = new List<GameObject>();
+    public List<GameObject> ballObjects = new List<GameObject>();
 
     public List<int> spots = new List<int>();
 
@@ -55,25 +55,18 @@ public class Tube : MonoBehaviour
         }
         corked = false;
         
-    }
-
-
-    public void IncomingBall(GameObject ball)
-    {
-        ballsInMotion.Add(ball);
-    }
-    
-    public GameObject GetBallsInMotion(int index)
-    {
-        for (int i = 0; i < ballsInMotion.Count; ++i)
+        for (int i = 0; i < ballObjects.Count; i++)
         {
-            if (ballsInMotion[i].GetComponent<Ball>().destinationSpot == index)
+            if (transform.GetChild(i).childCount != 0)
             {
-                return ballsInMotion[i];
+                ballObjects[i] = transform.GetChild(i).GetChild(0).gameObject;
+            }
+            else
+            {
+                ballObjects[i] = null;
             }
         }
 
-        return null;
     }
 
     public void SetSpot(int given, int where)
@@ -100,7 +93,9 @@ public class Tube : MonoBehaviour
     { 
         index = BottomIndex();
         spots[0] = spots[index];
-        spots[index] = 0;      
+        ballObjects[0] = ballObjects[index];
+        spots[index] = 0;
+        ballObjects[index] = null; 
         index = BottomIndex();     
     }
 
@@ -124,7 +119,9 @@ public class Tube : MonoBehaviour
             if (spots[i] == 0 && spots[0] != 0)
             {
                 spots[i] = spots[0];
+                ballObjects[i] = ballObjects[0];
                 spots[0] = 0;
+                ballObjects[0] = null;
                 
                 return;
             }
@@ -202,12 +199,17 @@ public class Tube : MonoBehaviour
         if (BottomIndex() != InvalidIndex)
         {
             spots[BottomIndex() - 1] = ball;
+            ballObjects[BottomIndex()] = ogTube.ballObjects[ogLocation];
         }
         else
         {
             spots[4] = ball;
+            ballObjects[4] = ogTube.ballObjects[ogLocation];
         }
         ogTube.spots[ogLocation] = 0;
+        ogTube.ballObjects[ogLocation] = null;
+
+        
     }
 
     public void NewBallsFromTT(int ball, TinyTube ogTube, int ogLocation)
@@ -215,12 +217,15 @@ public class Tube : MonoBehaviour
         if (BottomIndex() != InvalidIndex)
         {
             spots[BottomIndex() - 1] = ball;
+            ballObjects[BottomIndex() - 1] = ogTube.ballObjects[ogLocation];
         }
         else
         {
             spots[4] = ball;
+            ballObjects[4] = ogTube.ballObjects[ogLocation];
         }
         ogTube.spots[ogLocation] = 0;
+        ogTube.ballObjects[ogLocation] = null;
     }
 
     public bool CheckIfNextIsSameColor(int ball)
