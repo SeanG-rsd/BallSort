@@ -110,7 +110,9 @@ public class TinyTube : MonoBehaviour
     {
         index = BottomIndex();
         spots[0] = spots[index];
+        ballObjects[0] = ballObjects[index];
         spots[index] = 0;
+        ballObjects[index] = null;
         index = BottomIndex();
     }
 
@@ -129,12 +131,14 @@ public class TinyTube : MonoBehaviour
 
     public void MoveTopToBottom() // move the lowest ball in the tube to the above spot on the tube
     {
-        for (int i = spotObjects.Count - 1; i >= 0; i--)
+        for (int i = spots.Count - 1; i >= 0; i--)
         {
             if (spots[i] == 0 && spots[0] != 0)
             {
                 spots[i] = spots[0];
+                ballObjects[i] = ballObjects[0];
                 spots[0] = 0;
+                ballObjects[0] = null;
 
                 return;
             }
@@ -210,7 +214,9 @@ public class TinyTube : MonoBehaviour
     public void NewBallsToBottom(int ball, Tube ogTube, int ogLocation)
     {
         spots[1] = ball;
+        ballObjects[1] = ogTube.ballObjects[ogLocation];
         ogTube.spots[ogLocation] = 0;
+        ogTube.ballObjects[ogLocation] = null;
     }
 
     public bool CheckIfNextIsSameColor(int ball)

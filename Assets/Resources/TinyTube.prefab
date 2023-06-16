@@ -209,6 +209,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spots: 0000000000000000
+  ballObjects:
+  - {fileID: 0}
+  - {fileID: 0}
   index: 0
   GameTube: 0
   isFull: 0

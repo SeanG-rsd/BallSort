@@ -217,7 +217,7 @@ public class Tube : MonoBehaviour
         if (BottomIndex() != InvalidIndex)
         {
             spots[BottomIndex() - 1] = ball;
-            ballObjects[BottomIndex() - 1] = ogTube.ballObjects[ogLocation];
+            ballObjects[BottomIndex()] = ogTube.ballObjects[ogLocation];
         }
         else
         {

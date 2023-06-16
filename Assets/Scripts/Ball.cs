@@ -58,8 +58,7 @@ public class Ball : MonoBehaviour
         destinationSpot = spotIndex;
         if (targetTube.GetComponent<Tube>() != null)
         {
-            tutorial = targetTube.GetComponent<Tube>().TutorialTube;
-            
+            tutorial = targetTube.GetComponent<Tube>().TutorialTube;      
         }
         targetSpot = targetTube.transform.GetChild(spotIndex).gameObject;
         
@@ -188,6 +187,7 @@ public class Ball : MonoBehaviour
 
                     if (!tutorial)
                     {
+                        gameManager.GetComponent<GameManager>().Cork();
                         if (gameManager.GetComponent<GameManager>().CheckForWin())
                         {
                             gameManager.GetComponent<GameManager>().Win();
@@ -195,6 +195,7 @@ public class Ball : MonoBehaviour
                     }
                     else if (tutorial)
                     {
+                        tutorialManager.GetComponent<TutorialManager>().Cork();
                         if (tutorialManager.GetComponent<TutorialManager>().CheckForWin())
                         {
                             tutorialManager.GetComponent<TutorialManager>().Win();
@@ -202,7 +203,7 @@ public class Ball : MonoBehaviour
                     }
 
 
-                    gameManager.GetComponent<GameManager>().Cork();
+                    
                     move = false;
                 }
             }
