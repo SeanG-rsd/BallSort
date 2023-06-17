@@ -111,7 +111,7 @@ public class LevelCreator : MonoBehaviour
         LoadGame();
         LoadLevelChooseList();
         LoadCompleted();
-
+        Debug.Log(levels.Count);
         challengeRequirement.SetActive(ChallengeRequirement());
 
     }
@@ -277,7 +277,7 @@ public class LevelCreator : MonoBehaviour
     {
         for (int i = 0; i < genXLevels; ++i)
         {
-            List<List<int>> newLevel = GenerateLevel();
+            List<List<int>> newLevel = GenerateLevel(i);
             if (newLevel != null)
             {
                 levels.Add(newLevel);
@@ -286,6 +286,10 @@ public class LevelCreator : MonoBehaviour
 
                 AddToDatabase(levels.Count - 1);
                 WriteLevels("Assets/Resources/Levels.txt");
+            }
+            else
+            {
+                Debug.LogError("had full tube or was not solvable");
             }
         }
 
@@ -308,7 +312,22 @@ public class LevelCreator : MonoBehaviour
         return choices;
     }
 
-    List<List<int>> GenerateLevel()
+    bool CompletedTube(List<int> tube)
+    {
+        
+
+        for (int i = 0; i < tube.Count; ++i)
+        {
+            if (tube[i] != tube[0])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    List<List<int>> GenerateLevel(int index)
     {
         
 
@@ -333,13 +352,20 @@ public class LevelCreator : MonoBehaviour
 
                     int add = UnityEngine.Random.Range(0, choices.Count);
 
+                    
                     newTube.Add(choices[add]);
+
+                    
                     chosen[choices[add]]++;
                     
                 }
 
                 //Debug.Log("new tube size = " + newTube.Count);
-
+                if (CompletedTube(newTube))
+                {
+                    Debug.Log("error");
+                    return null;
+                }
                 newLevel.Add(newTube);
             }
 
@@ -349,7 +375,19 @@ public class LevelCreator : MonoBehaviour
 
             if (FinishedMaking())
             {
+                string output = SolveList(newLevel, index);
+
+                StreamWriter writer = new("Assets/Resources/SolveCheck.txt");
+
+                writer.WriteLine(output);
+
+                writer.Close();
                 Debug.Log("new level sixe = " + newLevel.Count);
+                if (output.Contains("No Solution") || newLevel.Count != 12)
+                {
+                    Debug.Log("no solution");
+                    return null;
+                }
                 return newLevel;
                 
 
@@ -456,7 +494,7 @@ public class LevelCreator : MonoBehaviour
         challengeLevels.Clear();
         for (int i = 0; i < LPP; ++i)
         {
-            List<List<int>> newLevel = GenerateLevel();
+            List<List<int>> newLevel = GenerateLevel(i);
             challengeLevels.Add(newLevel);
         }
         
@@ -1261,6 +1299,7 @@ public class LevelCreator : MonoBehaviour
         List<List<int>> loadLevel = new List<List<int>>();
 
         string level = "";
+        
 
         // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
 
@@ -1344,16 +1383,17 @@ public class LevelCreator : MonoBehaviour
                         //Debug.Log("Level Count = " + levels.Count);
 
                         levels.Add(newLevel);
-
+                        
 
                         
                         loadLevel = new List<List<int>>();
-                        
 
                         level = "";
+                        
                     }
                     else
                     {
+                        
                         Debug.Log("Not enough in loadLevel: " + loadLevel.Count);
                     }
                 }
@@ -1447,34 +1487,31 @@ public class LevelCreator : MonoBehaviour
         
     }
 
-    public void SolveAll()
+    public TextAsset solveCheck;
+    public string SolveList(List<List<int>> generated, int index)
     {
         string add = "";
-        List<List<int>> solvePoint = new List<List<int>>();
+        List<List<int>> solvePoint = new List<List<int>>(generated);
 
-        for (int i = 0; i < levels.Count; ++i)
+        for (int i = 0; i < generated.Count; ++i)
         {
-            
-            solvePoint = levels[i];
-
-            for (int j = 0; j < solvePoint.Count; ++j)
-            {
-                for (int ii = 0; ii < solvePoint[j].Count; ++ii)
-                {
-                    solvePoint[j][ii]++;
-                }
-            }
-
-            solvePoint.Add(new List<int>(4));
-            solvePoint.Add(new List<int>(4));
-            
-            add = add + gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, i);
+            solvePoint[i] = new List<int>(generated[i]);
         }
 
-        StreamWriter writer = new("Assets/Resources/SolveCheck.txt");
+        for (int j = 0; j < solvePoint.Count; ++j)
+        {
+            for (int ii = 0; ii < solvePoint[j].Count; ++ii)
+            {
+                solvePoint[j][ii]++;
+            }
+        }
 
-        writer.WriteLine(add);
+        solvePoint.Add(new List<int>(4));
+        solvePoint.Add(new List<int>(4));
 
-        writer.Close();
+        add = gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, index);
+
+        return add;
+        
     }
 }
