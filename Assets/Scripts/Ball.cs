@@ -180,7 +180,7 @@ public class Ball : MonoBehaviour
 
                 if (Vector3.Distance(transform.localPosition, targetPoint) < 1.0f)
                 {
-                    //Debug.Log("close");
+                    move = false;
                     transform.SetParent(targetSpot.transform);
                     transform.localPosition = Vector3.zero;
                     transform.localScale = Vector3.one;
@@ -204,7 +204,7 @@ public class Ball : MonoBehaviour
 
 
                     
-                    move = false;
+                    
                 }
             }
             else if (hasBeenAtTop)

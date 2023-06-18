@@ -42,26 +42,22 @@ public class LevelSolver : MonoBehaviour
     {
         levelIndex = index;
 
-        for (int i = 0; i < input.Count; ++i)
-        {
-            for (int ii = 0; ii < input[i].Count; ++ii)
-            {
-                initialLevel[i][ii] = input[i][ii];
-
-            }
-        }
-
+        initialLevel = CopyBoard(input);
+        Debug.Log(initialLevel.Count);
         OutputState(initialLevel);
 
-        return SolveLevel();
+        StartCoroutine(SolveLevel());
+
+        
+        Debug.LogError("finish");
+        return original;
     }
 
     public string GetLevels() // open the text file containing the string of levels
     {
-
         return solveCheck.text;
     }
-    private string SolveLevel()
+    private IEnumerator SolveLevel()
     {
         original = GetLevels();
         List<List<int>> currentState = new List<List<int>>(initialLevel);
@@ -169,12 +165,9 @@ public class LevelSolver : MonoBehaviour
                     showButton.interactable = true;
 
 
-
-
-                    return "Level " + (levelIndex + 1).ToString() + ": Solution in " + (statesMade.Count + 1).ToString() + " Moves and Iteration = " + iteration.ToString() + "\n";
-
-                    //WriteLevels();
-
+                    original = "Level " + (levelIndex + 1).ToString() + ": Solution in " + (statesMade.Count + 1).ToString() + " Moves and Iteration = " + iteration.ToString() + "\n";
+                    yield return null;
+                    
                 }
             }
             else
@@ -197,13 +190,14 @@ public class LevelSolver : MonoBehaviour
                 // if the new index for the first state is greater than the number of moves, there is no win
                 if (movesForEachState[0].Count < indexForState[0] + 1)
                 {
-                    Debug.Log("no win");
+                    Debug.LogError("no win");
                     Debug.Log(iteration);
                     Debug.Log(movesForEachState[0].Count + "   " + indexForState[0]);
-                    
-                    return "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
 
-                    
+                    yield return null;
+                    //return "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
+
+
 
                 }
 
@@ -228,12 +222,15 @@ public class LevelSolver : MonoBehaviour
             {
                 Debug.LogError(movesForEachState[0].Count + "   " + indexForState[0]);
                 Debug.LogError("no solution");
-                return "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
+                original = "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
+                yield return null;
+
             }
 
-            //yield return null;
+            yield return null;
         }
-        return "";
+        yield return null;
+        
     }
 
     public void WriteLevels() // save the string of levels to a text file
@@ -246,7 +243,7 @@ public class LevelSolver : MonoBehaviour
 
     }
 
-    List<List<int>> CopyBoard(List<List<int>> board)
+    public List<List<int>> CopyBoard(List<List<int>> board)
     {
         List<List<int>> copy = new List<List<int>>(board);
 

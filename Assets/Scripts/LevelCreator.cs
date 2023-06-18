@@ -136,6 +136,7 @@ public class LevelCreator : MonoBehaviour
                 
                 inChallenge = false;
                 
+                
                 SaveChallengeTime();
                 //Debug.LogWarning("beat challenge");
                 GiveUpChallenge();
@@ -364,6 +365,7 @@ public class LevelCreator : MonoBehaviour
                 if (CompletedTube(newTube))
                 {
                     Debug.Log("error");
+                    GenerateLevel(index);
                     return null;
                 }
                 newLevel.Add(newTube);
@@ -386,7 +388,7 @@ public class LevelCreator : MonoBehaviour
                 if (output.Contains("No Solution") || newLevel.Count != 12)
                 {
                     Debug.Log("no solution");
-                    return null;
+                    GenerateLevel(index);
                 }
                 return newLevel;
                 
@@ -412,11 +414,59 @@ public class LevelCreator : MonoBehaviour
         return false;
     }
 
+    string OrganizeRecordTime(float time)
+    {
+        string end = "00:00.00";
+
+        float check = time;
+
+        int Minutes = (int)time / 60;
+        check = check - (Minutes * 60);
+        int Seconds = (int)check;
+        check = check - Seconds;
+        float temp = check * 100;
+        int milli = Mathf.RoundToInt(temp);
+
+        string min = "";
+        string sec = "";
+        string ms = "";
+        
+
+        if (Minutes == 0) { min = "00"; }
+        else if (Minutes < 10) { min = "0" + Minutes.ToString(); }
+        else { min = Minutes.ToString(); }
+
+        if (Seconds == 0) { sec = "00"; }
+        else if (Seconds < 10) { sec = "0" + Seconds.ToString(); }
+        else { sec = Seconds.ToString(); }
+
+        if (milli == 0) { ms = "00"; }
+        else if (milli < 10) { ms = "0" + milli.ToString(); }
+        else { ms = milli.ToString(); }
+
+        end = min + ":" + sec + "." + ms;
+        Debug.Log(end);
+        return end;
+    }
+
     public void StartChallenge()
     {
-        if (gameObject.GetComponent<GameManager>().undoButton.activeSelf)
+        int LPP = (int)challengeLevelsPerPage.x * (int)challengeLevelsPerPage.y;
+
+
+        //Debug.LogWarning("spots");
+
+        challengeLevels.Clear();
+        for (int i = 0; i < LPP; ++i)
         {
-            gameObject.GetComponent<GameManager>().ModeChange();
+            List<List<int>> newLevel = GenerateLevel(i);
+            challengeLevels.Add(newLevel);
+        }
+
+        if (gameManager.undoButton.activeSelf)
+        {
+            gameManager.ModeChange();
+            
         }
 
         inChallenge = true;
@@ -448,7 +498,7 @@ public class LevelCreator : MonoBehaviour
             loadedChallengeTime = PlayerPrefs.GetFloat("ChallengeTime");
             if (loadedChallengeTime != 0) { recordText.gameObject.SetActive(true); }
             float roundedTime = Mathf.Round(loadedChallengeTime * 100) / 100;
-            recordText.text = "Record: " + OrganizeChallengeTime(roundedTime).ToString();
+            recordText.text = "Record: " + OrganizeRecordTime(roundedTime).ToString();
 
         }
 
@@ -486,17 +536,7 @@ public class LevelCreator : MonoBehaviour
         }
         
         //Debug.LogError("generatespots no work");
-        int LPP = (int)challengeLevelsPerPage.x * (int)challengeLevelsPerPage.y;
-
         
-        //Debug.LogWarning("spots");
-
-        challengeLevels.Clear();
-        for (int i = 0; i < LPP; ++i)
-        {
-            List<List<int>> newLevel = GenerateLevel(i);
-            challengeLevels.Add(newLevel);
-        }
         
 
         List<GameObject> page = new List<GameObject>();
@@ -545,15 +585,6 @@ public class LevelCreator : MonoBehaviour
 
 
         if (page.Count != 0) { challengeLevelButtons.Add(page); }
-
-
-
-        //currentLevelPage = 0;
-     
-        
-        //Debug.LogWarning("complete");
-
-        //Debug.LogWarning(challengeLevels.Count);
     }
 
     public void LoadChallengeLevel(int index) // load a certain level based on the index given
@@ -561,25 +592,38 @@ public class LevelCreator : MonoBehaviour
         gameManager.undoHolster.Clear();
         gameManager.TTHolster.Clear();
         List<GameObject> Gametubes = gameObject.GetComponent<GameManager>().tubes;
-        startChallenge = true;
+        if (!startChallenge)
+        {
+            challengeStart = DateTime.Now;
+            startChallenge = true;
+        }
+        
         
 
         if (challengeLevels.Count > 0)
         {
             for (int i = 0; i < challengeLevels[index].Count; ++i) // each tube
             {
-                int mat = 0;
+                
                 for (int ii = 1; ii <= challengeLevels[index][i].Count; ++ii) // each ball
                 {
 
 
                     
-                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[challengeLevels[index][i][mat]].color;
-                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (challengeLevels[index][i][mat] + 1).ToString();
-                    if (!Gametubes[i].GetComponent<Tube>().corked) { if (Gametubes[i].GetComponent<Tube>().FullTube() && !Gametubes[i].GetComponent<Tube>().EmptyTube()) { Gametubes[i].GetComponent<Tube>().Cork(); } }
-                    else { Debug.Log("dont cork"); }
-
-                    mat++;
+                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[challengeLevels[index][i][ii - 1]].color;
+                    Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (challengeLevels[index][i][ii - 1] + 1).ToString();
+                    Gametubes[i].GetComponent<Tube>().SetSpot(challengeLevels[index][i][ii - 1] + 1, ii);
+                    if (!Gametubes[i].GetComponent<Tube>().corked)
+                    {
+                        if (Gametubes[i].GetComponent<Tube>().FullTube() && !Gametubes[i].GetComponent<Tube>().EmptyTube())
+                        {
+                            Gametubes[i].GetComponent<Tube>().Cork();
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("dont cork");
+                    }
 
                     //Debug.Log("changed color");
                 }
@@ -628,6 +672,9 @@ public class LevelCreator : MonoBehaviour
         startChallenge = false;
         inChallenge = false;
         challengeTime = 0;
+        challengeStart = DateTime.Now;
+        challengeTimeTextGame.text = OrganizeChallengeTime(challengeTime).ToString();
+        challengeTimeTextList.text = OrganizeChallengeTime(challengeTime).ToString();
 
         pageNumText.gameObject.SetActive(true);
         pageLeftButton.SetActive(true);
@@ -1408,34 +1455,11 @@ public class LevelCreator : MonoBehaviour
         return textfile.text;
     }
 
-    /*public void FixCompleted() // temporary
+    public void Hint()
     {
-        string newCompleted = "";
-        
-
-        for (int i = 0; i < levelButtons.Count; ++i)
-        {
-            for (int ii = 0; ii < levelButtons[i].Count; ++ii)
-            {
-                if (levelButtons[i][ii].GetComponent<ChooseButton>().levelValue <= 312)
-                {
-                    newCompleted = newCompleted + levelButtons[i][ii].GetComponent<ChooseButton>().levelValue.ToString() + ",";
-                    coins += coinIncriment;
-                }
-
-            }
-        }
-
-        completedSave = newCompleted;
-        SaveCompleted();
-        Destroy(fixCompleted);
+        Test();
+        Debug.LogError("hint");
     }
-
-    public void Unlock() // temporary
-    {
-        fixCompleted.SetActive(true);
-        
-    }*/
 
     public void Test()
     {
@@ -1446,9 +1470,17 @@ public class LevelCreator : MonoBehaviour
         if (gameManager.undoHolster.Count > 0) { gameTubes = gameManager.undoHolster[gameManager.undoHolster.Count - 1]; }
         else
         {
-            solvePoint = levels[lastLevelLoaded];
-            solvePoint.Add(new List<int>(4));
-            solvePoint.Add(new List<int>(4));
+            solvePoint = gameObject.GetComponent<LevelSolver>().CopyBoard(levels[lastLevelLoaded]);
+            solvePoint.Add(new List<int>());
+            solvePoint[12].Add(0);
+            solvePoint[12].Add(0);
+            solvePoint[12].Add(0);
+            solvePoint[12].Add(0);
+            solvePoint.Add(new List<int>());
+            solvePoint[13].Add(0);
+            solvePoint[13].Add(0);
+            solvePoint[13].Add(0);
+            solvePoint[13].Add(0);
             gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, lastLevelLoaded);
             
             return;

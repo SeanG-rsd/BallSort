@@ -50,7 +50,13 @@ namespace Unity.Advertisement.IosSupport.Samples
                 yield return null;
             }
 #endif
-
+            if (PlayerPrefs.HasKey("Tutorial"))
+            {
+                if (PlayerPrefs.GetInt("Tutorial") == 1)
+                {
+                    SceneManager.LoadScene(2);
+                }
+            }
             SceneManager.LoadScene(1);
             yield return null;
         }

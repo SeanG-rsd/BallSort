@@ -276,13 +276,53 @@ public class GameManager : MonoBehaviour
         gameObject.GetComponent<LevelCreator>().LoadLastChallengeLevel();
     }
 
+    bool CheckForMovement()
+    {
+        for (int i = 0; i < tubes.Count; ++i)
+        {
+            Tube tube = tubes[i].GetComponent<Tube>();
+
+            for (int j = 0; j < tube.ballObjects.Count; ++j)
+            {
+                if (tube.ballObjects[j] != null)
+                {
+                    if (tube.ballObjects[j].GetComponent<Ball>().move)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (TinyTube.activeSelf)
+        {
+            for (int j = 0; j < TinyTube.GetComponent<TinyTube>().ballObjects.Count; ++j)
+            {
+                if (TinyTube.GetComponent<TinyTube>().ballObjects[j] != null)
+                {
+                    if (TinyTube.GetComponent<TinyTube>().ballObjects[j].GetComponent<Ball>().move)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     public bool CheckForWin() // check to see if all tubes are the right color
     {
-        if (!CheckIfAnyMovesLeft())
+        if (!CheckIfAnyMovesLeft() && !CheckForMovement())
         {
             noMoves = true;
             NoMovesLeftBox.SetActive(true);
             noMoveTimer = noMoveTime;
+        }
+
+        if (CheckForMovement())
+        {
+            return false;
         }
 
         for (int i = 0; i < tubes.Count; ++i)
@@ -297,7 +337,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < tubes.Count; ++i)
         {
-            if (!tubes[i].GetComponent<Tube>().corked)
+            if (!tubes[i].GetComponent<Tube>().corked && !tubes[i].GetComponent<Tube>().CheckForMovement())
             { 
                 if (tubes[i].GetComponent<Tube>().FullTube())
                 { 
@@ -905,6 +945,33 @@ public class GameManager : MonoBehaviour
                         
                     }
                        
+                }
+            }
+
+            if (TinyTube.activeSelf)
+            {
+                Tube tube = tubes[i].GetComponent<Tube>();
+                TinyTube tinyTube = TinyTube.GetComponent<TinyTube>();
+
+                int ball1 = InvalidIndex;
+                int ball2 = InvalidIndex;
+
+                if (!tube.EmptyTube() && !tinyTube.EmptyTube())
+                {
+                    ball1 = tube.GetBottomBall();
+                    ball2 = tinyTube.GetBottomBall();
+                }
+                else
+                {
+                    return true;
+                }
+
+                if (ball1 == ball2)
+                {
+                    if (1 <= tube.ReturnNumOpenSpots())
+                    {         
+                        return true;
+                    }
                 }
             }
         }

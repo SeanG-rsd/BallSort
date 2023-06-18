@@ -212,7 +212,23 @@ public class Tube : MonoBehaviour
         
     }
 
-    public void NewBallsFromTT(int ball, TinyTube ogTube, int ogLocation)
+    public bool CheckForMovement()
+    {
+        for (int j = 0; j < ballObjects.Count; ++j)
+        {
+            if (ballObjects[j] != null)
+            {
+                if (ballObjects[j].GetComponent<Ball>().move)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+        public void NewBallsFromTT(int ball, TinyTube ogTube, int ogLocation)
     {
         if (BottomIndex() != InvalidIndex)
         {
