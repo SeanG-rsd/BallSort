@@ -11166,7 +11166,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 137080903}
         m_TargetAssemblyTypeName: LevelCreator, Assembly-CSharp
-        m_MethodName: StartChallenge
+        m_MethodName: StartChallengeCoroutine
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -27642,7 +27642,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1765497822
 RectTransform:
   m_ObjectHideFlags: 0
@@ -34363,6 +34363,10 @@ PrefabInstance:
       propertyPath: spotPrefab
       value: 
       objectReference: {fileID: 1891005995998222646, guid: c3d0e7bc0326d98458d2c00874cbc9d2, type: 3}
+    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: loadingIcon
+      value: 
+      objectReference: {fileID: 841886162}
     - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: pageNumText
       value: 

@@ -20,6 +20,7 @@ public class LevelSolver : MonoBehaviour
     int levelIndex;
     string path = "Assets/Resources/SolveCheck.txt";
     string original = "";
+    bool solvable = true;
 
     // Start is called before the first frame update
     void Start()
@@ -38,7 +39,7 @@ public class LevelSolver : MonoBehaviour
         }
     }
 
-    public string InitiateLevel(List<List<int>> input, int index)
+    public bool InitiateLevel(List<List<int>> input, int index)
     {
         levelIndex = index;
 
@@ -50,7 +51,7 @@ public class LevelSolver : MonoBehaviour
 
         
         Debug.LogError("finish");
-        return original;
+        return solvable;
     }
 
     public string GetLevels() // open the text file containing the string of levels
@@ -164,7 +165,8 @@ public class LevelSolver : MonoBehaviour
                     }
                     showButton.interactable = true;
 
-
+                    solvable = true;
+                    gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(true);
                     original = "Level " + (levelIndex + 1).ToString() + ": Solution in " + (statesMade.Count + 1).ToString() + " Moves and Iteration = " + iteration.ToString() + "\n";
                     yield return null;
                     
@@ -193,7 +195,8 @@ public class LevelSolver : MonoBehaviour
                     Debug.LogError("no win");
                     Debug.Log(iteration);
                     Debug.Log(movesForEachState[0].Count + "   " + indexForState[0]);
-
+                    solvable = false;
+                    gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(false);
                     yield return null;
                     //return "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
 
@@ -223,6 +226,8 @@ public class LevelSolver : MonoBehaviour
                 Debug.LogError(movesForEachState[0].Count + "   " + indexForState[0]);
                 Debug.LogError("no solution");
                 original = "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
+                solvable = false;
+                gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(false);
                 yield return null;
 
             }

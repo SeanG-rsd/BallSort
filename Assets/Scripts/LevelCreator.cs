@@ -80,6 +80,7 @@ public class LevelCreator : MonoBehaviour
     public TMP_Text recordText;
     public GameObject challengeRequirement;
     bool startChallenge;
+    public List<bool> challengeSolvability = new List<bool>();
 
     public GameObject requirementBox;
     public TMP_Text requirementText;
@@ -100,7 +101,11 @@ public class LevelCreator : MonoBehaviour
     DateTime challengeStart;
 
     public List<string> ballTags;
-    
+
+    bool finishedMakingChallengeLevels = false;
+
+    public GameObject loadingIcon;
+
 
     // Start is called before the first frame update
     void Start()
@@ -113,6 +118,7 @@ public class LevelCreator : MonoBehaviour
         LoadCompleted();
         Debug.Log(levels.Count);
         challengeRequirement.SetActive(ChallengeRequirement());
+        loadingIcon.SetActive(false);
 
     }
 
@@ -123,6 +129,17 @@ public class LevelCreator : MonoBehaviour
 
         saveButton.GetComponent<Button>().interactable = FinishedMaking();
         UpdateCoins();
+
+        if (!inChallenge && finishedMakingChallengeLevels && !challengeSolvability.Contains(false) && challengeSolvability.Count == 4)
+        {
+            loadingIcon.SetActive(false);
+            StopCoroutine(MakeChallengeLevels());
+            StartChallenge();
+        }
+        else if (finishedMakingChallengeLevels && !inChallenge)
+        {
+            loadingIcon.SetActive(true);
+        }
 
         if (inChallenge && startChallenge)
         {
@@ -377,7 +394,7 @@ public class LevelCreator : MonoBehaviour
 
             if (FinishedMaking())
             {
-                string output = SolveList(newLevel, index);
+                bool output = SolveList(newLevel, index);
 
                 StreamWriter writer = new("Assets/Resources/SolveCheck.txt");
 
@@ -385,7 +402,7 @@ public class LevelCreator : MonoBehaviour
 
                 writer.Close();
                 Debug.Log("new level sixe = " + newLevel.Count);
-                if (output.Contains("No Solution") || newLevel.Count != 12)
+                if (!output)
                 {
                     Debug.Log("no solution");
                     GenerateLevel(index);
@@ -449,12 +466,15 @@ public class LevelCreator : MonoBehaviour
         return end;
     }
 
-    public void StartChallenge()
+    public void StartChallengeCoroutine()
     {
+        StartCoroutine(MakeChallengeLevels());
+    }
+
+    IEnumerator MakeChallengeLevels()
+    {
+        finishedMakingChallengeLevels = true;
         int LPP = (int)challengeLevelsPerPage.x * (int)challengeLevelsPerPage.y;
-
-
-        //Debug.LogWarning("spots");
 
         challengeLevels.Clear();
         for (int i = 0; i < LPP; ++i)
@@ -463,6 +483,12 @@ public class LevelCreator : MonoBehaviour
             challengeLevels.Add(newLevel);
         }
 
+        yield return null;
+    }
+
+    public void StartChallenge()
+    {
+        int LPP = (int)challengeLevelsPerPage.x * (int)challengeLevelsPerPage.y;
         if (gameManager.undoButton.activeSelf)
         {
             gameManager.ModeChange();
@@ -669,6 +695,8 @@ public class LevelCreator : MonoBehaviour
 
     public void GiveUpChallenge()
     {
+        Debug.Log("give up challenge");
+
         startChallenge = false;
         inChallenge = false;
         challengeTime = 0;
@@ -697,6 +725,12 @@ public class LevelCreator : MonoBehaviour
         resetButton.SetActive(true);
         challengeReset.SetActive(false);
         recordText.gameObject.SetActive(false);
+
+        challengeLevels.Clear();
+        challengeSolvability.Clear();
+        finishedMakingChallengeLevels = false;
+
+
 
         challengeTimeTextGame.text = OrganizeChallengeTime(challengeTime).ToString();
         challengeTimeTextList.text = OrganizeChallengeTime(challengeTime).ToString();
@@ -1520,9 +1554,9 @@ public class LevelCreator : MonoBehaviour
     }
 
     public TextAsset solveCheck;
-    public string SolveList(List<List<int>> generated, int index)
+    public bool SolveList(List<List<int>> generated, int index)
     {
-        string add = "";
+        bool solvable = false;
         List<List<int>> solvePoint = new List<List<int>>(generated);
 
         for (int i = 0; i < generated.Count; ++i)
@@ -1538,12 +1572,20 @@ public class LevelCreator : MonoBehaviour
             }
         }
 
-        solvePoint.Add(new List<int>(4));
-        solvePoint.Add(new List<int>(4));
+        solvePoint.Add(new List<int>());
+        solvePoint[12].Add(0);
+        solvePoint[12].Add(0);
+        solvePoint[12].Add(0);
+        solvePoint[12].Add(0);
+        solvePoint.Add(new List<int>());
+        solvePoint[13].Add(0);
+        solvePoint[13].Add(0);
+        solvePoint[13].Add(0);
+        solvePoint[13].Add(0);
 
-        add = gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, index);
-
-        return add;
+        solvable = gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, index);
+        
+        return solvable;
         
     }
 }
