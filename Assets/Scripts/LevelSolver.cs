@@ -196,7 +196,7 @@ public class LevelSolver : MonoBehaviour
                     Debug.Log(iteration);
                     Debug.Log(movesForEachState[0].Count + "   " + indexForState[0]);
                     solvable = false;
-                    gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(false);
+                    //gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(false);
                     yield return null;
                     //return "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
 
@@ -227,7 +227,7 @@ public class LevelSolver : MonoBehaviour
                 Debug.LogError("no solution");
                 original = "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
                 solvable = false;
-                gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(false);
+                //gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(false);
                 yield return null;
 
             }

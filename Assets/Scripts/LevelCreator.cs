@@ -102,7 +102,7 @@ public class LevelCreator : MonoBehaviour
 
     public List<string> ballTags;
 
-    bool finishedMakingChallengeLevels = false;
+    public bool generatingChallenge = false;
 
     public GameObject loadingIcon;
 
@@ -130,16 +130,28 @@ public class LevelCreator : MonoBehaviour
         saveButton.GetComponent<Button>().interactable = FinishedMaking();
         UpdateCoins();
 
-        if (!inChallenge && finishedMakingChallengeLevels && !challengeSolvability.Contains(false) && challengeSolvability.Count == 4)
+        if (generatingChallenge && challengeSolvability.Count > 0)
         {
-            loadingIcon.SetActive(false);
-            StopCoroutine(MakeChallengeLevels());
-            StartChallenge();
+            if (gameManager.menuNum == 1)
+            {
+                loadingIcon.SetActive(true);
+            }
+            for (int i = 0; i < challengeSolvability.Count; i++)
+            {
+                if (challengeSolvability[i] == true && challengeSpots[i].transform.GetChild(0).gameObject.GetComponent<Button>().interactable == false)
+                {
+                    challengeSpots[i].transform.GetChild(0).gameObject.GetComponent<Button>().interactable = true;
+                }
+            }
+
+            if (challengeSolvability.Count == 4)
+            {
+                generatingChallenge = false;
+                challengeSolvability.Clear();
+                loadingIcon.SetActive(false);
+            }
         }
-        else if (finishedMakingChallengeLevels && !inChallenge)
-        {
-            loadingIcon.SetActive(true);
-        }
+        
 
         if (inChallenge && startChallenge)
         {
@@ -396,11 +408,11 @@ public class LevelCreator : MonoBehaviour
             {
                 bool output = SolveList(newLevel, index);
 
-                StreamWriter writer = new("Assets/Resources/SolveCheck.txt");
+                //StreamWriter writer = new("Assets/Resources/SolveCheck.txt");
 
-                writer.WriteLine(output);
+                //writer.WriteLine(output);
 
-                writer.Close();
+                //writer.Close();
                 Debug.Log("new level sixe = " + newLevel.Count);
                 if (!output)
                 {
@@ -469,11 +481,12 @@ public class LevelCreator : MonoBehaviour
     public void StartChallengeCoroutine()
     {
         StartCoroutine(MakeChallengeLevels());
+        StartChallenge();
     }
 
     IEnumerator MakeChallengeLevels()
     {
-        finishedMakingChallengeLevels = true;
+        generatingChallenge = true;
         int LPP = (int)challengeLevelsPerPage.x * (int)challengeLevelsPerPage.y;
 
         challengeLevels.Clear();
@@ -556,6 +569,7 @@ public class LevelCreator : MonoBehaviour
                 newSpot.transform.SetParent(challengeList.transform);
                 newSpot.transform.localPosition = new Vector3((c * chooseButtonRect.x * scaleX) + (chooseButtonRect.x * scaleX / 2), (r * chooseButtonRect.y * scaleY) - (chooseButtonRect.y * scaleY / 2), 0);
                 newSpot.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                
                 challengeSpots.Add(newSpot);
 
             }
@@ -580,7 +594,7 @@ public class LevelCreator : MonoBehaviour
                 newButton.transform.SetParent(challengeSpots[challengeSpotCount].transform);
                 newButton.transform.position = challengeSpots[challengeSpotCount].transform.position;
                 newButton.transform.localScale = new Vector3(scaleX - 0.05f, scaleY - 0.05f, 1.0f);
-
+                newButton.GetComponent<Button>().interactable = false;
                 newButton.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = challengeActualCount.ToString();
                 newButton.GetComponent<ChooseButton>().levelValue = challengeActualCount;
                 newButton.GetComponent<ChooseButton>().Challenge();
@@ -623,7 +637,7 @@ public class LevelCreator : MonoBehaviour
             challengeStart = DateTime.Now;
             startChallenge = true;
         }
-        
+        loadingIcon.SetActive(false);
         
 
         if (challengeLevels.Count > 0)
@@ -728,7 +742,12 @@ public class LevelCreator : MonoBehaviour
 
         challengeLevels.Clear();
         challengeSolvability.Clear();
-        finishedMakingChallengeLevels = false;
+        generatingChallenge = false;
+
+        for (int i = 0; i < challengeSpots.Count; i++)
+        {
+            challengeSpots[i].transform.GetChild(0).gameObject.GetComponent<Button>().interactable = false;
+        }
 
 
 

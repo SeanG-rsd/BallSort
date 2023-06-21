@@ -251,6 +251,10 @@ public class GameManager : MonoBehaviour
         menuNum = 1;
         OpenMenuNum(menuNum);
         ResetGame();
+        if (gameObject.GetComponent<LevelCreator>().generatingChallenge)
+        {
+            gameObject.GetComponent<LevelCreator>().loadingIcon.SetActive(true);
+        }
 
         if (tinyTubeActive)
         {
