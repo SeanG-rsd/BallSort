@@ -106,6 +106,8 @@ public class LevelCreator : MonoBehaviour
 
     public GameObject loadingIcon;
 
+    bool lookingForHint = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -150,6 +152,18 @@ public class LevelCreator : MonoBehaviour
                 challengeSolvability.Clear();
                 loadingIcon.SetActive(false);
             }
+        }
+
+        if (lookingForHint && hintTubes == Vector2.zero)
+        {
+            if (gameManager.menuNum == 2)
+            {
+                loadingIcon.SetActive(true);
+            }
+        }
+        else
+        {
+            loadingIcon.SetActive(false);
         }
         
 
@@ -1508,6 +1522,8 @@ public class LevelCreator : MonoBehaviour
         return textfile.text;
     }
 
+    public Vector2 hintTubes = Vector2.zero;
+
     public void Hint()
     {
         Test();
@@ -1544,28 +1560,9 @@ public class LevelCreator : MonoBehaviour
         for (int i = 0; i < gameTubes.Count; ++i)
         {
             solvePoint.Add(new List<int>());
-            for (int j = 1; j < gameTubes[i].transform.childCount; ++j)
+            for (int j = 1; j < gameTubes[i].GetComponent<Tube>().spots.Count; ++j)
             {
-                
-                if (gameTubes[i].transform.GetChild(j).childCount != 0)
-                {
-
-                    for (int index = 0; index < ballTags.Count; ++index)
-                    {
-                        if (ballTags[index] == gameTubes[i].transform.GetChild(j).GetChild(0).gameObject.tag)
-                        {
-                            solvePoint[i].Add(index + 1);
-                            //Debug.Log(j);
-                            break;
-                        }
-
-                    }
-                }
-                else
-                {
-                    //Debug.Log("emptySlot");
-                    solvePoint[i].Add(0);
-                }
+                solvePoint[i].Add(gameTubes[i].GetComponent<Tube>().spots[j]);
             }
         }
         gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, lastLevelLoaded);

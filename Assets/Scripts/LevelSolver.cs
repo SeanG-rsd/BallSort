@@ -146,6 +146,9 @@ public class LevelSolver : MonoBehaviour
                 {
                     int other = 0;
                     Debug.LogError("found win");
+                    Debug.Log(movesForEachState[0][indexForState[0]]);
+                    gameObject.GetComponent<LevelCreator>().hintTubes = movesForEachState[0][indexForState[0]];
+
                     Debug.Log(iteration);
                     for (int i = 0; i < statesMade.Count; ++i)
                     {
