@@ -108,6 +108,7 @@ public class LevelCreator : MonoBehaviour
     public GameObject loadingIcon;
 
     public bool lookingForHint = false;
+    public int hintCost;
 
 
     // Start is called before the first frame update
@@ -1537,9 +1538,14 @@ public class LevelCreator : MonoBehaviour
 
     public void Hint()
     {
-        Test();
-        lookingForHint = true;
-        Debug.LogError("hint");
+        if (coins > hintCost)
+        {
+            coins -= hintCost;
+
+            Test();
+            lookingForHint = true;
+            Debug.LogError("hint");
+        }
     }
 
     public void Test()

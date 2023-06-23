@@ -101,6 +101,8 @@ public class GameManager : MonoBehaviour
     public Button solve;
 
     public GameObject HowToScreen;
+    public GameObject hintButton;
+    public TMP_Text hintCostText;
 
     // Start is called before the first frame update
     void Start()
@@ -169,6 +171,7 @@ public class GameManager : MonoBehaviour
         //Debug.Log("reset game");
         undosLeft = givenUndos;
         undosLeftText.text = undosLeft.ToString() + " Free";
+        hintCostText.text = gameObject.GetComponent<LevelCreator>().hintCost.ToString();
         undosLeftCoin.SetActive(false);
         gameObject.GetComponent<LevelSolver>().resetFlash.SetActive(false);
         NoMovesLeftBox.Deactivate();
@@ -1000,6 +1003,7 @@ public class GameManager : MonoBehaviour
         {
             undoButton.SetActive(false);
             TinyTubeButton.gameObject.SetActive(false);
+            hintButton.SetActive(false);
             modeButtonText.GetComponent<TMP_Text>().text = "Mode: Normal";
             modeButton.GetComponent<Image>().color = blank.color;
         }
@@ -1007,6 +1011,7 @@ public class GameManager : MonoBehaviour
         {
             undoButton.SetActive(true);
             TinyTubeButton.gameObject.SetActive(true);
+            hintButton.SetActive(true);
             modeButtonText.GetComponent<TMP_Text>().text = "Mode:   Easy";
             modeButton.GetComponent<Image>().color = badRed.color;
         }

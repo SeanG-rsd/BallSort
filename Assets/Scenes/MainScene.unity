@@ -25063,7 +25063,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1572139669
 RectTransform:
   m_ObjectHideFlags: 0
@@ -34866,6 +34866,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: bed4ecbc99d19f5409d805813c01a4e5, type: 2}
     - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: hintCost
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: textfile
       value: 
       objectReference: {fileID: 4900000, guid: 23dec4cef1145b64abb6fcd48be57211, type: 3}
@@ -35330,6 +35334,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: hintButton
+      value: 
+      objectReference: {fileID: 1572139668}
+    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: insultText
       value: 
       objectReference: {fileID: 1400200952}
@@ -35393,6 +35401,10 @@ PrefabInstance:
       propertyPath: greenSetting
       value: 
       objectReference: {fileID: 21300000, guid: 93763e5870ee33b4bac8000b8a1120f4, type: 3}
+    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: hintCostText
+      value: 
+      objectReference: {fileID: 1947032820}
     - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: redLockButton
       value: 
