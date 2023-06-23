@@ -8,6 +8,7 @@ using TMPro;
 using System.IO;
 using UnityEngine.Events;
 using System.Linq;
+using Unity.VisualScripting;
 
 // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
 
@@ -106,7 +107,7 @@ public class LevelCreator : MonoBehaviour
 
     public GameObject loadingIcon;
 
-    bool lookingForHint = false;
+    public bool lookingForHint = false;
 
 
     // Start is called before the first frame update
@@ -120,7 +121,6 @@ public class LevelCreator : MonoBehaviour
         LoadCompleted();
         Debug.Log(levels.Count);
         challengeRequirement.SetActive(ChallengeRequirement());
-        loadingIcon.SetActive(false);
 
     }
 
@@ -132,7 +132,7 @@ public class LevelCreator : MonoBehaviour
         saveButton.GetComponent<Button>().interactable = FinishedMaking();
         UpdateCoins();
 
-        if (generatingChallenge && challengeSolvability.Count > 0)
+        if (generatingChallenge && challengeSolvability.Count < 5)
         {
             if (gameManager.menuNum == 1)
             {
@@ -154,18 +154,27 @@ public class LevelCreator : MonoBehaviour
             }
         }
 
-        if (lookingForHint && hintTubes == Vector2.zero)
+        if (lookingForHint && gameObject.GetComponent<LevelSolver>().hintFlash.tubes == Vector2.zero)
         {
             if (gameManager.menuNum == 2)
             {
                 loadingIcon.SetActive(true);
             }
         }
-        else
+        else if (gameObject.GetComponent<LevelSolver>().hintFlash.tubes != Vector2.zero && lookingForHint)
+        {
+            loadingIcon.SetActive(false);
+            List<GameObject> gameTubes = gameManager.tubes;
+            HintFlash flash = gameObject.GetComponent<LevelSolver>().hintFlash;
+
+            flash.transform.position = gameTubes[(int)flash.tubes[flash.index]].transform.position;
+            flash.gameObject.SetActive(true);
+            
+        }
+        else if (!lookingForHint && gameObject.GetComponent<LevelSolver>().hintFlash.tubes == Vector2.zero)
         {
             loadingIcon.SetActive(false);
         }
-        
 
         if (inChallenge && startChallenge)
         {
@@ -494,6 +503,7 @@ public class LevelCreator : MonoBehaviour
 
     public void StartChallengeCoroutine()
     {
+        challengeSolvability.Clear();
         StartCoroutine(MakeChallengeLevels());
         StartChallenge();
     }
@@ -524,6 +534,7 @@ public class LevelCreator : MonoBehaviour
 
         inChallenge = true;
         completedChallenge.Clear();
+        loadingIcon.SetActive(true);
 
         gameObject.GetComponent<RewardedAd>()._showAdButton.gameObject.SetActive(false);
         challengeStart = DateTime.Now;
@@ -737,7 +748,7 @@ public class LevelCreator : MonoBehaviour
         pageLeftFarButton.SetActive(true);
         pageRightButton.SetActive(true);
         pageRightFarButton.SetActive(true);
-
+        loadingIcon.SetActive(false);
         gameObject.GetComponent<RewardedAd>()._showAdButton.gameObject.SetActive(true);
 
 
@@ -1527,6 +1538,7 @@ public class LevelCreator : MonoBehaviour
     public void Hint()
     {
         Test();
+        lookingForHint = true;
         Debug.LogError("hint");
     }
 

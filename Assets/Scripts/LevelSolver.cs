@@ -22,6 +22,12 @@ public class LevelSolver : MonoBehaviour
     string original = "";
     bool solvable = true;
 
+    public HintFlash hintFlash;
+
+    public GameObject resetFlash;
+
+    public Popup noSolution;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -148,6 +154,9 @@ public class LevelSolver : MonoBehaviour
                     Debug.LogError("found win");
                     Debug.Log(movesForEachState[0][indexForState[0]]);
                     gameObject.GetComponent<LevelCreator>().hintTubes = movesForEachState[0][indexForState[0]];
+                    
+                    hintFlash.tubes = movesForEachState[0][indexForState[0]];
+                    hintFlash.index = 0;
 
                     Debug.Log(iteration);
                     for (int i = 0; i < statesMade.Count; ++i)
@@ -170,6 +179,7 @@ public class LevelSolver : MonoBehaviour
 
                     solvable = true;
                     gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(true);
+                    
                     original = "Level " + (levelIndex + 1).ToString() + ": Solution in " + (statesMade.Count + 1).ToString() + " Moves and Iteration = " + iteration.ToString() + "\n";
                     yield return null;
                     
@@ -187,26 +197,35 @@ public class LevelSolver : MonoBehaviour
 
 
                 movesForEachState.RemoveAt(movesForEachState.Count - 1);
-                possibleMoves = movesForEachState[movesForEachState.Count - 1];
+                
                 indexForState.RemoveAt(indexForState.Count - 1);
-                indexForState[indexForState.Count - 1]++;
-                Debug.Log(movesForEachState[movesForEachState.Count - 1].Count + "   " + indexForState[indexForState.Count - 1]);
 
                 // if the new index for the first state is greater than the number of moves, there is no win
-                if (movesForEachState[0].Count < indexForState[0] + 1)
+
+                if (statesMade.Count == 0)
                 {
                     Debug.LogError("no win");
                     Debug.Log(iteration);
-                    Debug.Log(movesForEachState[0].Count + "   " + indexForState[0]);
                     solvable = false;
-                    //gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(false);
-                    yield return null;
-                    //return "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
-
-
-
+                    resetFlash.SetActive(true);
+                    noSolution.Activate(5f);
+                    gameObject.GetComponent<LevelCreator>().lookingForHint = false;
+                    yield break;
+                }
+                else if (movesForEachState[0].Count < indexForState[0] + 1)
+                {
+                    Debug.LogError("no win");
+                    Debug.Log(iteration);
+                    solvable = false;
+                    resetFlash.SetActive(true);
+                    noSolution.Activate(5f);
+                    gameObject.GetComponent<LevelCreator>().lookingForHint = false;
+                    yield break;
+                    
                 }
 
+                possibleMoves = movesForEachState[movesForEachState.Count - 1];
+                indexForState[indexForState.Count - 1]++;
 
                 currentState = CopyBoard(statesMade[statesMade.Count - 1]);
                 // Create a copy of current state
@@ -228,10 +247,13 @@ public class LevelSolver : MonoBehaviour
             {
                 Debug.LogError(movesForEachState[0].Count + "   " + indexForState[0]);
                 Debug.LogError("no solution");
+                resetFlash.SetActive(true);
+                noSolution.Activate(5f);
+                gameObject.GetComponent<LevelCreator>().lookingForHint = false;
                 original = "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
                 solvable = false;
-                //gameObject.GetComponent<LevelCreator>().challengeSolvability.Add(false);
-                yield return null;
+
+                yield break;
 
             }
 
@@ -304,23 +326,6 @@ public class LevelSolver : MonoBehaviour
         }
 
         return true;
-
-        /*for (int i = 0; i < first.Count; ++i)
-        {
-            for (int ii = 0; ii < first[i].Count; ++ii)
-            {
-                if (first[i][ii] != second[i][ii])
-                {
-                    return false;
-
-                }
-
-
-
-            }
-        }
-
-        return true;*/
     }
 
     void MakeMove(List<List<int>> initial, Vector2 move)

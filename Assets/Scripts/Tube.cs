@@ -35,6 +35,8 @@ public class Tube : MonoBehaviour
 
     public GameObject ballPrefab;
 
+    public int siblingIndex = 0;
+
     // Start is called before the first frame update
 
     void Awake()
