@@ -527,6 +527,7 @@ MonoBehaviour:
   mats:
   - {fileID: 2100000, guid: e804aee6221eccc41aa7f59c20633b86, type: 2}
   - {fileID: 2100000, guid: cacda47b3d0bd454da442d685c609552, type: 2}
+  StartButton: {fileID: 0}
 --- !u!1 &568258510
 GameObject:
   m_ObjectHideFlags: 0

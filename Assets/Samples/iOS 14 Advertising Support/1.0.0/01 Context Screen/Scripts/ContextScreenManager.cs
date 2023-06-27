@@ -41,21 +41,19 @@ namespace Unity.Advertisement.IosSupport.Samples
 
         private IEnumerator LoadNextScene()
         {
-#if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS
             var status = ATTrackingStatusBinding.GetAuthorizationTrackingStatus();
 
             while (status == ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED)
             {
+                Debug.Log("requesting");
                 status = ATTrackingStatusBinding.GetAuthorizationTrackingStatus();
                 yield return null;
             }
 #endif
             if (PlayerPrefs.HasKey("Tutorial"))
             {
-                if (PlayerPrefs.GetInt("Tutorial") == 1)
-                {
-                    SceneManager.LoadScene(2);
-                }
+                SceneManager.LoadScene(2);
             }
             SceneManager.LoadScene(1);
             yield return null;

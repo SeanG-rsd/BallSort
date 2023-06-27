@@ -22,6 +22,8 @@ public class TutorialManager : MonoBehaviour
 
     List<List<int>> level = new List<List<int>>();
 
+    public Button StartButton;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -247,17 +249,13 @@ public class TutorialManager : MonoBehaviour
 
     public void Win()
     {
-        
 
+        StartButton.interactable = true;
         win = true;
     }
 
     public void StartGame()
     {
-        if (win)
-        {
-            
-            SceneManager.LoadScene(2);
-        }
+        SceneManager.LoadScene(2);
     }
 }
