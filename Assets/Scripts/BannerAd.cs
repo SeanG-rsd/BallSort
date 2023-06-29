@@ -81,7 +81,7 @@ public class BannerAd : MonoBehaviour
         // Set up options to notify the SDK of show events:
         BannerOptions options = new BannerOptions
         {
-            clickCallback = OnBannerClicked,
+            
             hideCallback = OnBannerHidden,
             showCallback = OnBannerShown
         };
@@ -89,15 +89,6 @@ public class BannerAd : MonoBehaviour
         // Show the loaded Banner Ad Unit:
         Advertisement.Banner.Show(_adUnitId, options);
     }
-
-    // Implement a method to call when the Hide Banner button is clicked:
-    void HideBannerAd()
-    {
-        // Hide the banner:
-        Advertisement.Banner.Hide();
-    }
-
-    void OnBannerClicked() { }
     void OnBannerShown() { }
     void OnBannerHidden() { }
 
