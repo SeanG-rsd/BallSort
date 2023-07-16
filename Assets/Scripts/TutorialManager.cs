@@ -14,8 +14,6 @@ public class TutorialManager : MonoBehaviour
     public bool clickState;
     public GameObject firstTubeClicked;
 
-    bool win;
-
     public List<Material> mats;
 
     private int InvalidIndex = -1;
@@ -251,7 +249,6 @@ public class TutorialManager : MonoBehaviour
     {
 
         StartButton.interactable = true;
-        win = true;
     }
 
     public void StartGame()

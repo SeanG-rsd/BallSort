@@ -772,8 +772,11 @@ public class LevelCreator : MonoBehaviour
 
         for (int i = 0; i < challengeSpots.Count; i++)
         {
-            challengeSpots[i].transform.GetChild(0).gameObject.GetComponent<Button>().interactable = false;
+            //challengeSpots[i].transform.GetChild(0).gameObject.GetComponent<Button>().interactable = false;
+            Destroy(challengeSpots[i]);
         }
+
+        challengeSpots.Clear();
 
 
 
@@ -1004,7 +1007,7 @@ public class LevelCreator : MonoBehaviour
         if (requirementBox.activeSelf) { requirementText.text = "Complete levels " + levelButtons[currentLevelPage - 1][0].GetComponent<ChooseButton>().levelValue + "-" + levelButtons[currentLevelPage - 1][levelButtons[currentLevelPage - 1].Count - 1].GetComponent<ChooseButton>().levelValue + " to unlock"; }
     }
 
-    bool CheckRequirement(int page)
+    bool CheckRequirement(int page) // checks if a certain page has been completed or not
     {
         if (page != 0)
         {
@@ -1067,19 +1070,44 @@ public class LevelCreator : MonoBehaviour
     public void PageRightFar()
     {
         int cp = currentLevelPage;
-        
+        bool exit = false;
 
-        while (!CheckRequirement(currentLevelPage))
+        while (!exit)
         {
-            currentLevelPage++;
+            if (cp < levelButtons.Count - 1)
+            {
+                if (!CheckRequirement(cp))
+                {
+                    cp++;
+                }
+                else { exit = true; }
+            }
+            else { exit = true; }
         }
-        Debug.Log(cp + " " + currentLevelPage);
-        if (currentLevelPage == cp + 1) { currentLevelPage = levelButtons.Count; }
-        
+
+        if (cp == currentLevelPage + 1 || cp == currentLevelPage)
+        {
+            cp = levelButtons.Count - 1;
+        }
+        else
+        {
+            Debug.Log($"{cp} is not current page: {currentLevelPage}");
+        }
+
+        if (cp != levelButtons.Count - 1)
+        {
+            cp--;
+        }
 
 
-        currentLevelPage--;
-        if (cp + 1 > currentLevelPage) { currentLevelPage = levelButtons.Count - 1; }
+        if (cp > levelButtons.Count - 1)
+        {
+            cp = levelButtons.Count - 1;
+        }
+
+
+        currentLevelPage = cp;
+        //if (cp + 1 > currentLevelPage) { currentLevelPage = levelButtons.Count - 1; }
         UpdateListPage();
         UpdatePageButtons();
     }
@@ -1181,6 +1209,10 @@ public class LevelCreator : MonoBehaviour
                 
                 winNextButton.interactable = false;
                 
+            }
+            else
+            {
+                winNextButton.interactable = true;
             }
         }
         else if (inChallenge)
@@ -1333,9 +1365,81 @@ public class LevelCreator : MonoBehaviour
                         }
 
                     }
-
-
-                    
+                    if (!PlayerPrefs.HasKey("FIXTUBES"))
+                    {
+                        if (add > 988)
+                        {
+                            add -= 18;
+                        }
+                        else if (add > 947)
+                        {
+                            add -= 17;
+                        }
+                        else if (add > 874)
+                        {
+                            add -= 16;
+                        }
+                        else if (add > 857)
+                        {
+                            add -= 15;
+                        }
+                        else if (add > 834)
+                        {
+                            add -= 14;
+                        }
+                        else if (add > 712)
+                        {
+                            add -= 13;
+                        }
+                        else if (add > 708)
+                        {
+                            add -= 12;
+                        }
+                        else if (add > 634)
+                        {
+                            add -= 11;
+                        }
+                        else if (add > 569)
+                        {
+                            add -= 10;
+                        }
+                        else if (add > 553)
+                        {
+                            add -= 9;
+                        }
+                        else if (add > 437)
+                        {
+                            add -= 8;
+                        }
+                        else if (add > 353)
+                        {
+                            add -= 7;
+                        }
+                        else if (add > 347)
+                        {
+                            add -= 6;
+                        }
+                        else if (add > 332)
+                        {
+                            add -= 5;
+                        }
+                        else if (add > 269)
+                        {
+                            add -= 4;
+                        }
+                        else if (add > 173)
+                        {
+                            add -= 3;
+                        }
+                        else if (add > 139)
+                        {
+                            add -= 2;
+                        }
+                        else if (add > 50)
+                        {
+                            add -= 1;
+                        }
+                    }
 
                     completed.Add(add);
                     
@@ -1345,6 +1449,7 @@ public class LevelCreator : MonoBehaviour
             }
 
             PlayerPrefs.SetInt("o", 0);
+            PlayerPrefs.SetInt("FIXTUBES", 0);
         }
 
         
@@ -1514,6 +1619,8 @@ public class LevelCreator : MonoBehaviour
                         
                         loadLevel = new List<List<int>>();
 
+                        
+
                         level = "";
                         
                     }
@@ -1621,5 +1728,18 @@ public class LevelCreator : MonoBehaviour
         
         return solvable;
         
+    }
+
+    public void AddPageToCompleted()
+    {
+        for (int j = 0; j < levelButtons.Count; ++j)
+        {
+            for (int i = 0; i < levelButtons[j].Count; ++i)
+            {
+                levelButtons[j][i].GetComponent<Image>().color = completedMat.color;
+            }
+        }
+
+        UpdateCompleted();
     }
 }

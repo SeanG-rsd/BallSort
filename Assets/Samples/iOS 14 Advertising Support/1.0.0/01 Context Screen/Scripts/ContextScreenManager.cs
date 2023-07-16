@@ -53,9 +53,13 @@ namespace Unity.Advertisement.IosSupport.Samples
 #endif
             if (PlayerPrefs.HasKey("Tutorial"))
             {
-                SceneManager.LoadScene(2);
+                SceneManager.LoadScene("MainScene");
             }
-            SceneManager.LoadScene(1);
+            else
+            {
+                SceneManager.LoadScene("Tutorial");
+                Debug.Log("loaded tutorial");
+            }
             yield return null;
         }
     }   

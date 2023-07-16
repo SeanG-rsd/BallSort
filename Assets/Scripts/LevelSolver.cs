@@ -114,9 +114,9 @@ public class LevelSolver : MonoBehaviour
             // If the number of moves in the last state is greater than the index of the last state then create a new state
             if (movesForEachState[movesForEachState.Count - 1].Count >= indexForState[indexForState.Count - 1] + 1)
             {
-                Debug.Log("move");
-                Debug.Log(possibleMoves[indexForState[indexForState.Count - 1]]);
-                Debug.Log(possibleMoves.Count);
+                //Debug.Log("move");
+                //Debug.Log(possibleMoves[indexForState[indexForState.Count - 1]]);
+                //Debug.Log(possibleMoves.Count);
 
                 // make a move on currentState based on the index of its possible moves and edit current state
                 MakeMove(currentState, possibleMoves[indexForState[indexForState.Count - 1]]);
@@ -129,7 +129,7 @@ public class LevelSolver : MonoBehaviour
                 {
                     if (CheckIfEqualStates(statesVisited[j], currentState))
                     {
-                        Debug.Log("same");
+                        //Debug.Log("same");
                         OutputState(statesVisited[j]);
                         OutputState(currentState);
                         indexForState[indexForState.Count - 1]++;
@@ -189,8 +189,8 @@ public class LevelSolver : MonoBehaviour
             {
                 // if there are no moves then remove the last item in each list and get the new moves for the new last state
 
-                Debug.Log("no moves on current state");
-                Debug.Log(movesForEachState[movesForEachState.Count - 1].Count + "   " + indexForState[indexForState.Count - 1]);
+                //Debug.Log("no moves on current state");
+                //Debug.Log(movesForEachState[movesForEachState.Count - 1].Count + "   " + indexForState[indexForState.Count - 1]);
 
                 statesMade.RemoveAt(statesMade.Count - 1);
 
@@ -233,7 +233,7 @@ public class LevelSolver : MonoBehaviour
                 // step backwards if the last "same" portion was not triggered ^^ and do not step backwards if it was triggered
                 same = false;
                 stepBack = true;
-                Debug.Log("removed last index.");
+                //Debug.Log("removed last index.");
                 OutputState(currentState);
 
                 
@@ -450,7 +450,7 @@ public class LevelSolver : MonoBehaviour
             level += "\n";
         }
 
-        Debug.Log(level);
+        //Debug.Log(level);
     }
 
     int NumBallInTube(List<List<int>> initial, int tube)

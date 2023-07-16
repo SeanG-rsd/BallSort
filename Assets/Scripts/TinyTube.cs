@@ -77,10 +77,15 @@ public class TinyTube : MonoBehaviour
                     ball.transform.localPosition = Vector3.zero;
                     ball.transform.localScale = Vector3.one;
                 }
-                else if (i == 0)
+                else if (i == 0 && transform.GetChild(i).childCount != 0)
                 {
-                    Destroy(transform.GetChild(i).GetChild(0).gameObject);
+                    
                 }
+            }
+            else if (spots[i] == 0 && transform.GetChild(i).childCount != 0)
+            {
+                Destroy(transform.GetChild(i).GetChild(0).gameObject);
+                Debug.Log("destory");
             }
 
         }
@@ -92,11 +97,10 @@ public class TinyTube : MonoBehaviour
         for (int i = 0; i < spots.Count; i++)
         {
             spots[i] = 0;
-            if (spotObjects[i].transform.childCount != 0)
-            {
-                Destroy(spotObjects[i].transform.GetChild(i).gameObject);
-            }
+
         }
+
+        ResetSelf();
     }
 
 

@@ -75,6 +75,7 @@ public class Tube : MonoBehaviour
     {
         
         spots[where] = given;
+        Debug.Log("set spot");
     }
 
     // Update is called once per frame
@@ -387,14 +388,16 @@ public class Tube : MonoBehaviour
 
     public void ResetSelf()
     {
-        //Debug.Log("reset self");
+        Debug.Log("reset self");
         for (int i = 0; i < spots.Count; ++i)
         {
             if (spots[i] != 0)
             {
                 GameObject ball = Instantiate(ballPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                Debug.Log("made ball");
                 ball.GetComponent<Image>().color = gm.GetComponent<LevelCreator>().mats[spots[i] - 1].color;
                 ball.tag = "C" + spots[i].ToString();
+                ballObjects[i] = ball;
 
                 if (transform.GetChild(i).childCount == 0 && i != 0)
                 {
@@ -410,10 +413,14 @@ public class Tube : MonoBehaviour
                     ball.transform.localPosition = Vector3.zero;
                     ball.transform.localScale = Vector3.one;
                 }
-                else if (i == 0)
+                else if (i == 0 && transform.GetChild(i).childCount != 0)
                 {
                     Destroy(transform.GetChild(i).GetChild(0).gameObject);
                 }
+            }
+            else
+            {
+                Debug.Log("empty spot");
             }
             
         }

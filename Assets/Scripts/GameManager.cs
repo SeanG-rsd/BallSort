@@ -32,7 +32,6 @@ public class GameManager : MonoBehaviour
     public GameObject modeButton;
     public TMP_Text modeButtonText;
     public List<GameObject> undoTubes = new List<GameObject>();
-    private int firstUndoTube;
     public GameObject moveHolder;
     public bool canUndo;
     public List<List<GameObject>> undoHolster = new List<List<GameObject>>();
@@ -64,8 +63,6 @@ public class GameManager : MonoBehaviour
 
     public Popup NoMovesLeftBox;
     public float noMoveTime;
-    float noMoveTimer;
-    bool noMoves;
 
     bool win;
     static float winTime = 1.0f;
@@ -111,7 +108,6 @@ public class GameManager : MonoBehaviour
         insult.SetActive(false);
         SettingsScreen.SetActive(false);
         insultTimer = insultTime;
-        noMoveTimer = noMoveTime;
         winTimer = winTime;
         //ModeChange();
         OpenMenuNum(1);
@@ -184,7 +180,7 @@ public class GameManager : MonoBehaviour
             undosLeftCoin.SetActive(true);
             undosLeftText.text = "     " + undoCost.ToString();
         }
-        TTTExt.text = "     " + TinyTubeCost.ToString();
+        TTTExt.text = TinyTubeCost.ToString();
 
         List<GameObject> testTubes = new List<GameObject>();
 
@@ -201,7 +197,7 @@ public class GameManager : MonoBehaviour
             Destroy(tubes[i]);
             
 
-            clickState = false;
+            
             
         }
 
@@ -209,9 +205,10 @@ public class GameManager : MonoBehaviour
         tubes = testTubes;
 
         //menuNum = 2;
-        
+        TinyTube.GetComponent<TinyTube>().ClearTube();
 
         canUndo = false;
+        clickState = false;
 
         for (int i = 0; i < moveHolder.transform.childCount; ++i)
         {
@@ -783,7 +780,7 @@ public class GameManager : MonoBehaviour
                     test.GetComponent<Tube>().SetSpot(undoTubes[i].GetComponent<Tube>().spots[ii], ii);
                 }
                 test.GetComponent<Tube>().ResetSelf();
-                
+                Debug.Log("set tube");
 
 
                 testTubes.Add(test);
