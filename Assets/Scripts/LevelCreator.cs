@@ -19,9 +19,9 @@ public class LevelCreator : MonoBehaviour
 
     public List<Material> mats;
 
-    int lastLevelLoaded = 0;
+    public int lastLevelLoaded = 0;
 
-    public List<List<List<int>>> levels = new List<List<List<int>>>(); // a list of level
+    List<List<List<int>>> levels = new List<List<List<int>>>(); // a list of level
 
     public List<int> chosen;
 
@@ -32,8 +32,6 @@ public class LevelCreator : MonoBehaviour
     public GameObject chooseButtonPrefab;
 
     public GameObject saveButton;
-
-    GameObject button;
 
     public GameObject pageLeftButton;
     public GameObject pageRightButton;
@@ -47,8 +45,8 @@ public class LevelCreator : MonoBehaviour
 
     public Material completedMat;
     public Material blankMat;
-    public string completedSave = "";
-    List<int> completed = new List<int>();
+    string completedSave = "";
+    public List<int> completed = new List<int>();
 
     public TextAsset textfile;
 
@@ -82,6 +80,12 @@ public class LevelCreator : MonoBehaviour
     public GameObject challengeRequirement;
     bool startChallenge;
     public List<bool> challengeSolvability = new List<bool>();
+
+    public GameObject challengeWinScreen;
+    public TMP_Text challengeWinRecordText;
+    public TMP_Text challengeWinTimeText;
+    public int challengeWinCoins;
+    public TMP_Text challengeWinCoinText;
 
     public GameObject requirementBox;
     public TMP_Text requirementText;
@@ -186,17 +190,10 @@ public class LevelCreator : MonoBehaviour
 
             if (BeatChallenge())
             {
-                
                 inChallenge = false;
-                
-                
                 SaveChallengeTime();
-                //Debug.LogWarning("beat challenge");
-                GiveUpChallenge();
             }
         }
-
-        //Debug.Log("Level Count: " + levels.Count);
 
     }
 
@@ -811,9 +808,6 @@ public class LevelCreator : MonoBehaviour
             PlayerPrefs.SetFloat("ChallengeTime", challengeTime); 
         }
         else { PlayerPrefs.SetFloat("ChallengeTime", loadedChallengeTime); }
-        //Debug.Log(PlayerPrefs.GetFloat("ChallengeTime"));
-        PlayerPrefs.Save();
-        //Debug.Log("Game data saved!");
     }
 
     string OrganizeChallengeTime(float time)
@@ -1220,14 +1214,29 @@ public class LevelCreator : MonoBehaviour
             winCoinText.text = "Challenge " + (lastLevelLoaded + 1).ToString() + " completed";
             if (!BeatLastChallengeLevel()) { winCoinText.text = "You've Already Beat This Challenge Level!"; }
             BeatLastChallengeLevel();
-            if (lastLevelLoaded >= challengeLevels.Count - 1)
+            if (BeatChallenge())
             {
-                winNextButton.interactable = false;
                 winCoinText.text = "You've Beat The Challenge!";
             }
         }
 
         
+    }
+
+    private void WinChallengeScreen()
+    {
+        challengeWinScreen.SetActive(true);
+        challengeWinCoinText.text = $"+ {challengeWinCoins} Coins!";
+        challengeWinRecordText.text = $"Record: {OrganizeChallengeTime(PlayerPrefs.GetFloat("ChallengeTime"))}";
+        challengeWinTimeText.text = $"Time: {OrganizeChallengeTime(challengeTime)}";
+
+        coins += challengeWinCoins;
+    }
+
+    public void EndChallenge()
+    {
+        challengeWinScreen.SetActive(false);
+        GiveUpChallenge();
     }
 
     public void WinNext()
@@ -1237,9 +1246,32 @@ public class LevelCreator : MonoBehaviour
 
         if (!inChallenge)
         {
-            if (lastLevelLoaded < levels.Count) { LoadLevel(lastLevelLoaded + 1); }
+            if (lastLevelLoaded < levels.Count)
+            {
+                for (int i = 1; i < 100;  i++)
+                {
+                    int test = lastLevelLoaded + i;
+                    if (!completed.Contains(test))
+                    {
+                        LoadLevel(test - 1);
+                        break;
+                    }
+                }
+                LoadLevel(lastLevelLoaded + 1);
+                
+            }
         }
-        else if (inChallenge) { if (lastLevelLoaded < challengeLevels.Count - 1) { LoadChallengeLevel(lastLevelLoaded + 1); } }
+        else if (inChallenge && BeatChallenge())
+        {
+            WinChallengeScreen();
+        }
+        else if (inChallenge)
+        {
+            if (lastLevelLoaded < challengeLevels.Count - 1)
+            {
+                LoadChallengeLevel(lastLevelLoaded + 1); 
+            }
+        }
 
         winScreen.SetActive(false);
     }
@@ -1333,7 +1365,7 @@ public class LevelCreator : MonoBehaviour
         }
         //else { Debug.LogWarning("There is no save data"); }
 
-        List<int> completed = new List<int>();
+        List<int> getCompleted = new List<int>();
         string set = "";
 
         if (completedSave.Length > 0)
@@ -1441,7 +1473,7 @@ public class LevelCreator : MonoBehaviour
                         }
                     }
 
-                    completed.Add(add);
+                    getCompleted.Add(add);
                     
                     set = "";
                     //Debug.Log(completed.Count);
@@ -1452,16 +1484,16 @@ public class LevelCreator : MonoBehaviour
             PlayerPrefs.SetInt("FIXTUBES", 0);
         }
 
-        
+        completed = getCompleted;
 
-        for (int index = 0; index < completed.Count; ++index)
+        for (int index = 0; index < getCompleted.Count; ++index)
         {
             //Debug.Log("complete load: " + completed[index]);
             for (int i = 0; i < levelButtons.Count; ++i)
             {
                 for (int ii = 0; ii < levelButtons[i].Count; ++ii)
                 {
-                    if (levelButtons[i][ii].GetComponent<ChooseButton>().levelValue == completed[index])
+                    if (levelButtons[i][ii].GetComponent<ChooseButton>().levelValue == getCompleted[index])
                     {
                         //Debug.Log("loadedCom: " + index);
                         levelButtons[i][ii].GetComponent<Image>().color = completedMat.color;
@@ -1732,7 +1764,7 @@ public class LevelCreator : MonoBehaviour
 
     public void AddPageToCompleted()
     {
-        for (int j = 0; j < levelButtons.Count; ++j)
+        for (int j = 0; j < 20; ++j)
         {
             for (int i = 0; i < levelButtons[j].Count; ++i)
             {
