@@ -118,6 +118,8 @@ public class LevelCreator : MonoBehaviour
     public bool lookingForHint = false;
     public int hintCost;
 
+    public int loadingLevelNum;
+
 
     // Start is called before the first frame update
     void Start()
@@ -264,7 +266,7 @@ public class LevelCreator : MonoBehaviour
         AddToDatabase(levels.Count - 1);
         WriteLevels("Assets/Resources/Levels.txt");
 
-        ResetMaker();
+        ResetMaker(12);
 
     }
 
@@ -315,16 +317,13 @@ public class LevelCreator : MonoBehaviour
         return true;
     }
 
-    public void ResetMaker() // reset the dropdowns for the level maker
+    public void ResetMaker(int tubeCount) // reset the dropdowns for the level maker
     {
-        for (int i = 0; i < tubes.Count; ++i)
-        {
-            chosen[i] = 0;
+        chosen.Clear();
 
-            for (int ii = 0; ii < tubes[i].transform.childCount; ++ii)
-            {
-                tubes[i].transform.GetChild(ii).gameObject.GetComponent<TMP_Dropdown>().value = 0;
-            }
+        for (int i = 0; i < tubeCount; ++i)
+        {
+            chosen.Add(0);
         }
     }
 
@@ -332,7 +331,7 @@ public class LevelCreator : MonoBehaviour
     {
         for (int i = 0; i < genXLevels; ++i)
         {
-            List<List<int>> newLevel = GenerateLevel(i);
+            List<List<int>> newLevel = GenerateLevel(i, 10);
             if (newLevel != null)
             {
                 levels.Add(newLevel);
@@ -351,11 +350,11 @@ public class LevelCreator : MonoBehaviour
         
     }
 
-    List<int> FindPossibleChoices()
+    List<int> FindPossibleChoices(int tubeCount)
     {
         List<int> choices = new List<int>();
 
-        for (int i = 0; i < chosen.Count; ++i)
+        for (int i = 0; i < tubeCount; ++i)
         {
             if (chosen[i] < 4)
             {
@@ -382,18 +381,18 @@ public class LevelCreator : MonoBehaviour
         return true;
     }
 
-    List<List<int>> GenerateLevel(int index)
+    List<List<int>> GenerateLevel(int index, int tubeCount)
     {
         
 
-        ResetMaker();
+        ResetMaker(tubeCount);
 
         if (!FinishedMaking())
         {
             
-            List<List<int>> newLevel = new List<List<int>>(12);
+            List<List<int>> newLevel = new List<List<int>>(tubeCount);
 
-            for (int ii = 0; ii < 12; ii++)
+            for (int ii = 0; ii < tubeCount; ii++)
             {
 
 
@@ -402,7 +401,7 @@ public class LevelCreator : MonoBehaviour
                 
                 for (int i = 0; i < 4; ++i)
                 {
-                    List<int> choices = FindPossibleChoices();
+                    List<int> choices = FindPossibleChoices(tubeCount);
                     
 
                     int add = UnityEngine.Random.Range(0, choices.Count);
@@ -419,7 +418,7 @@ public class LevelCreator : MonoBehaviour
                 if (CompletedTube(newTube))
                 {
                     Debug.Log("error");
-                    GenerateLevel(index);
+                    GenerateLevel(index, tubeCount);
                     return null;
                 }
                 newLevel.Add(newTube);
@@ -442,7 +441,7 @@ public class LevelCreator : MonoBehaviour
                 if (!output)
                 {
                     Debug.Log("no solution");
-                    GenerateLevel(index);
+                    GenerateLevel(index, tubeCount);
                 }
                 return newLevel;
                 
@@ -518,7 +517,7 @@ public class LevelCreator : MonoBehaviour
         challengeLevels.Clear();
         for (int i = 0; i < LPP; ++i)
         {
-            List<List<int>> newLevel = GenerateLevel(i);
+            List<List<int>> newLevel = GenerateLevel(i, 12);
             challengeLevels.Add(newLevel);
         }
 
@@ -1114,6 +1113,10 @@ public class LevelCreator : MonoBehaviour
         gameManager.undoHolster.Clear();
         gameManager.TTHolster.Clear();
         Debug.LogWarning("Loaded Level " + index);
+
+        gameManager.SetResetTubes(levels[index].Count);
+        gameManager.ResetGame();
+
         List<GameObject> Gametubes = gameObject.GetComponent<GameManager>().tubes;
 
         levelNumText.text = "Level " + (index + 1).ToString();
@@ -1652,7 +1655,7 @@ public class LevelCreator : MonoBehaviour
                         loadTube = new List<int>();
                     }
 
-                    if (loadLevel.Count == 12)
+                    if (loadLevel.Count > 0)
                     {
                         List<List<int>> newLevel = new List<List<int>>();
 
@@ -1761,15 +1764,15 @@ public class LevelCreator : MonoBehaviour
         }
 
         solvePoint.Add(new List<int>());
-        solvePoint[12].Add(0);
-        solvePoint[12].Add(0);
-        solvePoint[12].Add(0);
-        solvePoint[12].Add(0);
+        solvePoint[solvePoint.Count - 1].Add(0);
+        solvePoint[solvePoint.Count - 1].Add(0);
+        solvePoint[solvePoint.Count - 1].Add(0);
+        solvePoint[solvePoint.Count - 1].Add(0);
         solvePoint.Add(new List<int>());
-        solvePoint[13].Add(0);
-        solvePoint[13].Add(0);
-        solvePoint[13].Add(0);
-        solvePoint[13].Add(0);
+        solvePoint[solvePoint.Count - 1].Add(0);
+        solvePoint[solvePoint.Count - 1].Add(0);
+        solvePoint[solvePoint.Count - 1].Add(0);
+        solvePoint[solvePoint.Count - 1].Add(0);
 
         solvable = gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, index);
         
@@ -1779,7 +1782,7 @@ public class LevelCreator : MonoBehaviour
 
     public void AddPageToCompleted()
     {
-        for (int j = 0; j < 20; ++j)
+        for (int j = 0; j < levelButtons.Count; ++j)
         {
             for (int i = 0; i < levelButtons[j].Count; ++i)
             {

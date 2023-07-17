@@ -32,13 +32,18 @@ public class Ball : MonoBehaviour
 
     public int destinationSpot;
 
+    private Transform moveSpace;
+    private Transform tubeSpace;
+
     // Start is called before the first frame update
     void Start()
     {
         gameManager = GameObject.Find("GameManager");
         tutorialManager = GameObject.Find("Manager");
+        tubeSpace = gameManager.GetComponent<GameManager>().tubeContainer;
 
-        
+        moveSpace = transform.parent.parent.parent.parent;
+        //tubeSpace = transform.parent.parent;
 
     }
 
@@ -63,12 +68,17 @@ public class Ball : MonoBehaviour
         targetSpot = targetTube.transform.GetChild(spotIndex).gameObject;
         
         targetPoint = FindPoint();
+
+        Debug.Log(topPoint);
+        Debug.Log(secondPoint);
+        Debug.Log(targetPoint);
     }
 
     Vector3 FindPoint()
     {
+
         GameObject extraTop = lastTube.transform.GetChild(0).gameObject;
-        topPoint = extraTop.transform.parent.localPosition + extraTop.transform.localPosition;
+        topPoint = extraTop.transform.parent.localPosition + extraTop.transform.localPosition + tubeSpace.localPosition;
 
         if (targetSpot.transform.parent == transform.parent.parent)
         {
@@ -80,12 +90,13 @@ public class Ball : MonoBehaviour
             thisIndex = transform.parent.parent.GetSiblingIndex();
             
             
-            transform.SetParent(transform.parent.parent.parent);
+            transform.SetParent(moveSpace);
 
             //transform.localScale = Vector3.one;
             //Debug.Log(transform.localPosition);
             if (Vector3.Distance(transform.localPosition, topPoint) > 15.0f)
             {
+                Debug.Log(transform.position);
                 hasBeenAtTop = false;
             }
             else
@@ -93,7 +104,7 @@ public class Ball : MonoBehaviour
                 hasBeenAtTop = true;
             }
 
-            targetPoint = targetSpot.transform.parent.localPosition + targetSpot.transform.localPosition;
+            targetPoint = targetSpot.transform.parent.localPosition + targetSpot.transform.localPosition + tubeSpace.localPosition;
             if (!tutorial)
             {
                 SetSecondPoint();
@@ -121,12 +132,12 @@ public class Ball : MonoBehaviour
         else if (index < 8 && thisIndex > 7 && index != -2)
         {
             secondPoint.x = targetPoint.x;
-            secondPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y;
+            secondPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y + tubeSpace.localPosition.y;
             secondPoint.z = targetPoint.z;
 
             topPoint.x = transform.localPosition.x;
 
-            topPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y;
+            topPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y + tubeSpace.localPosition.y;
             topPoint.z = targetPoint.z;
 
             //Debug.LogWarning("b to t");
@@ -136,12 +147,12 @@ public class Ball : MonoBehaviour
         else if (index == tinyTubeIndex)
         {
             secondPoint.x = targetPoint.x;
-            secondPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y;
+            secondPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y + tubeSpace.localPosition.y;
             secondPoint.z = targetPoint.z;
 
             topPoint.x = transform.localPosition.x;
 
-            topPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y;
+            topPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y + tubeSpace.localPosition.y;
             topPoint.z = targetPoint.z;
 
             //Debug.LogWarning("b to t");

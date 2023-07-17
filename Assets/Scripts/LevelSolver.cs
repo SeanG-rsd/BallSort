@@ -438,7 +438,7 @@ public class LevelSolver : MonoBehaviour
 
         for (int i = 0; i < 4; ++i)
         {
-            for (int ii = 0; ii < 14; ++ii)
+            for (int ii = 0; ii < state.Count; ++ii)
             {
                 level = level + state[ii][i].ToString() + " ";
                 if (state[ii][i] < 10) 

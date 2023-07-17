@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public List<GameObject> resetTubes = new List<GameObject>();
     
     public GameObject fullTubePrefab;
+    public GameObject emptyTubePrefab;
 
     public GameObject undoButton;
     public GameObject modeButton;
@@ -101,6 +102,8 @@ public class GameManager : MonoBehaviour
     public GameObject hintButton;
     public TMP_Text hintCostText;
 
+    public Transform tubeContainer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -159,6 +162,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SetResetTubes(int tubeCount)
+    {
+        resetTubes.Clear();
+
+        for (int i = 0; i < tubeCount; ++i)
+        {
+            resetTubes.Add(fullTubePrefab);
+        }
+
+        resetTubes.Add(emptyTubePrefab);
+        resetTubes.Add(emptyTubePrefab);
+    }
+
     public void ResetGame()
     {
         solveText.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = "";
@@ -188,17 +204,17 @@ public class GameManager : MonoBehaviour
         {
             GameObject test = Instantiate(resetTubes[i], new Vector3(0, 0, 0), Quaternion.identity);
 
-            test.transform.SetParent(gameScreen.transform.GetChild(0));
+            test.transform.SetParent(tubeContainer);
 
             test.GetComponent<Tube>().siblingIndex = i;
             test.transform.position = tubes[i].transform.position;
             test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);         
             testTubes.Add(test);
-            Destroy(tubes[i]);
-            
+        }
 
-            
-            
+        for (int i = 0; i < tubes.Count; ++i)
+        {
+            Destroy(tubes[i]);
         }
 
         tubes.Clear();
