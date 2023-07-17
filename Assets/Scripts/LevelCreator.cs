@@ -65,6 +65,7 @@ public class LevelCreator : MonoBehaviour
     public float challengeTime;
     public float loadedChallengeTime;
     public bool inChallenge;
+    private bool finishedChallenge = false;
     
     public TMP_Text challengeTimeTextGame;
     public TMP_Text challengeTimeTextList;
@@ -100,6 +101,9 @@ public class LevelCreator : MonoBehaviour
     public List<GameObject> confettiSpots;
     public TMP_Text winCoinText;
     public Button winNextButton;
+    public Button levelsPageButton;
+
+    public Button goToWinChallengeButton;
 
     GameManager gameManager;
 
@@ -181,7 +185,7 @@ public class LevelCreator : MonoBehaviour
             loadingIcon.SetActive(false);
         }
 
-        if (inChallenge && startChallenge)
+        if (inChallenge && startChallenge && !finishedChallenge)
         {
             challengeTime += Time.deltaTime;
             
@@ -190,8 +194,8 @@ public class LevelCreator : MonoBehaviour
 
             if (BeatChallenge())
             {
-                inChallenge = false;
                 SaveChallengeTime();
+                finishedChallenge = true;
             }
         }
 
@@ -767,6 +771,8 @@ public class LevelCreator : MonoBehaviour
         challengeSolvability.Clear();
         generatingChallenge = false;
 
+        StopAllCoroutines();
+
         for (int i = 0; i < challengeSpots.Count; i++)
         {
             //challengeSpots[i].transform.GetChild(0).gameObject.GetComponent<Button>().interactable = false;
@@ -775,13 +781,10 @@ public class LevelCreator : MonoBehaviour
 
         challengeSpots.Clear();
 
-
-
-        challengeTimeTextGame.text = OrganizeChallengeTime(challengeTime).ToString();
-        challengeTimeTextList.text = OrganizeChallengeTime(challengeTime).ToString();
-
         UpdateListPage();
         UpdatePageButtons();
+
+        WinLevels();
     }
 
     bool BeatChallenge()
@@ -1217,25 +1220,41 @@ public class LevelCreator : MonoBehaviour
             if (BeatChallenge())
             {
                 winCoinText.text = "You've Beat The Challenge!";
+                winNextButton.gameObject.SetActive(false);
+                levelsPageButton.gameObject.SetActive(false);
+
+                goToWinChallengeButton.gameObject.SetActive(true);
             }
         }
 
         
     }
 
-    private void WinChallengeScreen()
+    public void WinChallengeScreen()
     {
         challengeWinScreen.SetActive(true);
         challengeWinCoinText.text = $"+ {challengeWinCoins} Coins!";
-        challengeWinRecordText.text = $"Record: {OrganizeChallengeTime(PlayerPrefs.GetFloat("ChallengeTime"))}";
+
+        loadedChallengeTime = PlayerPrefs.GetFloat("ChallengeTime");
+        float roundedTime = Mathf.Round(loadedChallengeTime * 100) / 100;
+        
+
+        challengeWinRecordText.text = $"Record: {OrganizeChallengeTime(roundedTime)}";
         challengeWinTimeText.text = $"Time: {OrganizeChallengeTime(challengeTime)}";
 
         coins += challengeWinCoins;
+        finishedChallenge = false;
     }
 
     public void EndChallenge()
     {
         challengeWinScreen.SetActive(false);
+
+        winNextButton.gameObject.SetActive(true);
+        levelsPageButton.gameObject.SetActive(true);
+
+        goToWinChallengeButton.gameObject.SetActive(false);
+
         GiveUpChallenge();
     }
 
@@ -1260,10 +1279,6 @@ public class LevelCreator : MonoBehaviour
                 LoadLevel(lastLevelLoaded + 1);
                 
             }
-        }
-        else if (inChallenge && BeatChallenge())
-        {
-            WinChallengeScreen();
         }
         else if (inChallenge)
         {
