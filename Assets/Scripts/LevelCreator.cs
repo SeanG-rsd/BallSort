@@ -1018,7 +1018,7 @@ public class LevelCreator : MonoBehaviour
     void UpdatePageButtons()
     {
 
-        pageNumText.text = (currentLevelPage + 1).ToString() + " / " + (levelButtons.Count).ToString();
+        pageNumText.text = (currentLevelPage + 1).ToString();
 
         if (currentLevelPage == 0)
         { 
@@ -1275,12 +1275,11 @@ public class LevelCreator : MonoBehaviour
                     int test = lastLevelLoaded + i;
                     if (!completed.Contains(test))
                     {
+                        Debug.Log($"Loaded level: {test}");
                         LoadLevel(test - 1);
                         break;
                     }
-                }
-                LoadLevel(lastLevelLoaded + 1);
-                
+                } 
             }
         }
         else if (inChallenge)

@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
-using static UnityEngine.ParticleSystem;
 
 public class GameManager : MonoBehaviour
 { 
@@ -104,7 +102,6 @@ public class GameManager : MonoBehaviour
 
     public Transform tubeContainer;
 
-    // Start is called before the first frame update
     void Start()
     {
 
@@ -112,7 +109,6 @@ public class GameManager : MonoBehaviour
         SettingsScreen.SetActive(false);
         insultTimer = insultTime;
         winTimer = winTime;
-        //ModeChange();
         OpenMenuNum(1);
         
 
@@ -120,12 +116,9 @@ public class GameManager : MonoBehaviour
         LoadBackgrounds();
     }
 
-    // Update is called once per frame
     void Update()
     {
-       
-
-        if (win)
+        if (win) // checks if the player has won the game and then waits to open the win screen
         {
             if (winTimer < 0)
             {
@@ -135,25 +128,9 @@ public class GameManager : MonoBehaviour
             }
 
             winTimer -= Time.deltaTime;
-        }
+        }   
 
-        if (insult.activeSelf)
-        {
-            if (doInsult)
-            {
-                insultText.text = insults[Random.Range(0, insults.Count)];
-                doInsult = false;
-            }
-            insultTimer -= Time.deltaTime;
-
-            if (insultTimer < 0)
-            {
-                insult.SetActive(false);
-                insultTimer = insultTime;
-            }
-        }      
-
-        for (int i = 0; i < screens.Count; ++i)
+        for (int i = 0; i < screens.Count; ++i) // this is so the correct screen is always open when it is changed somewhere
         {
             if (i == menuNum && !screens[i].activeSelf)
             {
@@ -162,7 +139,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetResetTubes(int tubeCount)
+    public void SetResetTubes(int tubeCount) // sets the number of tubes for a level that is being loaded so that the level can load
     {
         resetTubes.Clear();
 
@@ -175,12 +152,8 @@ public class GameManager : MonoBehaviour
         resetTubes.Add(emptyTubePrefab);
     }
 
-    public void ResetGame()
+    public void ResetGame() // resets everything related to the game. this includes undos, tinytubes, moveHolders, the board
     {
-        solveText.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = "";
-        solve.interactable = false;
-
-        //Debug.Log("reset game");
         undosLeft = givenUndos;
         undosLeftText.text = undosLeft.ToString() + " Free";
         hintCostText.text = gameObject.GetComponent<LevelCreator>().hintCost.ToString();
@@ -188,8 +161,6 @@ public class GameManager : MonoBehaviour
         gameObject.GetComponent<LevelSolver>().resetFlash.SetActive(false);
         NoMovesLeftBox.Deactivate();
         gameObject.GetComponent<LevelSolver>().noSolution.Deactivate();
-
-        
 
         if (undosLeft == 0)
         {
@@ -220,7 +191,6 @@ public class GameManager : MonoBehaviour
         tubes.Clear();
         tubes = testTubes;
 
-        //menuNum = 2;
         TinyTube.GetComponent<TinyTube>().ClearTube();
 
         canUndo = false;
@@ -233,11 +203,9 @@ public class GameManager : MonoBehaviour
         }
         undoHolster.Clear();
         TTHolster.Clear();
-        
-        Debug.Log("reset current");
     }
 
-    public void OpenMenuNum(int index)
+    public void OpenMenuNum(int index) // opens a certain menu number based off of the index
     {
         for (int i = 0; i < screens.Count; ++i)
         {
@@ -247,12 +215,12 @@ public class GameManager : MonoBehaviour
         screens[index].SetActive(true);
     }
 
-    public void OpenLevelScreen()
+    public void OpenLevelScreen() // opens the level screen, reseting the tiny tube and checking for challenge generation
     {
-        //Debug.Log("openlevelscreen");
         menuNum = 1;
         OpenMenuNum(menuNum);
         ResetGame();
+
         if (gameObject.GetComponent<LevelCreator>().generatingChallenge)
         {
             gameObject.GetComponent<LevelCreator>().loadingIcon.SetActive(true);
@@ -263,26 +231,22 @@ public class GameManager : MonoBehaviour
             tinyTubeActive = false;
             TinyTube.SetActive(false);
             TinyTubeButton.gameObject.SetActive(true);
-
-
         }
     }
 
-    public void ResetCurrent()
+    public void ResetCurrent() // this resets the game while in the game
     {
         ResetGame();
-        gameObject.GetComponent<LevelCreator>().LoadLastLevel();
-
-        
+        gameObject.GetComponent<LevelCreator>().LoadLastLevel(); 
     }
 
-    public void ResetChallenge()
+    public void ResetChallenge() // this reset the game while in a challenge level
     {
         ResetGame();
         gameObject.GetComponent<LevelCreator>().LoadLastChallengeLevel();
     }
 
-    bool CheckForMovement()
+    bool CheckForMovement() // this checks if any balls are in motion at a moment, return true if there is movement and false if not
     {
         for (int i = 0; i < tubes.Count; ++i)
         {
@@ -317,7 +281,7 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    public bool CheckForWin() // check to see if all tubes are the right color
+    public bool CheckForWin() // check to see if all tubes are the right color or checks if there are any moves left or not
     {
         if (!CheckIfAnyMovesLeft() && !CheckForMovement())
         {
@@ -331,13 +295,16 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < tubes.Count; ++i)
         { 
-            if (!tubes[i].GetComponent<Tube>().FullTube() && !tubes[i].GetComponent<Tube>().EmptyTube()) { return false; } 
+            if (!tubes[i].GetComponent<Tube>().FullTube() && !tubes[i].GetComponent<Tube>().EmptyTube())
+            {
+                return false;
+            } 
         }
 
         return true;
     }
 
-    public void Cork()
+    public void Cork() // corks the tubes if they are full
     {
         for (int i = 0; i < tubes.Count; ++i)
         {
@@ -351,7 +318,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void EndHint()
+    void EndHint() // moves the hint to the next tube in the hint sequence
     {
         if (gameObject.GetComponent<LevelCreator>().lookingForHint)
         {
@@ -362,30 +329,23 @@ public class GameManager : MonoBehaviour
 
     public void Clicked(GameObject tube)
     {
-        
-
         if (!tube.GetComponent<Tube>().corked)
         {
             if (!clickState && !tube.GetComponent<Tube>().FullTube() && !tube.GetComponent<Tube>().EmptyTube()) // move ball to the top
             {
-                //SetUndoTubes();
                 clickState = true;
                 firstTubeClicked = tube;
                 Tube t = firstTubeClicked.GetComponent<Tube>();
 
                 t.ballObjects[t.BottomIndex()].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, 0);
-                //tube.transform.GetChild(t.BottomIndex()).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, 0);
+            
                 t.MoveBottomToTop();
                 HintFlash flash = gameObject.GetComponent<LevelSolver>().hintFlash;
 
                 if (gameObject.GetComponent<LevelCreator>().lookingForHint && (int)flash.tubes[flash.index] == tube.GetComponent<Tube>().siblingIndex)
-                {
-                    
-
-                    
+                { 
                     flash.index++;
-                    flash.transform.position = tubes[(int)flash.tubes[flash.index]].transform.position;
-                    
+                    flash.transform.position = tubes[(int)flash.tubes[flash.index]].transform.position;    
                 }
             }
             else if (!tinyTubeTime && clickState && firstTubeClicked != tube) // move balls into empty tube
@@ -396,8 +356,6 @@ public class GameManager : MonoBehaviour
                 Tube first = firstTubeClicked.GetComponent<Tube>();
 
                 Tube second = tube.GetComponent<Tube>();
-                
-                //Debug.Log(ball.GetComponent<Image>().color);
 
                 if (second.EmptyTube())
                 {
@@ -407,7 +365,7 @@ public class GameManager : MonoBehaviour
                     EndHint();
 
                     first.ballObjects[0].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
-                    //firstTubeClicked.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
+                    
                     second.NewBallsToBottom(ball, firstTubeClicked.GetComponent<Tube>(), 0);
 
                     for (int i = 0; i <= firstTubeClicked.GetComponent<Tube>().CheckHowManyNextIsSameColor(ball); ++i)
@@ -418,21 +376,14 @@ public class GameManager : MonoBehaviour
                             if (firstTubeClicked.GetComponent<Tube>().CheckTwo(firstTubeClicked.GetComponent<Tube>().ReturnNext(), ball))
                             {
                                 moveIndex--;
-                                //second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
-                                //Debug.LogWarning("sent new ball");
-
                                 first.ballObjects[first.BottomIndex()].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
-                                //firstTubeClicked.transform.GetChild(firstTubeClicked.GetComponent<Tube>().BottomIndex()).GetChild(0).gameObject.c
                                 second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), firstTubeClicked.GetComponent<Tube>(), firstTubeClicked.GetComponent<Tube>().BottomIndex());
                             }
                         }
                     }
 
-
-
                     firstTubeClicked = null;
                     canUndo = true;
-                    //Cork();
                     
                     SetUndoTubes();
                 }
@@ -441,26 +392,21 @@ public class GameManager : MonoBehaviour
                     clickState = false;
                     EndHint();
 
-
                     Tube t = firstTubeClicked.GetComponent<Tube>();
 
                     int moveIndex = second.BottomIndex() - 1;
 
                     first.ballObjects[0].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
                     second.NewBallsToBottom(ball, firstTubeClicked.GetComponent<Tube>(), 0);
-                    
-                    //firstTubeClicked.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
 
                     for (int i = 0; i <= firstTubeClicked.GetComponent<Tube>().CheckHowManyNextIsSameColor(ball); ++i)
                     {
-
                         if (firstTubeClicked.GetComponent<Tube>().ReturnNext() != InvalidIndex)
                         {
                             if (firstTubeClicked.GetComponent<Tube>().CheckTwo(firstTubeClicked.GetComponent<Tube>().ReturnNext(), ball))
                             {
                                 moveIndex--;
                                 first.ballObjects[first.BottomIndex()].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
-                                //firstTubeClicked.transform.GetChild(firstTubeClicked.GetComponent<Tube>().BottomIndex()).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
                                 second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), firstTubeClicked.GetComponent<Tube>(), firstTubeClicked.GetComponent<Tube>().BottomIndex());
                             }
                         }
@@ -468,13 +414,11 @@ public class GameManager : MonoBehaviour
 
                     firstTubeClicked = null;
                     canUndo = true;
-                    //Cork();
                     
                     SetUndoTubes();
                 }
                 else if (!second.FullTube())// move ball from different tube to the top
                 {
-                    
                     if (!first.EmptyTube())
                     {
                         first.ballObjects[0].GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, firstTubeClicked.GetComponent<Tube>().BottomIndex() - 1);
@@ -484,14 +428,9 @@ public class GameManager : MonoBehaviour
                         first.ballObjects[0].GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, 4);
                     }
                     firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
-                    
-                    //firstTubeClicked.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, firstTubeClicked.GetComponent<Tube>().BottomIndex());
-                    
                     firstTubeClicked = tube;
 
                     first = firstTubeClicked.GetComponent<Tube>();
-                    //firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
-                    //firstTubeClicked.transform.GetChild(firstTubeClicked.GetComponent<Tube>().BottomIndex()).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, 0);
                     first.ballObjects[first.BottomIndex()].GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, 0);
                     firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
 
@@ -509,9 +448,6 @@ public class GameManager : MonoBehaviour
                         flash.transform.position = tubes[(int)flash.tubes[flash.index]].transform.position;
                     }
                 }
-
-                
-
             }
             else if (tinyTubeTime && clickState && firstTubeClicked != tube) // move balls into empty tube
             {
@@ -524,27 +460,18 @@ public class GameManager : MonoBehaviour
 
                 if (second.EmptyTube())
                 {
-
                     clickState = false;
-
-                    //Debug.Log("tubeSecondClick");
-
-
-
                     first.ballObjects[0].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, 4);      
                     
                     second.NewBallsFromTT(ball, firstTubeClicked.GetComponent<TinyTube>(), 0);
 
-
                     firstTubeClicked = null;
                     canUndo = true;
-                    //Cork();
                     
                     SetUndoTubes();
                 }
                 else if (ball == second.GetBottomBall() && !second.FullTube() && firstTubeClicked.GetComponent<TinyTube>().CanMoveIntoNextTube(tube))
                 {
-
                     clickState = false;
 
                     first.ballObjects[0].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, second.BottomIndex() - 1);
@@ -552,7 +479,6 @@ public class GameManager : MonoBehaviour
 
                     firstTubeClicked = null;
                     canUndo = true;
-                    //Cork();
 
                     SetUndoTubes();
                 }
@@ -562,18 +488,11 @@ public class GameManager : MonoBehaviour
                     first.ballObjects[0].GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, 1);
                     firstTubeClicked.GetComponent<TinyTube>().MoveTopToBottom();
                     
-                    
                     firstTubeClicked = tube;
                     
-
-                    //firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
                     firstTubeClicked.GetComponent<Tube>().ballObjects[firstTubeClicked.GetComponent<Tube>().BottomIndex()].GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, 0);
                     firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
                 }
-
-                //else { Debug.Log("not win"); }
-                
-
                 tinyTubeTime = false;
             }     
             else if (clickState && firstTubeClicked == tube) // move ball back into the tube
@@ -584,17 +503,11 @@ public class GameManager : MonoBehaviour
                 {
                     flash.index--;
                     flash.transform.position = tubes[(int)flash.tubes[flash.index]].transform.position;
-
                 }
 
                 tube.GetComponent<Tube>().MoveTopToBottom();
                 tube.GetComponent<Tube>().ballObjects[tube.GetComponent<Tube>().BottomIndex()].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, tube.GetComponent<Tube>().BottomIndex());
 
-                //tube.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, tube.GetComponent<Tube>().BottomIndex());
-
-                //Debug.Log("same tube");
-                //undoHolster.RemoveAt(undoHolster.Count - 1);
-                //if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
                 tube = null;
                 clickState = false;
             }
@@ -606,15 +519,13 @@ public class GameManager : MonoBehaviour
     {
         if (!clickState && !tube.GetComponent<TinyTube>().EmptyTube()) // move ball to the top
         {
-            //SetUndoTubes();
             clickState = true;
             firstTubeClicked = tube;
-            //Debug.Log("tubeFirstClicked");
+
             tinyTubeTime = true;
 
             tube.GetComponent<TinyTube>().ballObjects[1].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, 0);
             tube.GetComponent<TinyTube>().MoveBottomToTop();
-            //firstTubeClicked.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(-1, tube, 0);
         }
         else if (!tinyTubeTime && clickState && firstTubeClicked != tube) // coming from normal tube (firstTubeClicked is a normal tube)
         {
@@ -623,11 +534,9 @@ public class GameManager : MonoBehaviour
             TinyTube second = tube.GetComponent<TinyTube>();
 
             Tube first = firstTubeClicked.GetComponent<Tube>();
-            //Debug.Log(ball.GetComponent<Image>().color);
 
             if (second.EmptyTube())
             {
-
                 clickState = false;
 
                 first.ballObjects[0].GetComponent<Ball>().MoveBall(-2, tube, 1);
@@ -659,9 +568,7 @@ public class GameManager : MonoBehaviour
                 tinyTubeTime = true;
             }
             canUndo = true;
-            //Cork();
-            SetUndoTubes();
-            
+            SetUndoTubes();           
         }
         
         else if (clickState && firstTubeClicked == tube) // move ball back into the tube
@@ -669,26 +576,19 @@ public class GameManager : MonoBehaviour
             tube.GetComponent<TinyTube>().ballObjects[0].GetComponent<Ball>().MoveBall(tinyTubeIndex, firstTubeClicked, 1);
             firstTubeClicked.GetComponent<TinyTube>().MoveTopToBottom();
             
-            
-
-            //Debug.Log("same tube");
-            //undoHolster.RemoveAt(undoHolster.Count - 1);
-            //if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
             tube = null;
             clickState = false;
         }
 
     }
 
-
     public void Win()
     {
         win = true;
     }
 
-    public void SetUndoTubes()
+    public void SetUndoTubes() // adds tubes to a list of boards that is used when the undo button is pressed
     {
-        //for (int i = 0; i < undoTubes.Count; ++i) { Destroy(undoTubes[i]); }
         List<GameObject> newTubes = new List<GameObject>();
 
         for (int i = 0; i < tubes.Count; ++i)
@@ -702,7 +602,6 @@ public class GameManager : MonoBehaviour
             {
                 if (tubes[i].GetComponent<Tube>().spots[ii] != 0) // is one in actual and in new
                 {
-                    
                     tube.SetSpot(tubes[i].GetComponent<Tube>().spots[ii], ii);
                 }
                 else if (tubes[i].GetComponent<Tube>().spots[ii] == 0 && test.transform.GetChild(ii).childCount != 0) // in not one in actual but in new
@@ -712,9 +611,7 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            newTubes.Add(test);
-
-            
+            newTubes.Add(test);       
         }
 
         GameObject tt = Instantiate(TinyTubePrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -722,15 +619,12 @@ public class GameManager : MonoBehaviour
         tt.transform.SetParent(moveHolder.transform);
 
         TinyTube tinyTube = tt.GetComponent<TinyTube>();
-        //Debug.Log(TinyTube.GetComponent<TinyTube>().spots.Count);
-        
 
         for (int ii = 0; ii < 2; ++ii)
         {
             if (TinyTube.GetComponent<TinyTube>().spots[ii] != 0) // is one in actual and in new
             {
                 tinyTube.SetSpot(TinyTube.GetComponent<TinyTube>().spots[ii], ii);
-                
             }
             else if (TinyTube.GetComponent<TinyTube>().spots[ii] != 0 && tt.transform.GetChild(ii).childCount != 0) // in not one in actual but in new
             {
@@ -741,14 +635,10 @@ public class GameManager : MonoBehaviour
 
         TTHolster.Add(tt);
 
-        undoHolster.Add(newTubes);
-        
-
-        //Debug.LogWarning(undoHolster.Count);
-        
+        undoHolster.Add(newTubes);     
     }
 
-    public void UNDO()
+    public void UNDO() // this is called when the undo button is pressed to undo the current board
     {
         int coins = gameObject.GetComponent<LevelCreator>().coins;
 
@@ -766,7 +656,6 @@ public class GameManager : MonoBehaviour
                 undoTubes = undoHolster[undoHolster.Count - 1];
             }
 
-            //undoTubes = undoHolster[undoHolster.Count - 1];
             if (TinyTube.activeSelf)
             {
                 if (TTHolster.Count > 1)
@@ -786,8 +675,6 @@ public class GameManager : MonoBehaviour
                 GameObject test = Instantiate(undoTubes[i], new Vector3(0, 0, 0), Quaternion.identity);
 
                 test.transform.SetParent(gameScreen.transform.GetChild(0));
-
-
                 test.transform.position = tubes[i].transform.position;
                 test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
 
@@ -801,13 +688,10 @@ public class GameManager : MonoBehaviour
 
                 testTubes.Add(test);
                 Destroy(tubes[i]);
-
             }
 
             tubes.Clear();
             tubes = testTubes;
-            
-
             undoHolster.RemoveAt(undoHolster.Count - 1);
 
             if (TinyTube.activeSelf)
@@ -830,18 +714,17 @@ public class GameManager : MonoBehaviour
                 TinyTube = test;
                 TTHolster.RemoveAt(TTHolster.Count - 1);
                 
+            }        
+
+            if (undoHolster.Count == 0)
+            { 
+                canUndo = false;
             }
-
-            
-
-            if (undoHolster.Count == 0) { canUndo = false; }
         }
         else if (canUndo && undoHolster.Count != 0 && coins >= undoCost && undosLeft == 0)
         {
-            //insult.SetActive(true);
             coins -= undoCost;
             gameObject.GetComponent<LevelCreator>().coins = coins;
-            //if (insultTimer == insultTime) { doInsult = true; }
 
             GameObject undoTT = new GameObject();
             if (undoHolster.Count > 1) { undoTubes = undoHolster[undoHolster.Count - 2]; }
@@ -901,7 +784,6 @@ public class GameManager : MonoBehaviour
                 TTHolster.RemoveAt(TTHolster.Count - 1);
 
             }
-            //Debug.LogWarning(undoHolster.Count);
 
             if (undoHolster.Count == 0) { canUndo = false; }
         }
@@ -917,15 +799,12 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void TinyTubeTime()
+    public void TinyTubeTime() // this is called when the tinytube button is pressed
     {
         int coins = gameObject.GetComponent<LevelCreator>().coins;
 
         if (!tinyTubeActive && coins >= TinyTubeCost)
         {
-            //if (insultTimer == insultTime) { doInsult = true; }
-
-
             TinyTubeButton.gameObject.SetActive(false);
 
             TinyTube.SetActive(true);
@@ -935,7 +814,7 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    public bool CheckIfAnyMovesLeft()
+    public bool CheckIfAnyMovesLeft() // checks if the current state has any more moves that the player can make
     {
         for (int i = 0; i < tubes.Count; ++i)
         {
@@ -956,26 +835,16 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        //Debug.Log(i + " " + ii);
-                        //Debug.LogWarning("there is a move");
                         return true;
                     }
-
-
-                    //Debug.Log("num same at top: " + tube1.NumSameAtTop());
-                    //Debug.Log("open spots: " + tube2.ReturnNumOpenSpots());
 
                     if (ball1 == ball2)
                     {
                         if (tube1.NumSameAtTop() <= tube2.ReturnNumOpenSpots())
                         {
-                            //Debug.Log(i + " " + ii);
-                            //Debug.LogWarning("there is a move");
                             return true;
-                        }
-                        
-                    }
-                       
+                        }                     
+                    }       
                 }
             }
 
@@ -1005,12 +874,11 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-        }
-        
+        }       
         return false;
     }
 
-    public void ModeChange()
+    public void ModeChange() // this swaps the mode from hard to easy
     {
         if (undoButton.activeSelf)
         {
@@ -1030,13 +898,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OpenSettingsScreen()
+    public void OpenSettingsScreen() // this opens the settings screen
     {
         if (SettingsScreen.activeSelf) { SettingsScreen.SetActive(false); }
         else if (!SettingsScreen.activeSelf) { SettingsScreen.SetActive(true); }
     }
 
-    public void BuyBackground(int index)
+    public void BuyBackground(int index) // this is called when a background is tapped on in the settings menu and remembers that the player bought the background
     {
         int coins = gameObject.GetComponent<LevelCreator>().coins;
         if (coins >= BackgroundCost)
@@ -1055,7 +923,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetBackground(int index)
+    public void SetBackground(int index) // this is called when the player wants to change to a different background
     {
         if (index == 0)
         {
@@ -1088,11 +956,10 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("lastBackground", index);
     }
 
-    public void LoadBackgrounds()
+    public void LoadBackgrounds() // this loads all the backgrounds that the player has bought
     {
         if (PlayerPrefs.HasKey("lastBackground"))
         {
-            //Debug.Log(PlayerPrefs.GetInt("lastBackground"));
             SetBackground(PlayerPrefs.GetInt("lastBackground"));
         }
         else
@@ -1100,9 +967,27 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("lastBackground", 0);
         }
 
-        if (PlayerPrefs.HasKey("redLock")) { if (PlayerPrefs.GetInt("redLock") == 1) { redLockButton.gameObject.SetActive(false); } }
-        if (PlayerPrefs.HasKey("greenLock")) { if (PlayerPrefs.GetInt("greenLock") == 1) { greenLockButton.gameObject.SetActive(false); } }
-        if (PlayerPrefs.HasKey("blueLock")) { if (PlayerPrefs.GetInt("blueLock") == 1) { blueLockButton.gameObject.SetActive(false); } }
+        if (PlayerPrefs.HasKey("redLock"))
+        { 
+            if (PlayerPrefs.GetInt("redLock") == 1) 
+            { 
+                redLockButton.gameObject.SetActive(false);
+            }
+        }
+        if (PlayerPrefs.HasKey("greenLock")) 
+        { 
+            if (PlayerPrefs.GetInt("greenLock") == 1)
+            {
+                greenLockButton.gameObject.SetActive(false); 
+            }
+        }
+        if (PlayerPrefs.HasKey("blueLock"))
+        {
+            if (PlayerPrefs.GetInt("blueLock") == 1) 
+            {
+                blueLockButton.gameObject.SetActive(false); 
+            }
+        }
 
         greenLockButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = BackgroundCost.ToString() + " Coins";
         redLockButton.gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = BackgroundCost.ToString() + " Coins";
@@ -1111,7 +996,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void ShowSolveText()
+    public void ShowSolveText() // debug for showing a solution
     {
         if (solveText.activeSelf)
         {
@@ -1120,7 +1005,7 @@ public class GameManager : MonoBehaviour
         else { solveText.SetActive(true); }
     }
 
-    public void ShowHowToPlay()
+    public void ShowHowToPlay() // this shows the tutorial screen
     {
         if (!HowToScreen.activeSelf)
         {
@@ -1132,7 +1017,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void PlayTutorial()
+    public void PlayTutorial() // this happens when user user clicks on the tutorial button on the tutorial screen and then loads the tutorial for them to play
     {
         PlayerPrefs.SetInt("Tutorial", 0);
 
