@@ -101,6 +101,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text hintCostText;
 
     public Transform tubeContainer;
+    public TubeContainer tubeContainerObj;
 
     void Start()
     {
@@ -150,6 +151,11 @@ public class GameManager : MonoBehaviour
 
         resetTubes.Add(emptyTubePrefab);
         resetTubes.Add(emptyTubePrefab);
+
+        int row = (tubeCount + 2) / 8;
+        row++;
+
+        tubeContainerObj.SetGrid(row);
     }
 
     public void ResetGame() // resets everything related to the game. this includes undos, tinytubes, moveHolders, the board
@@ -169,6 +175,13 @@ public class GameManager : MonoBehaviour
         }
         TTTExt.text = TinyTubeCost.ToString();
 
+        for (int i = 0; i < tubes.Count; ++i)
+        {
+            Destroy(tubes[i]);
+        }
+
+        tubes.Clear();
+
         List<GameObject> testTubes = new List<GameObject>();
 
         for (int i = 0; i < resetTubes.Count; ++i)
@@ -178,17 +191,9 @@ public class GameManager : MonoBehaviour
             test.transform.SetParent(tubeContainer);
 
             test.GetComponent<Tube>().siblingIndex = i;
-            test.transform.position = tubes[i].transform.position;
             test.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);         
             testTubes.Add(test);
         }
-
-        for (int i = 0; i < tubes.Count; ++i)
-        {
-            Destroy(tubes[i]);
-        }
-
-        tubes.Clear();
         tubes = testTubes;
 
         TinyTube.GetComponent<TinyTube>().ClearTube();

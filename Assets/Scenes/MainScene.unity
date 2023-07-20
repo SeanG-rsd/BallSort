@@ -3123,6 +3123,7 @@ GameObject:
   m_Component:
   - component: {fileID: 149259737}
   - component: {fileID: 149259738}
+  - component: {fileID: 149259739}
   m_Layer: 7
   m_Name: Tubes
   m_TagString: Untagged
@@ -3188,6 +3189,19 @@ MonoBehaviour:
   m_Spacing: {x: 5, y: 50}
   m_Constraint: 2
   m_ConstraintCount: 2
+--- !u!114 &149259739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149259736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59c157eb332999c4bb1e48705f2c5b7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 149259738}
 --- !u!1 &152793442
 GameObject:
   m_ObjectHideFlags: 0
@@ -36551,6 +36565,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: tubeCount
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: winScreen
       value: 
       objectReference: {fileID: 1055464239}
@@ -36560,7 +36578,7 @@ PrefabInstance:
       objectReference: {fileID: 1057911745711522576, guid: 6ef4958dbcc38cf4793439b6d89569c5, type: 3}
     - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: genXLevels
-      value: 5
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: recordText
@@ -37278,6 +37296,10 @@ PrefabInstance:
       propertyPath: redSettingButton
       value: 
       objectReference: {fileID: 27488280}
+    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
+      propertyPath: tubeContainerObj
+      value: 
+      objectReference: {fileID: 149259739}
     - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
       propertyPath: tubes.Array.size
       value: 14

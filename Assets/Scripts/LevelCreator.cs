@@ -223,11 +223,13 @@ public class LevelCreator : MonoBehaviour
             chosen.Add(0);
         }
     }
+
+    public int tubeCount;
     public void GenerateLevelsButton() // generate a certain number of levels and then solve them
     {
         for (int i = 0; i < genXLevels; ++i)
         {
-            List<List<int>> newLevel = GenerateLevel(i, 10);
+            List<List<int>> newLevel = GenerateLevel(i, tubeCount - 2);
             if (newLevel != null)
             {
                 levels.Add(newLevel);
@@ -857,11 +859,14 @@ public class LevelCreator : MonoBehaviour
 
     bool CheckRequirement(int page) // checks if a certain page has been completed or not
     {
-        if (page != 0)
+        if (page != 0 && page != 1 && page != 2)
         {
             for (int i = 0; i < levelButtons[page - 1].Count; ++i)
             {
-                if (levelButtons[page - 1][i].GetComponent<Image>().color != completedMat.color) { return true; }
+                if (levelButtons[page - 1][i].GetComponent<Image>().color != completedMat.color)
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -956,6 +961,7 @@ public class LevelCreator : MonoBehaviour
         gameManager.undoHolster.Clear();
         gameManager.TTHolster.Clear();
 
+        Debug.Log($"Loaded level {index} with {levels[index].Count} tubes");
         gameManager.SetResetTubes(levels[index].Count);
         gameManager.ResetGame();
 
@@ -1090,17 +1096,18 @@ public class LevelCreator : MonoBehaviour
     public void WinNext() // this is called when the player wants to move onto the next level on the win screen
     {
         gameObject.GetComponent<GameManager>().ResetGame();
+        UpdateCompleted();
         
         if (!inChallenge)
         {
             if (lastLevelLoaded < levels.Count)
             {
-                for (int i = 1; i < 100;  i++)
+                for (int i = 1; i < 150;  i++)
                 {
                     int test = lastLevelLoaded + i;
                     if (!completed.Contains(test))
                     {
-                        LoadLevel(test - 1);
+                        LoadLevel(test);
                         break;
                     }
                 } 
@@ -1299,6 +1306,11 @@ public class LevelCreator : MonoBehaviour
                         }
                     }
 
+                    if (!PlayerPrefs.HasKey("BEGINNER"))
+                    {
+                        add += 120;
+                    }
+
                     getCompleted.Add(add);
                     
                     set = "";
@@ -1307,6 +1319,7 @@ public class LevelCreator : MonoBehaviour
 
             PlayerPrefs.SetInt("o", 0);
             PlayerPrefs.SetInt("FIXTUBES", 0);
+            PlayerPrefs.SetInt("BEGINNER", 0);
         }
 
         completed = getCompleted;
@@ -1347,6 +1360,7 @@ public class LevelCreator : MonoBehaviour
     public void UpdateCompleted() // this updates the completed levels of the player then saves them
     {
         string newCompleted = "";
+        completed.Clear();
 
         for (int i = 0; i < levelButtons.Count; ++i)
         {
@@ -1355,6 +1369,7 @@ public class LevelCreator : MonoBehaviour
                 if (levelButtons[i][ii].GetComponent<Image>().color == completedMat.color)
                 {
                     newCompleted = newCompleted + levelButtons[i][ii].GetComponent<ChooseButton>().levelValue.ToString() + ",";
+                    completed.Add(levelButtons[i][ii].GetComponent<ChooseButton>().levelValue - 1);
                 }               
             }
         }
@@ -1552,7 +1567,7 @@ public class LevelCreator : MonoBehaviour
 
     public void AddPageToCompleted() // Debug feature
     {
-        for (int j = 0; j < levelButtons.Count; ++j)
+        for (int j = 0; j < 5; ++j)
         {
             for (int i = 0; i < levelButtons[j].Count; ++i)
             {
