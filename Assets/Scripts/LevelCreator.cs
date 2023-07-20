@@ -119,31 +119,21 @@ public class LevelCreator : MonoBehaviour
     public int hintCost;
 
     public int loadingLevelNum;
-
-
-    // Start is called before the first frame update
     void Start()
     {
-        winScreen.SetActive(false);
         gameManager = GetComponent<GameManager>();
         savedLevels = GetLevels();
         LoadGame();
         LoadLevelChooseList();
         LoadCompleted();
-        Debug.Log(levels.Count);
         challengeRequirement.SetActive(ChallengeRequirement());
-
     }
-
-    // Update is called once per frame
     void Update()
     {
         SaveCompleted();
-
-        saveButton.GetComponent<Button>().interactable = FinishedMaking();
         UpdateCoins();
 
-        if (generatingChallenge && challengeSolvability.Count < 5)
+        if (generatingChallenge && challengeSolvability.Count < 5) // checks if the challenge is done generating or not
         {
             if (gameManager.menuNum == 1)
             {
@@ -165,29 +155,28 @@ public class LevelCreator : MonoBehaviour
             }
         }
 
-        if (lookingForHint && gameObject.GetComponent<LevelSolver>().hintFlash.tubes == Vector2.zero)
+        if (lookingForHint && gameObject.GetComponent<LevelSolver>().hintFlash.tubes == Vector2.zero) // checks if the user is looking for a hint but doesnt have it yet
         {
             if (gameManager.menuNum == 2)
             {
                 loadingIcon.SetActive(true);
             }
         }
-        else if (gameObject.GetComponent<LevelSolver>().hintFlash.tubes != Vector2.zero && lookingForHint)
+        else if (gameObject.GetComponent<LevelSolver>().hintFlash.tubes != Vector2.zero && lookingForHint) // when the user got a hint and is waiting for them to use it
         {
             loadingIcon.SetActive(false);
             List<GameObject> gameTubes = gameManager.tubes;
             HintFlash flash = gameObject.GetComponent<LevelSolver>().hintFlash;
 
             flash.transform.position = gameTubes[(int)flash.tubes[flash.index]].transform.position;
-            flash.gameObject.SetActive(true);
-            
+            flash.gameObject.SetActive(true);       
         }
-        else if (!lookingForHint && gameObject.GetComponent<LevelSolver>().hintFlash.tubes == Vector2.zero)
+        else if (!lookingForHint && gameObject.GetComponent<LevelSolver>().hintFlash.tubes == Vector2.zero) // when the hint phase is over
         {
             loadingIcon.SetActive(false);
         }
 
-        if (inChallenge && startChallenge && !finishedChallenge)
+        if (inChallenge && startChallenge && !finishedChallenge) // updating challenge times while challenge is being played
         {
             challengeTime += Time.deltaTime;
             
@@ -200,74 +189,12 @@ public class LevelCreator : MonoBehaviour
                 finishedChallenge = true;
             }
         }
-
     }
 
-    void UpdateCoins()
+    void UpdateCoins() // saves the coins a player has
     {
         coinsText.text = coins.ToString();
         PlayerPrefs.SetInt("CoinCount", coins);
-        PlayerPrefs.Save();
-    }
-
-    public void ChangedValue(GameObject dropdown) // changed a value in the maker to update chosen
-    {
-        
-
-        for (int i = 0; i < tubes.Count; ++i) // i is the tube
-        {
-            for (int ii = 0; ii < tubes[i].transform.childCount; ++ii) // ii is the dropdown
-            {
-                if (dropdown.GetComponent<TMP_Dropdown>().value != 0)
-                {
-                    if (tubes[i].transform.GetChild(ii).gameObject == dropdown && chosen[dropdown.GetComponent<TMP_Dropdown>().value - 1] < 4)
-                    {
-                        chosen[dropdown.GetComponent<TMP_Dropdown>().value - 1]++;
-                        UpdateChosen();
-                        return;
-                    }
-                    else if (tubes[i].transform.GetChild(ii).gameObject == dropdown && chosen[dropdown.GetComponent<TMP_Dropdown>().value - 1] >= 4)
-                    {
-                        dropdown.GetComponent<TMP_Dropdown>().value = 0;
-                        return;
-                    }
-                }
-            }
-        }
-
-        
-    }
-
-    public void SaveLevel() // save a level after completing it in the maker
-    {
-        if (!FinishedMaking()) { return; }
-
-        List<List<int>> level = new List<List<int>>();
-
-        for (int i = 0; i < tubes.Count; ++i)
-        {
-            List<int> newTube = new List<int>();
-
-            for (int ii = 0; ii < tubes[i].transform.childCount; ++ii)
-            {
-                int add = tubes[i].transform.GetChild(ii).gameObject.GetComponent<TMP_Dropdown>().value - 1;
-
-                newTube.Add(add);
-            }
-
-            level.Add(newTube);
-        }
-
-        List<List<int>> newLevel = level;
-
-        levels.Add(newLevel);
-        AddToLevelList(newLevel);
-
-        AddToDatabase(levels.Count - 1);
-        WriteLevels("Assets/Resources/Levels.txt");
-
-        ResetMaker(12);
-
     }
 
     public void WriteLevels(string path) // save the string of levels to a text file
@@ -277,36 +204,7 @@ public class LevelCreator : MonoBehaviour
         writer.WriteLine(savedLevels);
 
         writer.Close();
-
     }
-
-    void UpdateChosen() // update the level maker counter
-    {
-        List<int> newChosen = new List<int>();
-
-        for (int i = 0; i < 12; ++i)
-        {
-            newChosen.Add(0);
-        }
-
-        
-        
-        for (int i = 0; i < tubes.Count; ++i)
-        {
-
-            for (int ii = 0; ii < tubes[i].transform.childCount; ++ii)
-            {
-
-                if (tubes[i].transform.GetChild(ii).gameObject.GetComponent<TMP_Dropdown>().value != 0) { newChosen[tubes[i].transform.GetChild(ii).gameObject.GetComponent<TMP_Dropdown>().value - 1]++; }
-                //Debug.Log(newChosen[i]);
-                
-            }
-
-        }
-
-        chosen = newChosen;
-    }
-
     public bool FinishedMaking() // check to see if all the dropdowns are filled in the level maker
     {
         for (int i = 0; i < chosen.Count; ++i)
@@ -316,7 +214,6 @@ public class LevelCreator : MonoBehaviour
 
         return true;
     }
-
     public void ResetMaker(int tubeCount) // reset the dropdowns for the level maker
     {
         chosen.Clear();
@@ -326,8 +223,7 @@ public class LevelCreator : MonoBehaviour
             chosen.Add(0);
         }
     }
-
-    public void GenerateLevelsButton()
+    public void GenerateLevelsButton() // generate a certain number of levels and then solve them
     {
         for (int i = 0; i < genXLevels; ++i)
         {
@@ -345,12 +241,10 @@ public class LevelCreator : MonoBehaviour
             {
                 Debug.LogError("had full tube or was not solvable");
             }
-        }
-
-        
+        }       
     }
 
-    List<int> FindPossibleChoices(int tubeCount)
+    List<int> FindPossibleChoices(int tubeCount) // find the possible ball options for generating a level
     {
         List<int> choices = new List<int>();
 
@@ -359,17 +253,13 @@ public class LevelCreator : MonoBehaviour
             if (chosen[i] < 4)
             {
                 choices.Add(i);
-                
             }
         }
-        //Debug.Log(choices.Count);
         return choices;
     }
 
-    bool CompletedTube(List<int> tube)
+    bool CompletedTube(List<int> tube) // checks if a tube has been completed when generating
     {
-        
-
         for (int i = 0; i < tube.Count; ++i)
         {
             if (tube[i] != tube[0])
@@ -381,40 +271,27 @@ public class LevelCreator : MonoBehaviour
         return true;
     }
 
-    List<List<int>> GenerateLevel(int index, int tubeCount)
+    List<List<int>> GenerateLevel(int index, int tubeCount) // generates a random new level then solves it
     {
-        
-
         ResetMaker(tubeCount);
 
         if (!FinishedMaking())
-        {
-            
+        {           
             List<List<int>> newLevel = new List<List<int>>(tubeCount);
 
             for (int ii = 0; ii < tubeCount; ii++)
             {
-
-
                 List<int> newTube = new List<int>(4);
-                //int tryAgain = 4;
                 
                 for (int i = 0; i < 4; ++i)
                 {
                     List<int> choices = FindPossibleChoices(tubeCount);
-                    
-
-                    int add = UnityEngine.Random.Range(0, choices.Count);
-
-                    
+                    int add = UnityEngine.Random.Range(0, choices.Count);               
                     newTube.Add(choices[add]);
-
                     
-                    chosen[choices[add]]++;
-                    
+                    chosen[choices[add]]++;           
                 }
 
-                //Debug.Log("new tube size = " + newTube.Count);
                 if (CompletedTube(newTube))
                 {
                     Debug.Log("error");
@@ -424,41 +301,23 @@ public class LevelCreator : MonoBehaviour
                 newLevel.Add(newTube);
             }
 
-
-
-
-
             if (FinishedMaking())
             {
                 bool output = SolveList(newLevel, index);
 
-                //StreamWriter writer = new("Assets/Resources/SolveCheck.txt");
-
-                //writer.WriteLine(output);
-
-                //writer.Close();
-                Debug.Log("new level sixe = " + newLevel.Count);
                 if (!output)
                 {
                     Debug.Log("no solution");
                     GenerateLevel(index, tubeCount);
                 }
-                return newLevel;
-                
 
-            }
-            
-            else
-            {
-                Debug.Log(FinishedMaking());
-                Debug.LogError("Did not work");
+                return newLevel;
             }
         }
 
         return null;
     }
-
-    bool ChallengeRequirement()
+    bool ChallengeRequirement() // checks if the player can play the challenge
     {
         for (int i = 0; i < levelButtons[0].Count; ++i)
         {
@@ -467,7 +326,7 @@ public class LevelCreator : MonoBehaviour
         return false;
     }
 
-    string OrganizeRecordTime(float time)
+    string OrganizeRecordTime(float time) // organizes the input time into minutes:seconds.milliseconds
     {
         string end = "00:00.00";
 
@@ -485,31 +344,55 @@ public class LevelCreator : MonoBehaviour
         string ms = "";
         
 
-        if (Minutes == 0) { min = "00"; }
-        else if (Minutes < 10) { min = "0" + Minutes.ToString(); }
-        else { min = Minutes.ToString(); }
+        if (Minutes == 0)
+        {
+            min = "00";
+        }
+        else if (Minutes < 10)
+        { 
+            min = "0" + Minutes.ToString();
+        }
+        else 
+        {
+            min = Minutes.ToString();
+        }
 
-        if (Seconds == 0) { sec = "00"; }
-        else if (Seconds < 10) { sec = "0" + Seconds.ToString(); }
-        else { sec = Seconds.ToString(); }
+        if (Seconds == 0) 
+        {
+            sec = "00";
+        }
+        else if (Seconds < 10) 
+        {
+            sec = "0" + Seconds.ToString();
+        }
+        else
+        {
+            sec = Seconds.ToString();
+        }
 
-        if (milli == 0) { ms = "00"; }
-        else if (milli < 10) { ms = "0" + milli.ToString(); }
-        else { ms = milli.ToString(); }
+        if (milli == 0)
+        {
+            ms = "00";
+        }
+        else if (milli < 10) 
+        {
+            ms = "0" + milli.ToString();
+        }
+        else
+        { 
+            ms = milli.ToString();
+        }
 
         end = min + ":" + sec + "." + ms;
-        Debug.Log(end);
         return end;
     }
-
-    public void StartChallengeCoroutine()
+    public void StartChallengeCoroutine() // starts making the challenge levels
     {
         challengeSolvability.Clear();
         StartCoroutine(MakeChallengeLevels());
         StartChallenge();
     }
-
-    IEnumerator MakeChallengeLevels()
+    IEnumerator MakeChallengeLevels() // makes all challenge levels
     {
         generatingChallenge = true;
         int LPP = (int)challengeLevelsPerPage.x * (int)challengeLevelsPerPage.y;
@@ -524,7 +407,7 @@ public class LevelCreator : MonoBehaviour
         yield return null;
     }
 
-    public void StartChallenge()
+    public void StartChallenge() // starts the challenge, updates ui, creates list button, and sets bools
     {
         int LPP = (int)challengeLevelsPerPage.x * (int)challengeLevelsPerPage.y;
         if (gameManager.undoButton.activeSelf)
@@ -564,13 +447,12 @@ public class LevelCreator : MonoBehaviour
             if (loadedChallengeTime != 0) { recordText.gameObject.SetActive(true); }
             float roundedTime = Mathf.Round(loadedChallengeTime * 100) / 100;
             recordText.text = "Record: " + OrganizeRecordTime(roundedTime).ToString();
-
         }
 
-
-        
-
-        if (challengeSpots.Count > 0) { challengeSpots.Clear(); }
+        if (challengeSpots.Count > 0)
+        {
+            challengeSpots.Clear();
+        }
 
         Vector2 listRect = new Vector2(challengeList.GetComponent<RectTransform>().rect.width, challengeList.GetComponent<RectTransform>().rect.height);
         Vector2 chooseButtonRect = new Vector2(chooseButtonPrefab.GetComponent<RectTransform>().rect.width, chooseButtonPrefab.GetComponent<RectTransform>().rect.height);
@@ -579,10 +461,8 @@ public class LevelCreator : MonoBehaviour
         float sizeY = listRect.y / challengeLevelsPerPage.y;
         float scaleX = sizeX / chooseButtonRect.x;
         float scaleY = sizeY / chooseButtonRect.y;
-        //Debug.Log("size x = " + sizeX);
 
         float halfY = challengeLevelsPerPage.y / 2;
-
 
         for (float r = halfY; r > -halfY; --r)
         {
@@ -600,10 +480,6 @@ public class LevelCreator : MonoBehaviour
 
             }
         }
-        
-        //Debug.LogError("generatespots no work");
-        
-        
 
         List<GameObject> page = new List<GameObject>();
         int challengeSpotCount = 0;
@@ -625,14 +501,10 @@ public class LevelCreator : MonoBehaviour
                 newButton.GetComponent<ChooseButton>().levelValue = challengeActualCount;
                 newButton.GetComponent<ChooseButton>().Challenge();
 
-
-
-
                 challengeSpotCount++;
                 challengeActualCount++;
 
                 page.Add(newButton);
-                //Debug.Log("page count: " + page.Count);
 
                 if (challengeSpotCount > LPP - 1)
                 {
@@ -644,13 +516,12 @@ public class LevelCreator : MonoBehaviour
                     page = add;
                 }
             }
-
-
-
         }
 
-
-        if (page.Count != 0) { challengeLevelButtons.Add(page); }
+        if (page.Count != 0)
+        { 
+            challengeLevelButtons.Add(page);
+        }
     }
 
     public void LoadChallengeLevel(int index) // load a certain level based on the index given
@@ -665,7 +536,6 @@ public class LevelCreator : MonoBehaviour
         }
         loadingIcon.SetActive(false);
         
-
         if (challengeLevels.Count > 0)
         {
             for (int i = 0; i < challengeLevels[index].Count; ++i) // each tube
@@ -673,8 +543,6 @@ public class LevelCreator : MonoBehaviour
                 
                 for (int ii = 1; ii <= challengeLevels[index][i].Count; ++ii) // each ball
                 {
-
-
                     
                     Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[challengeLevels[index][i][ii - 1]].color;
                     Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (challengeLevels[index][i][ii - 1] + 1).ToString();
@@ -690,33 +558,18 @@ public class LevelCreator : MonoBehaviour
                     {
                         Debug.Log("dont cork");
                     }
-
-                    //Debug.Log("changed color");
                 }
-
-            }
-
-            
-        }
-        else
-        {
-            Debug.Log("no levels");
-            Debug.Log("Level Count: " + challengeLevels.Count);
-
+            }          
         }
 
         gameObject.GetComponent<GameManager>().menuNum = 2;
-        lastLevelLoaded = index;
-
-        
+        lastLevelLoaded = index;      
     }
-
-    public void LoadLastChallengeLevel()
+    public void LoadLastChallengeLevel() // loads the last challenge level
     {
         LoadChallengeLevel(lastLevelLoaded);
     }
-
-    public bool BeatLastChallengeLevel()
+    public bool BeatLastChallengeLevel() // sets values for beating the last loaded challenge level
     {
         for (int i = 0; i < challengeLevelButtons.Count; ++i)
         {
@@ -725,7 +578,6 @@ public class LevelCreator : MonoBehaviour
                 if (lastLevelLoaded + 1 == challengeLevelButtons[i][ii].GetComponent<ChooseButton>().levelValue && challengeLevelButtons[i][ii].GetComponent<Image>().color != completedMat.color)
                 {
                     challengeLevelButtons[i][ii].GetComponent<Image>().color = completedMat.color;
-                    Debug.LogWarning("Beat Last Challenge Level");
                     return true;
                 }
             }
@@ -733,10 +585,8 @@ public class LevelCreator : MonoBehaviour
         return false;
     }
 
-    public void GiveUpChallenge()
+    public void GiveUpChallenge() // ends the challenge, sets ui, sets bools
     {
-        Debug.Log("give up challenge");
-
         startChallenge = false;
         inChallenge = false;
         challengeTime = 0;
@@ -774,7 +624,6 @@ public class LevelCreator : MonoBehaviour
 
         for (int i = 0; i < challengeSpots.Count; i++)
         {
-            //challengeSpots[i].transform.GetChild(0).gameObject.GetComponent<Button>().interactable = false;
             Destroy(challengeSpots[i]);
         }
 
@@ -786,7 +635,7 @@ public class LevelCreator : MonoBehaviour
         WinLevels();
     }
 
-    bool BeatChallenge()
+    bool BeatChallenge() // checks if the player has beat the challenge or not
     {
         for (int i = 0; i < challengeLevelButtons.Count; ++i)
         {
@@ -801,8 +650,7 @@ public class LevelCreator : MonoBehaviour
 
         return true;
     }
-
-    public void SaveChallengeTime()
+    public void SaveChallengeTime() // saves the challenge time to playerprefs
     {
         if (challengeTime < loadedChallengeTime || loadedChallengeTime == 0)
         {
@@ -811,8 +659,7 @@ public class LevelCreator : MonoBehaviour
         }
         else { PlayerPrefs.SetFloat("ChallengeTime", loadedChallengeTime); }
     }
-
-    string OrganizeChallengeTime(float time)
+    string OrganizeChallengeTime(float time) // organizes the challenge time to minutes:seconds.milliseconds
     {
         string end = "00:00.00";
         DateTime challengeCurrent = DateTime.Now;
@@ -823,27 +670,51 @@ public class LevelCreator : MonoBehaviour
         string ms = "";
         float milli = Mathf.Round(ts.Milliseconds / 10);
 
-        if (ts.Minutes == 0) { min = "00"; }
-        else if (ts.Minutes < 10) { min = "0" + ts.Minutes.ToString(); }
-        else { min = ts.Minutes.ToString(); }
+        if (ts.Minutes == 0)
+        {
+            min = "00"; 
+        }
+        else if (ts.Minutes < 10)
+        {
+            min = "0" + ts.Minutes.ToString();
+        }
+        else 
+        { 
+            min = ts.Minutes.ToString();
+        }
 
-        if (ts.Seconds == 0) { sec = "00"; }
-        else if (ts.Seconds < 10) { sec = "0" + ts.Seconds.ToString(); }
-        else { sec = ts.Seconds.ToString(); }
+        if (ts.Seconds == 0)
+        { 
+            sec = "00";
+        }
+        else if (ts.Seconds < 10)
+        {
+            sec = "0" + ts.Seconds.ToString(); 
+        }
+        else
+        { 
+            sec = ts.Seconds.ToString();
+        }
 
-        if (milli == 0) { ms = "00"; }
-        else if (milli < 10) { ms = "0" + milli.ToString(); }
-        else { ms = milli.ToString(); }
+        if (milli == 0)
+        {
+            ms = "00";
+        }
+        else if (milli < 10)
+        { 
+            ms = "0" + milli.ToString();
+        }
+        else
+        {
+            ms = milli.ToString();
+        }
 
         end = min + ":" + sec + "." + ms;
-        Debug.Log(end);
         return end;
     }
 
-    public void AddToLevelList(List<List<int>> newLevel)
+    public void AddToLevelList(List<List<int>> newLevel) // creates button for the user to press
     {
-        
-
         GameObject newButton = Instantiate(chooseButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         newButton.transform.SetParent(spots[spotCount].transform);
         newButton.transform.position = spots[spotCount].transform.position;
@@ -851,14 +722,8 @@ public class LevelCreator : MonoBehaviour
 
         newButton.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = "Level " + actualCount;
         newButton.GetComponent<ChooseButton>().levelValue = actualCount;
-
-
-
         spotCount++;
         actualCount++;
-
-        
-        //Debug.Log("page count: " + page.Count);
 
         if (spotCount > 7)
         {
@@ -875,7 +740,7 @@ public class LevelCreator : MonoBehaviour
         UpdateListPage();
     }
 
-    float GenerateSpots()
+    float GenerateSpots() // generates the spots that the buttons for the user to press get placed on
     {
         spots.Clear();
 
@@ -890,7 +755,6 @@ public class LevelCreator : MonoBehaviour
 
         float halfY = levelsPerPage.y / 2;
         
-
         for (float r = halfY; r > -halfY; --r)
         {
             float halfX = levelsPerPage.x / 2;
@@ -907,25 +771,24 @@ public class LevelCreator : MonoBehaviour
             }
         }
 
-        if (sizeX == sizeY) { return scaleX - 0.05f; }
-        //Debug.LogError("generatespots no work");
+        if (sizeX == sizeY) 
+        {
+            return scaleX - 0.05f;
+        }
+
         return 1;
     }
 
     public void LoadLevelChooseList() // create the initial list of levels that you can click on to load
     {
-        //Debug.Log("Load Level Choose List");
         float scale = GenerateSpots();
 
         int LPP = (int)levelsPerPage.x * (int)levelsPerPage.y;
 
         List<GameObject> page = new List<GameObject>();
         
-
         if (levels.Count > 0)
-        {
-            
-
+        {           
             for (int i = 0; i < levels.Count; ++i)
             {
 
@@ -938,13 +801,10 @@ public class LevelCreator : MonoBehaviour
                 newButton.GetComponent<ChooseButton>().levelValue = actualCount;
                 newButton.GetComponent<ChooseButton>().Level();
 
-
-
                 spotCount++;
                 actualCount++;
                 
                 page.Add(newButton);
-                //Debug.Log("page count: " + page.Count);
 
                 if (spotCount > LPP - 1)
                 { 
@@ -954,38 +814,27 @@ public class LevelCreator : MonoBehaviour
                     levelButtons.Add(page);
 
                     page = add;
-
-                    
-
-
                 }
             }
-
-            
-
         }
-
-
-        if (page.Count != 0) { levelButtons.Add(page); }
-
-        
+        if (page.Count != 0)
+        { 
+            levelButtons.Add(page);
+        }  
 
         currentLevelPage = 0;
-        //Debug.LogWarning(levelButtons.Count);
         UpdateListPage();
         UpdatePageButtons();
     }
 
-    void UpdateListPage()
+    void UpdateListPage() // updates the buttons to be the correct page
     {
         for (int i = 0; i < levelButtons.Count; ++i)
         {
             if (currentLevelPage == i)
-            {
-               
+            {              
                 for (int ii = 0; ii < levelButtons[i].Count; ++ii)
                 {
-                    //Debug.Log(levelButtons[i][ii].name);
                     levelButtons[i][ii].SetActive(true);
                 }
             }
@@ -1000,7 +849,10 @@ public class LevelCreator : MonoBehaviour
         }
 
         requirementBox.SetActive(CheckRequirement(currentLevelPage));
-        if (requirementBox.activeSelf) { requirementText.text = "Complete levels " + levelButtons[currentLevelPage - 1][0].GetComponent<ChooseButton>().levelValue + "-" + levelButtons[currentLevelPage - 1][levelButtons[currentLevelPage - 1].Count - 1].GetComponent<ChooseButton>().levelValue + " to unlock"; }
+        if (requirementBox.activeSelf)
+        {
+            requirementText.text = "Complete levels " + levelButtons[currentLevelPage - 1][0].GetComponent<ChooseButton>().levelValue + "-" + levelButtons[currentLevelPage - 1][levelButtons[currentLevelPage - 1].Count - 1].GetComponent<ChooseButton>().levelValue + " to unlock";
+        }
     }
 
     bool CheckRequirement(int page) // checks if a certain page has been completed or not
@@ -1015,9 +867,8 @@ public class LevelCreator : MonoBehaviour
         return false;
     }
 
-    void UpdatePageButtons()
+    void UpdatePageButtons() // updates the page buttons to be interactable or not
     {
-
         pageNumText.text = (currentLevelPage + 1).ToString();
 
         if (currentLevelPage == 0)
@@ -1041,29 +892,28 @@ public class LevelCreator : MonoBehaviour
             pageRightFarButton.GetComponent<Button>().interactable = true;
         }
     }
-
-    public void PageLeft()
+    public void PageLeft() // is called whe the single left button is pressed
     {
         currentLevelPage--;
         UpdateListPage();
         UpdatePageButtons();
     }
 
-    public void PageLeftFar()
+    public void PageLeftFar() // is called whe the double left button is pressed
     {
         currentLevelPage = 0;
         UpdateListPage();
         UpdatePageButtons();
     }
 
-    public void PageRight()
+    public void PageRight() // is called whe the single right button is pressed
     {
         currentLevelPage++;
         UpdateListPage();
         UpdatePageButtons();
     }
 
-    public void PageRightFar()
+    public void PageRightFar() // is called whe the double right button is pressed
     {
         int cp = currentLevelPage;
         bool exit = false;
@@ -1085,25 +935,18 @@ public class LevelCreator : MonoBehaviour
         {
             cp = levelButtons.Count - 1;
         }
-        else
-        {
-            Debug.Log($"{cp} is not current page: {currentLevelPage}");
-        }
 
         if (cp != levelButtons.Count - 1)
         {
             cp--;
         }
 
-
         if (cp > levelButtons.Count - 1)
         {
             cp = levelButtons.Count - 1;
         }
 
-
         currentLevelPage = cp;
-        //if (cp + 1 > currentLevelPage) { currentLevelPage = levelButtons.Count - 1; }
         UpdateListPage();
         UpdatePageButtons();
     }
@@ -1112,7 +955,6 @@ public class LevelCreator : MonoBehaviour
     {
         gameManager.undoHolster.Clear();
         gameManager.TTHolster.Clear();
-        Debug.LogWarning("Loaded Level " + index);
 
         gameManager.SetResetTubes(levels[index].Count);
         gameManager.ResetGame();
@@ -1120,19 +962,13 @@ public class LevelCreator : MonoBehaviour
         List<GameObject> Gametubes = gameObject.GetComponent<GameManager>().tubes;
 
         levelNumText.text = "Level " + (index + 1).ToString();
-        //index = button.GetComponent<ChooseButton>().levelValue - 1;
-
-        //Debug.Log("Level Count: " + levels.Count);
 
         if (levels.Count > 0)
         {
             for (int i = 0; i < levels[index].Count; ++i) // each tube
-            {
-                
+            {        
                 for (int ii = 1; ii <= levels[index][i].Count; ii++) // each ball
-                {
-                    
-
+                {                 
                     Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[levels[index][i][ii - 1]].color;
                     Gametubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (levels[index][i][ii - 1] + 1).ToString();
                     Gametubes[i].GetComponent<Tube>().SetSpot(levels[index][i][ii - 1] + 1, ii);
@@ -1143,36 +979,21 @@ public class LevelCreator : MonoBehaviour
                             Gametubes[i].GetComponent<Tube>().Cork(); 
                         }
                     }
-                    else { Debug.Log("dont cork"); }
-                    
-
-                    //Debug.Log("changed color");
                 }
-
             }
-
             gameObject.GetComponent<GameManager>().Cork();
-            gameObject.GetComponent<GameManager>().Cork();
-        }
-        else
-        {
-            Debug.Log("no levels");
-            Debug.Log("Level Count: " + levels.Count);
-
         }
 
         gameManager.menuNum = 2;
         lastLevelLoaded = index;
-        gameManager.SetUndoTubes();
-        
+        gameManager.SetUndoTubes();       
     }
-
-    public void LoadLastLevel()
+    public void LoadLastLevel() // loads the last level
     {
         LoadLevel(lastLevelLoaded);
     }
 
-    public void WinScreen()
+    public void WinScreen() // is called when the player completes a level
     {
         winScreen.SetActive(true);
         winCoinText.text = "+" + coinIncriment.ToString() + " Coins";
@@ -1181,7 +1002,6 @@ public class LevelCreator : MonoBehaviour
         {
             ParticleSystem confetti = Instantiate(confettiPrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
-            //confetti.gameObject.transform.SetParent(confettiSpots[i].transform);
             confetti.gameObject.transform.localScale = new Vector3(1, 1, 1);
             Vector3 pos = confettiSpots[i].transform.position;
             pos.z = -1;
@@ -1193,9 +1013,14 @@ public class LevelCreator : MonoBehaviour
 
         if (!inChallenge)
         {
-            if (!BeatLastLevel()) { winCoinText.text = "You've Already Beat This Level!"; }
+            if (!BeatLastLevel())
+            {
+                winCoinText.text = "You've Already Beat This Level!"; 
+            }
+
             UpdateCompleted();
             gameObject.GetComponent<GameManager>().SetUndoTubes();
+
             if (lastLevelLoaded >= levels.Count - 1)
             {
                 winNextButton.interactable = false;
@@ -1218,8 +1043,13 @@ public class LevelCreator : MonoBehaviour
         else if (inChallenge)
         {
             winCoinText.text = "Challenge " + (lastLevelLoaded + 1).ToString() + " completed";
-            if (!BeatLastChallengeLevel()) { winCoinText.text = "You've Already Beat This Challenge Level!"; }
+            if (!BeatLastChallengeLevel())
+            { 
+                winCoinText.text = "You've Already Beat This Challenge Level!";
+            }
+
             BeatLastChallengeLevel();
+
             if (BeatChallenge())
             {
                 winCoinText.text = "You've Beat The Challenge!";
@@ -1228,12 +1058,10 @@ public class LevelCreator : MonoBehaviour
 
                 goToWinChallengeButton.gameObject.SetActive(true);
             }
-        }
-
-        
+        }        
     }
 
-    public void WinChallengeScreen()
+    public void WinChallengeScreen() // this is called when the player completes the challenge
     {
         challengeWinScreen.SetActive(true);
         challengeWinCoinText.text = $"+ {challengeWinCoins} Coins!";
@@ -1241,15 +1069,13 @@ public class LevelCreator : MonoBehaviour
         loadedChallengeTime = PlayerPrefs.GetFloat("ChallengeTime");
         float roundedTime = Mathf.Round(loadedChallengeTime * 100) / 100;
         
-
         challengeWinRecordText.text = $"Record: {OrganizeChallengeTime(roundedTime)}";
         challengeWinTimeText.text = $"Time: {OrganizeChallengeTime(challengeTime)}";
 
         coins += challengeWinCoins;
         finishedChallenge = false;
     }
-
-    public void EndChallenge()
+    public void EndChallenge() // this is called when the player is done with the win challenge screen
     {
         challengeWinScreen.SetActive(false);
 
@@ -1261,11 +1087,10 @@ public class LevelCreator : MonoBehaviour
         GiveUpChallenge();
     }
 
-    public void WinNext()
+    public void WinNext() // this is called when the player wants to move onto the next level on the win screen
     {
         gameObject.GetComponent<GameManager>().ResetGame();
         
-
         if (!inChallenge)
         {
             if (lastLevelLoaded < levels.Count)
@@ -1275,7 +1100,6 @@ public class LevelCreator : MonoBehaviour
                     int test = lastLevelLoaded + i;
                     if (!completed.Contains(test))
                     {
-                        Debug.Log($"Loaded level: {test}");
                         LoadLevel(test - 1);
                         break;
                     }
@@ -1289,19 +1113,16 @@ public class LevelCreator : MonoBehaviour
                 LoadChallengeLevel(lastLevelLoaded + 1); 
             }
         }
-
         winScreen.SetActive(false);
     }
-
-    public void WinLevels()
+    public void WinLevels() // this is called when the player wants to go back to the levels screen
     {
-
         gameObject.GetComponent<GameManager>().menuNum = 1;
         gameObject.GetComponent<GameManager>().ResetGame();
         winScreen.SetActive(false);
     }
 
-    public bool BeatLastLevel()
+    public bool BeatLastLevel() // this is called when the player beats the level they're on
     {
         for (int i = 0; i < levelButtons.Count; ++i)
         {
@@ -1315,18 +1136,15 @@ public class LevelCreator : MonoBehaviour
                     return true;
                     
                 }
-                //else if (lastLevelLoaded + 1 == 45) { Unlock(); }
             }
         }
 
         challengeRequirement.SetActive(ChallengeRequirement());
-        return false;
-        
-    }
 
-    public void BeatIndexLevel(int index)
+        return false;    
+    }
+    public void BeatIndexLevel(int index) // this is called to set the beaten levels at the start
     {
-        //Debug.Log(index);
         for (int i = 0; i < levelButtons.Count; ++i)
         {
             for (int ii = 0; ii < levelButtons[i].Count; ++ii)
@@ -1337,10 +1155,7 @@ public class LevelCreator : MonoBehaviour
                 }
             }
         }
-
-        challengeRequirement.SetActive(ChallengeRequirement());
-
-        
+        challengeRequirement.SetActive(ChallengeRequirement());        
     }
 
     public void AddToDatabase(int index) // add a new level to the saved string
@@ -1368,19 +1183,16 @@ public class LevelCreator : MonoBehaviour
         savedLevels = savedLevels + level;
     }
 
-    public void LoadCompleted()
-    {
-        
+    public void LoadCompleted() // this loads the completed levels of the player
+    {    
         if (PlayerPrefs.HasKey("SavedString"))
         {
             completedSave = PlayerPrefs.GetString("SavedString");
-            //Debug.Log(completedSave);
         }
         if (PlayerPrefs.HasKey("CoinCount"))
         {
             coins = PlayerPrefs.GetInt("CoinCount");
         }
-        //else { Debug.LogWarning("There is no save data"); }
 
         List<int> getCompleted = new List<int>();
         string set = "";
@@ -1389,11 +1201,9 @@ public class LevelCreator : MonoBehaviour
         {
             for (int i = 0; i < completedSave.Length; ++i)
             {
-
                 if (completedSave[i] != ',')
                 {
                     set = set + completedSave[i];
-
                 }
                 else if (completedSave[i] == ',')
                 {
@@ -1412,7 +1222,6 @@ public class LevelCreator : MonoBehaviour
                         {
                             add -= 3;
                         }
-
                     }
                     if (!PlayerPrefs.HasKey("FIXTUBES"))
                     {
@@ -1493,7 +1302,6 @@ public class LevelCreator : MonoBehaviour
                     getCompleted.Add(add);
                     
                     set = "";
-                    //Debug.Log(completed.Count);
                 }
             }
 
@@ -1505,14 +1313,12 @@ public class LevelCreator : MonoBehaviour
 
         for (int index = 0; index < getCompleted.Count; ++index)
         {
-            //Debug.Log("complete load: " + completed[index]);
             for (int i = 0; i < levelButtons.Count; ++i)
             {
                 for (int ii = 0; ii < levelButtons[i].Count; ++ii)
                 {
                     if (levelButtons[i][ii].GetComponent<ChooseButton>().levelValue == getCompleted[index])
                     {
-                        //Debug.Log("loadedCom: " + index);
                         levelButtons[i][ii].GetComponent<Image>().color = completedMat.color;
                     }
                 }
@@ -1535,13 +1341,10 @@ public class LevelCreator : MonoBehaviour
             {
                 levelButtons[i][ii].GetComponent<Image>().color = blankMat.color;
             }
-        }
-
-
-        
+        }       
     }
 
-    public void UpdateCompleted()
+    public void UpdateCompleted() // this updates the completed levels of the player then saves them
     {
         string newCompleted = "";
 
@@ -1552,22 +1355,16 @@ public class LevelCreator : MonoBehaviour
                 if (levelButtons[i][ii].GetComponent<Image>().color == completedMat.color)
                 {
                     newCompleted = newCompleted + levelButtons[i][ii].GetComponent<ChooseButton>().levelValue.ToString() + ",";
-                }
-                
+                }               
             }
         }
 
         completedSave = newCompleted;
         SaveCompleted();
     }
-
-    
-
     public void SaveCompleted()
     {
         PlayerPrefs.SetString("SavedString", completedSave);
-        PlayerPrefs.Save();
-        //Debug.Log("Game data saved!");  
     }
 
     public void LoadGame() // load all the levels from a string to their list versions
@@ -1578,8 +1375,7 @@ public class LevelCreator : MonoBehaviour
         List<int> loadTube = new List<int>();
         List<List<int>> loadLevel = new List<List<int>>();
 
-        string level = "";
-        
+        string level = "";       
 
         // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
 
@@ -1588,7 +1384,6 @@ public class LevelCreator : MonoBehaviour
             for (int index = 0; index < savedLevels.Length; index++)
             {
                 level += savedLevels[index];
-                //Debug.Log("index = " + index);
 
                 if (savedLevels[index] != '-')
                 {
@@ -1602,7 +1397,6 @@ public class LevelCreator : MonoBehaviour
                         {
 
                             loadBall = System.Convert.ToInt32(ball);
-                            //Debug.Log("Load ball = " + loadBall);
                             ball = "";
                             int newBall = loadBall;
 
@@ -1617,7 +1411,6 @@ public class LevelCreator : MonoBehaviour
                         if (ball != "")
                         {
                             loadBall = System.Convert.ToInt32(ball);
-                            //Debug.Log("Load ball = " + loadBall);
                             ball = "";
                             int newBall = loadBall;
 
@@ -1625,7 +1418,6 @@ public class LevelCreator : MonoBehaviour
                         }
 
                         List<int> newTube = loadTube;
-                        //Debug.Log("New Tube with Count = " + newTube.Count);
 
                         loadLevel.Add(newTube);
 
@@ -1639,7 +1431,6 @@ public class LevelCreator : MonoBehaviour
                         if (ball != "")
                         {
                             loadBall = System.Convert.ToInt32(ball);
-                            //Debug.Log("Load ball = " + loadBall);
                             ball = "";
                             int newBall = loadBall;
 
@@ -1647,7 +1438,6 @@ public class LevelCreator : MonoBehaviour
                         }
 
                         List<int> newTube = loadTube;
-                        //Debug.Log("New Tube with Count = " + newTube.Count);
 
                         loadLevel.Add(newTube);
 
@@ -1659,58 +1449,43 @@ public class LevelCreator : MonoBehaviour
                         List<List<int>> newLevel = new List<List<int>>();
 
                         newLevel = loadLevel;
-
-                        //Debug.Log("Level Count = " + levels.Count);
-
                         levels.Add(newLevel);
-                        
-
                         
                         loadLevel = new List<List<int>>();
 
-                        
-
-                        level = "";
-                        
-                    }
-                    else
-                    {
-                        
-                        Debug.Log("Not enough in loadLevel: " + loadLevel.Count);
+                        level = "";                        
                     }
                 }
-
             }
         }
     }
-
     public string GetLevels() // open the text file containing the string of levels
     {
-
         return textfile.text;
     }
 
     public Vector2 hintTubes = Vector2.zero;
 
-    public void Hint()
+    public void Hint() // this is called when the player presses the hint button
     {
         if (coins > hintCost)
         {
             coins -= hintCost;
 
-            Test();
+            DoHint();
             lookingForHint = true;
-            Debug.LogError("hint");
         }
     }
 
-    public void Test()
-    {
-        
+    public void DoHint() // this solves the current board and gives the player a hint
+    {       
         List<List<int>> solvePoint = new List<List<int>>();
         List<GameObject> gameTubes = new List<GameObject>();
 
-        if (gameManager.undoHolster.Count > 0) { gameTubes = gameManager.undoHolster[gameManager.undoHolster.Count - 1]; }
+        if (gameManager.undoHolster.Count > 0)
+        {
+            gameTubes = gameManager.undoHolster[gameManager.undoHolster.Count - 1];
+        }
         else
         {
             solvePoint = gameObject.GetComponent<LevelSolver>().CopyBoard(levels[lastLevelLoaded]);
@@ -1729,8 +1504,6 @@ public class LevelCreator : MonoBehaviour
             return;
         }
 
-        //Debug.Log(gameTubes.Count);
-
         for (int i = 0; i < gameTubes.Count; ++i)
         {
             solvePoint.Add(new List<int>());
@@ -1739,12 +1512,11 @@ public class LevelCreator : MonoBehaviour
                 solvePoint[i].Add(gameTubes[i].GetComponent<Tube>().spots[j]);
             }
         }
-        gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, lastLevelLoaded);
-        
+        gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, lastLevelLoaded);        
     }
 
     public TextAsset solveCheck;
-    public bool SolveList(List<List<int>> generated, int index)
+    public bool SolveList(List<List<int>> generated, int index) // this solves a list of a list of ints
     {
         bool solvable = false;
         List<List<int>> solvePoint = new List<List<int>>(generated);
@@ -1775,11 +1547,10 @@ public class LevelCreator : MonoBehaviour
 
         solvable = gameObject.GetComponent<LevelSolver>().InitiateLevel(solvePoint, index);
         
-        return solvable;
-        
+        return solvable;        
     }
 
-    public void AddPageToCompleted()
+    public void AddPageToCompleted() // Debug feature
     {
         for (int j = 0; j < levelButtons.Count; ++j)
         {

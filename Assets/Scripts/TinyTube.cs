@@ -46,13 +46,13 @@ public class TinyTube : MonoBehaviour
 
     
 
-    public void SetSpot(int given, int where)
+    public void SetSpot(int given, int where) // sets a spot in the tube
     {
 
         spots[where] = given;
     }
 
-    public void ResetSelf()
+    public void ResetSelf() // resets the game balls in the tube to be matched with the spots and spot objects lists
     {
         Debug.Log("reset self");
         for (int i = 0; i < spots.Count; ++i)
@@ -90,9 +90,7 @@ public class TinyTube : MonoBehaviour
 
         }
     }
-
-
-    public void ClearTube()
+    public void ClearTube() // empties the tube
     {
         for (int i = 0; i < spots.Count; i++)
         {
@@ -102,15 +100,7 @@ public class TinyTube : MonoBehaviour
 
         ResetSelf();
     }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-       
-    }
-
-    public void MoveBottomToTop()
+    public void MoveBottomToTop() // moves the first ball to the top of the tube
     {
         index = BottomIndex();
         spots[0] = spots[index];
@@ -120,7 +110,7 @@ public class TinyTube : MonoBehaviour
         index = BottomIndex();
     }
 
-    public int BottomIndex()
+    public int BottomIndex() // returns the index of the last ball
     {
         for (int i = 1; i < spots.Count; ++i)
         {
@@ -155,7 +145,7 @@ public class TinyTube : MonoBehaviour
         {
             return spots[0];
         }
-        Debug.LogWarning("not getting top ball");
+
         return InvalidIndex;
     }
 
@@ -180,6 +170,7 @@ public class TinyTube : MonoBehaviour
         {
             return true;
         }
+
         return false;
     }
 
@@ -189,8 +180,6 @@ public class TinyTube : MonoBehaviour
         {
             for (int i = 1; i < spotObjects.Count; ++i)
             {
-
-
                 if (spots[i] == 0)
                 {
                     return false;
@@ -215,7 +204,7 @@ public class TinyTube : MonoBehaviour
         return false;
     }
 
-    public void NewBallsToBottom(int ball, Tube ogTube, int ogLocation)
+    public void NewBallsToBottom(int ball, Tube ogTube, int ogLocation) // puts a new ball into the bottom of this tube from another tube
     {
         spots[1] = ball;
         ballObjects[1] = ogTube.ballObjects[ogLocation];
@@ -223,7 +212,7 @@ public class TinyTube : MonoBehaviour
         ogTube.ballObjects[ogLocation] = null;
     }
 
-    public bool CheckIfNextIsSameColor(int ball)
+    public bool CheckIfNextIsSameColor(int ball) // check if the ball at the bottom index is equal to the parameter ball
     {
         if (BottomIndex() != InvalidIndex)
         {
@@ -239,7 +228,7 @@ public class TinyTube : MonoBehaviour
         return false;
     }
 
-    public int CheckHowManyNextIsSameColor(int ball)
+    public int CheckHowManyNextIsSameColor(int ball) // returns how many balls from the bottom index ball are the same color
     {
         int num = 0;
 
@@ -255,21 +244,11 @@ public class TinyTube : MonoBehaviour
                 }
             }
         }
-        //Debug.Log("num same: " + num);
+
         return num;
     }
 
-    public bool CheckTwo(int ball, int other)
-    {
-        if (other == ball)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public int ReturnNext()
+    public int ReturnNext() // returns the bottom ball
     {
         if (BottomIndex() != InvalidIndex)
         {
@@ -282,24 +261,27 @@ public class TinyTube : MonoBehaviour
         return InvalidIndex;
     }
 
-    public bool CanMoveIntoNextTube(GameObject tube)
+    public bool CanMoveIntoNextTube(GameObject tube) // checks if this tubes top ball can move into the parameter tube
     {
-        //Debug.Log("check if moveable");
-
         if (tube.GetComponent<Tube>().ReturnNumOpenSpots() != 0)
         {
             int ball = InvalidIndex;
-            if (spots[0] != 0) { ball = GetTopBall(); }
-            else { ball = GetBottomBall(); }
+            if (spots[0] != 0)
+            {
+                ball = GetTopBall();
+            }
+            else
+            {
+                ball = GetBottomBall();
+            }
 
             int numMoving = 1;
             if (!EmptyTube())
             {
                 for (int i = BottomIndex(); i < spotObjects.Count; ++i)
                 {
-                    if (CheckTwo(ball, spots[i]))
+                    if (ball == spots[i])
                     {
-                        //Debug.Log("is same color");
                         numMoving++;
                     }
                     else
@@ -308,8 +290,6 @@ public class TinyTube : MonoBehaviour
                     }
                 }
             }
-
-            //Debug.Log("numMoving: " + numMoving);
 
             if (numMoving <= tube.GetComponent<Tube>().ReturnNumOpenSpots())
             {
@@ -320,7 +300,7 @@ public class TinyTube : MonoBehaviour
         return false;
     }
 
-    public int ReturnNumOpenSpots()
+    public int ReturnNumOpenSpots() // returns the number of open spots at the top of the tube
     {
         int num = 0;
 
@@ -329,13 +309,11 @@ public class TinyTube : MonoBehaviour
             if (spots[i] == 0) { num++; }
         }
 
-        //Debug.Log("open spots: " + num);
         return num;
     }
 
-    void Clicked()
+    void Clicked() // inializing clicking for tube
     {
-
         gm.GetComponent<GameManager>().ClickedTinyTube(gameObject);
 
     }

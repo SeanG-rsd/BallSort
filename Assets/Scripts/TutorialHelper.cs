@@ -16,21 +16,12 @@ public class TutorialHelper : MonoBehaviour
 
     public GameObject moveOnButton;
     public GameObject startGameButton;
-
-    // Start is called before the first frame update
-    void Start()
+    void Start() 
     {
         index = 0;
         infoText.text = infoStrings[index];
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void MoveOn()
+    public void MoveOn() // is called when the next button is click and moves to the next message in the tutorial sequence
     {
         index++;
         if (index < infoStrings.Count - 1)

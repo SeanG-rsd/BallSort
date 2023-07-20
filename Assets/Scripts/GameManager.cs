@@ -517,6 +517,8 @@ public class GameManager : MonoBehaviour
 
     public void ClickedTinyTube(GameObject tube)
     {
+        gameObject.GetComponent<LevelSolver>().tinyTubeFlash.gameObject.SetActive(false);
+
         if (!clickState && !tube.GetComponent<TinyTube>().EmptyTube()) // move ball to the top
         {
             clickState = true;
@@ -645,6 +647,7 @@ public class GameManager : MonoBehaviour
         if (canUndo && undoHolster.Count != 0 && undosLeft > 0)
         {
             undosLeft--;
+            NoMovesLeftBox.Deactivate();
 
             GameObject undoTT = new GameObject();
             if (undoHolster.Count > 1)
@@ -723,6 +726,7 @@ public class GameManager : MonoBehaviour
         }
         else if (canUndo && undoHolster.Count != 0 && coins >= undoCost && undosLeft == 0)
         {
+            NoMovesLeftBox.Deactivate();
             coins -= undoCost;
             gameObject.GetComponent<LevelCreator>().coins = coins;
 
@@ -838,6 +842,11 @@ public class GameManager : MonoBehaviour
                         return true;
                     }
 
+                    if (tube1.spots[0] != 0 || tube2.spots[0] != 0)
+                    {
+                        return true;
+                    }
+
                     if (ball1 == ball2)
                     {
                         if (tube1.NumSameAtTop() <= tube2.ReturnNumOpenSpots())
@@ -874,7 +883,8 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-        }       
+        }
+        Debug.Log("NO MOVES LEFT");
         return false;
     }
 

@@ -16,17 +16,13 @@ public class HintFlash : MonoBehaviour
 
     public Color color;
     GameObject gm;
-
-    // Start is called before the first frame update
     void Awake()
     {
         color = gameObject.GetComponent<Image>().color;
         gm = GameObject.Find("GameManager");
         gameObject.SetActive(false);
     }
-
-    // Update is called once per frame
-    void Update()
+    void Update() // increases and decreases transparency within a range when active
     {
         if (gameObject.activeSelf)
         {
@@ -47,11 +43,10 @@ public class HintFlash : MonoBehaviour
             }
         }
 
-        if (playerMadeMove)
+        if (playerMadeMove) // if the player finished the hint move then set the tube inactive
         {
             tubes = Vector2.zero;
             gm.GetComponent<LevelCreator>().lookingForHint = false;
-            Debug.Log("reset");
             index = 0;
             playerMadeMove = false;
             gameObject.SetActive(false);

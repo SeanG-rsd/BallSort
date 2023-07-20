@@ -43,11 +43,9 @@ public class Ball : MonoBehaviour
         tubeSpace = gameManager.GetComponent<GameManager>().tubeContainer;
 
         moveSpace = transform.parent.parent.parent.parent;
-        //tubeSpace = transform.parent.parent;
-
     }
 
-    public void MoveBall(int tubeNum, GameObject targetTube, int spotIndex)
+    public void MoveBall(int tubeNum, GameObject targetTube, int spotIndex) // setting the balls destination and figuring out the target spot where the ball is to be placed
     {
         if (!move)
         {
@@ -68,33 +66,24 @@ public class Ball : MonoBehaviour
         targetSpot = targetTube.transform.GetChild(spotIndex).gameObject;
         
         targetPoint = FindPoint();
-
-        Debug.Log(topPoint);
-        Debug.Log(secondPoint);
-        Debug.Log(targetPoint);
     }
 
-    Vector3 FindPoint()
+    Vector3 FindPoint() // finds the point of the target spot relative to the tubecontainer object
     {
-
         GameObject extraTop = lastTube.transform.GetChild(0).gameObject;
         topPoint = extraTop.transform.parent.localPosition + extraTop.transform.localPosition + tubeSpace.localPosition;
 
-        if (targetSpot.transform.parent == transform.parent.parent)
+        if (targetSpot.transform.parent == transform.parent.parent) // if the ball is moving within its own tube
         {
-            //Debug.Log("true");
             targetPoint = targetSpot.transform.localPosition - transform.parent.localPosition;
         }
-        else
+        else // if the ball is moving to a different tube
         {
             thisIndex = transform.parent.parent.GetSiblingIndex();
             
             
             transform.SetParent(moveSpace);
-
-            //transform.localScale = Vector3.one;
-            //Debug.Log(transform.localPosition);
-            if (Vector3.Distance(transform.localPosition, topPoint) > 15.0f)
+            if (Vector3.Distance(transform.localPosition, topPoint) > 15.0f) // checks if the ball needs to go out the tube before moving the the second point
             {
                 Debug.Log(transform.position);
                 hasBeenAtTop = false;
@@ -104,7 +93,7 @@ public class Ball : MonoBehaviour
                 hasBeenAtTop = true;
             }
 
-            targetPoint = targetSpot.transform.parent.localPosition + targetSpot.transform.localPosition + tubeSpace.localPosition;
+            targetPoint = targetSpot.transform.parent.localPosition + targetSpot.transform.localPosition + tubeSpace.localPosition; // the target spot point
             if (!tutorial)
             {
                 SetSecondPoint();
@@ -120,7 +109,7 @@ public class Ball : MonoBehaviour
         return targetPoint;
     }
 
-    void SetSecondPoint()
+    void SetSecondPoint() // finding the top of the second tube, either traveling vertically first if the tube is on a different row or traveling horizontally if the target tube is on the same row
     {
         if (index > 7 && thisIndex < 8 && index != -2)
         {
@@ -140,8 +129,6 @@ public class Ball : MonoBehaviour
             topPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y + tubeSpace.localPosition.y;
             topPoint.z = targetPoint.z;
 
-            //Debug.LogWarning("b to t");
-
             hasBeenAtTop = false;
         }
         else if (index == tinyTubeIndex)
@@ -155,8 +142,6 @@ public class Ball : MonoBehaviour
             topPoint.y = targetSpot.transform.parent.GetChild(0).localPosition.y + targetSpot.transform.parent.localPosition.y + tubeSpace.localPosition.y;
             topPoint.z = targetPoint.z;
 
-            //Debug.LogWarning("b to t");
-
             hasBeenAtTop = false;
         }
         else
@@ -164,12 +149,10 @@ public class Ball : MonoBehaviour
             secondPoint.x = targetPoint.x;
             secondPoint.y = transform.localPosition.y;
             secondPoint.z = targetPoint.z;
-        }
-
-        
+        }     
     }
 
-    void SetTutorialPoint()
+    void SetTutorialPoint() // this is for the tutorial
     {
         secondPoint.x = targetPoint.x;
         secondPoint.y = transform.localPosition.y;
@@ -180,12 +163,11 @@ public class Ball : MonoBehaviour
         topPoint.y = (targetSpot.transform.parent.GetChild(0).localPosition.y * targetSpot.transform.parent.localScale.x) + targetSpot.transform.parent.localPosition.y;
         topPoint.z = targetPoint.z;
     }
-    // Update is called once per frame
     void Update()
     {
         if (move)
         {
-            if (!otherTube)
+            if (!otherTube) // last
             {
                 transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPoint, speed * Time.deltaTime);
 
@@ -207,28 +189,19 @@ public class Ball : MonoBehaviour
                     else if (tutorial)
                     {
                         tutorialManager.GetComponent<TutorialManager>().Cork();
-                        if (tutorialManager.GetComponent<TutorialManager>().CheckForWin())
-                        {
-                            tutorialManager.GetComponent<TutorialManager>().Win();
-                        }
-                    }
-
-
-                    
-                    
+                    }         
                 }
             }
-            else if (hasBeenAtTop)
+            else if (hasBeenAtTop) // second
             {
                 transform.localPosition = Vector3.MoveTowards(transform.localPosition, secondPoint, speed * Time.deltaTime);
 
                 if (Vector3.Distance(transform.localPosition, secondPoint) < 0.01f)
                 {
-                    //Debug.Log("close to other");
                     otherTube = false;
                 }
             }
-            else
+            else // first
             {
                 transform.localPosition = Vector3.MoveTowards(transform.localPosition, topPoint, speed * Time.deltaTime);
 

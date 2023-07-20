@@ -5,15 +5,7 @@ using UnityEngine;
 public class Popup : MonoBehaviour
 {
     public float activationTime;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
+    void Update() // decreases time until the object get deactivated
     {
         if (gameObject.activeSelf)
         {
@@ -21,18 +13,17 @@ public class Popup : MonoBehaviour
 
             if (activationTime < 0 )
             {
-                gameObject.SetActive (false);
+                Deactivate();
             }
         }
     }
-
-    public void Activate(float time)
+    public void Activate(float time) // activates the icon with a certain time
     {
         activationTime = time;
         gameObject.SetActive(true);
     }
 
-    public void Deactivate()
+    public void Deactivate() // deactivates the icon and resets it
     {
         gameObject.SetActive(false);
         activationTime = 0;

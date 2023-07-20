@@ -10,7 +10,6 @@ public class TutorialManager : MonoBehaviour
 {
     public List<GameObject> tubes;
 
-
     public bool clickState;
     public GameObject firstTubeClicked;
 
@@ -21,9 +20,7 @@ public class TutorialManager : MonoBehaviour
     List<List<int>> level = new List<List<int>>();
 
     public Button StartButton;
-
-    // Start is called before the first frame update
-    void Start()
+    void Start() // start tutorial and create level
     {
         if (PlayerPrefs.HasKey("Tutorial"))
         {
@@ -50,34 +47,27 @@ public class TutorialManager : MonoBehaviour
         LoadTutorial();
     }
 
-    void LoadTutorial()
+    void LoadTutorial() // sets the tubes in the tutorial
     {
         for (int i = 0; i < level.Count; ++i) // each tube
         {
             
             for (int ii = 1; ii <= level[i].Count; ++ii) // each ball
             {
-
-
                 tubes[i].transform.GetChild(ii).GetChild(0).gameObject.GetComponent<Image>().color = mats[level[i][ii - 1]].color;
                 tubes[i].transform.GetChild(ii).GetChild(0).gameObject.tag = "C" + (level[i][ii - 1] + 1).ToString();
                 tubes[i].GetComponent<Tube>().SetSpot(level[i][ii - 1] + 1, ii);
-                if (!tubes[i].GetComponent<Tube>().corked) { if (tubes[i].GetComponent<Tube>().FullTube() && !tubes[i].GetComponent<Tube>().EmptyTube()) { tubes[i].GetComponent<Tube>().Cork(); } }
-                else { Debug.Log("dont cork"); }
-                
-
-                //Debug.Log("changed color");
+                if (!tubes[i].GetComponent<Tube>().corked)
+                { 
+                    if (tubes[i].GetComponent<Tube>().FullTube() && !tubes[i].GetComponent<Tube>().EmptyTube())
+                    {
+                        tubes[i].GetComponent<Tube>().Cork();
+                    }
+                }
             }
 
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public bool CheckForWin() // check to see if all tubes are the right color
     {
         for (int i = 0; i < tubes.Count; ++i)
@@ -89,27 +79,26 @@ public class TutorialManager : MonoBehaviour
         return true;
     }
 
-    public void Cork()
+    public void Cork() // cork a tube if finished
     {
-        //Debug.Log("cork");
-
         for (int i = 0; i < tubes.Count; ++i)
         {
-            if (!tubes[i].GetComponent<Tube>().corked) { if (tubes[i].GetComponent<Tube>().FullTube() && !tubes[i].GetComponent<Tube>().EmptyTube()) { tubes[i].GetComponent<Tube>().Cork(); } }
-
-
+            if (!tubes[i].GetComponent<Tube>().corked)
+            {
+                if (tubes[i].GetComponent<Tube>().FullTube() && !tubes[i].GetComponent<Tube>().EmptyTube())
+                {
+                    tubes[i].GetComponent<Tube>().Cork(); 
+                }
+            }
         }
     }
 
-    public void Clicked(GameObject tube)
+    public void Clicked(GameObject tube) // is called when a tube is clicked
     {
-
-
         if (!tube.GetComponent<Tube>().corked)
         {
             if (!clickState && !tube.GetComponent<Tube>().FullTube() && !tube.GetComponent<Tube>().EmptyTube()) // move ball to the top
             {
-                //SetUndoTubes();
                 clickState = true;
                 firstTubeClicked = tube;
                 Tube t = firstTubeClicked.GetComponent<Tube>();
@@ -119,23 +108,19 @@ public class TutorialManager : MonoBehaviour
             }
             else if (clickState && firstTubeClicked != tube) // move balls into empty tube
             {
-
                 int ball = firstTubeClicked.GetComponent<Tube>().GetTopBall();
 
                 Tube second = tube.GetComponent<Tube>();
-                //Debug.Log(ball.GetComponent<Image>().color);
+
                 Tube first = firstTubeClicked.GetComponent<Tube>();
 
                 if (second.EmptyTube())
                 {
-
                     clickState = false;
                     int moveIndex = 4;
 
                     first.ballObjects[0].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
                     second.NewBallsToBottom(ball, firstTubeClicked.GetComponent<Tube>(), 0);
-
-
 
                     for (int i = 0; i <= firstTubeClicked.GetComponent<Tube>().CheckHowManyNextIsSameColor(ball); ++i)
                     {
@@ -144,10 +129,7 @@ public class TutorialManager : MonoBehaviour
                         {
                             if (firstTubeClicked.GetComponent<Tube>().CheckTwo(firstTubeClicked.GetComponent<Tube>().ReturnNext(), ball))
                             {
-
                                 moveIndex--;
-                                //second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
-                                //Debug.LogWarning("sent new ball");
 
                                 first.ballObjects[first.BottomIndex()].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
                                 second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), firstTubeClicked.GetComponent<Tube>(), firstTubeClicked.GetComponent<Tube>().BottomIndex());
@@ -155,19 +137,12 @@ public class TutorialManager : MonoBehaviour
                         }
                     }
 
-
-
                     firstTubeClicked = null;
-
-
-                    if (CheckForWin()) { Win(); }
 
                 }
                 else if (ball == second.GetBottomBall() && !second.FullTube() && firstTubeClicked.GetComponent<Tube>().CanMoveIntoNextTube(tube)) // move more than one ball from partially full tube
                 {
                     clickState = false;
-
-
 
                     Tube t = firstTubeClicked.GetComponent<Tube>();
 
@@ -184,8 +159,6 @@ public class TutorialManager : MonoBehaviour
                             if (firstTubeClicked.GetComponent<Tube>().CheckTwo(firstTubeClicked.GetComponent<Tube>().ReturnNext(), ball))
                             {
                                 moveIndex--;
-                                //second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext());
-                                Debug.LogWarning("sent new ball");
 
                                 first.ballObjects[first.BottomIndex()].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, moveIndex);
                                 second.NewBallsToBottom(firstTubeClicked.GetComponent<Tube>().ReturnNext(), firstTubeClicked.GetComponent<Tube>(), firstTubeClicked.GetComponent<Tube>().BottomIndex());
@@ -194,16 +167,9 @@ public class TutorialManager : MonoBehaviour
                     }
 
                     firstTubeClicked = null;
-
-
-                    if (CheckForWin()) { Win(); }
-
                 }
                 else if (!second.FullTube())// move ball from different tube to the top
                 {
-
-
-
                     if (!first.EmptyTube())
                     {
                         first.ballObjects[0].GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, firstTubeClicked.GetComponent<Tube>().BottomIndex() - 1);
@@ -214,30 +180,18 @@ public class TutorialManager : MonoBehaviour
                     }
                     firstTubeClicked.GetComponent<Tube>().MoveTopToBottom();
 
-                    //firstTubeClicked.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, firstTubeClicked.GetComponent<Tube>().BottomIndex());
-
                     firstTubeClicked = tube;
 
                     first = firstTubeClicked.GetComponent<Tube>();
-                    //firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
-                    //firstTubeClicked.transform.GetChild(firstTubeClicked.GetComponent<Tube>().BottomIndex()).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, 0);
                     first.ballObjects[first.BottomIndex()].GetComponent<Ball>().MoveBall(firstTubeClicked.transform.GetSiblingIndex(), firstTubeClicked, 0);
                     firstTubeClicked.GetComponent<Tube>().MoveBottomToTop();
                 }
-
-
-
             }
             else if (clickState && firstTubeClicked == tube) // move ball back into the tube
             {
                 tube.GetComponent<Tube>().MoveTopToBottom();
                 tube.GetComponent<Tube>().ballObjects[tube.GetComponent<Tube>().BottomIndex()].GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, tube.GetComponent<Tube>().BottomIndex());
 
-                //tube.transform.GetChild(0).GetChild(0).gameObject.GetComponent<Ball>().MoveBall(tube.transform.GetSiblingIndex(), tube, tube.GetComponent<Tube>().BottomIndex());
-
-                //Debug.Log("same tube");
-                //undoHolster.RemoveAt(undoHolster.Count - 1);
-                //if (TinyTube.activeSelf) { TTHolster.RemoveAt(TTHolster.Count - 1); }
                 tube = null;
                 clickState = false;
             }
@@ -245,13 +199,7 @@ public class TutorialManager : MonoBehaviour
         }
     } // main game function
 
-    public void Win()
-    {
-
-        StartButton.interactable = true;
-    }
-
-    public void StartGame()
+    public void StartGame() // loads the main game scene
     {
         SceneManager.LoadScene(2);
     }

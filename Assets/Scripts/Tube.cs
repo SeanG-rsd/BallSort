@@ -40,10 +40,7 @@ public class Tube : MonoBehaviour
     // Start is called before the first frame update
 
     void Awake()
-    {
-        
-        
-        
+    {        
         GameTube = true;
         if (!TutorialTube)
         {
@@ -71,17 +68,12 @@ public class Tube : MonoBehaviour
 
     }
 
-    public void SetSpot(int given, int where)
-    {
-        
+    public void SetSpot(int given, int where) // sets a spot in the tube
+    {        
         spots[where] = given;
-        Debug.Log("set spot");
     }
-
-    // Update is called once per frame
-    void Update()
+    void Update() // checks if the tube is able to play confetti
     {
-
         if (!canConfetti)
         {
             loadedConfetti -= Time.deltaTime;
@@ -92,7 +84,7 @@ public class Tube : MonoBehaviour
         }
     }
 
-    public void MoveBottomToTop()
+    public void MoveBottomToTop() // moves the first ball to the top of the tube
     { 
         index = BottomIndex();
         spots[0] = spots[index];
@@ -102,7 +94,7 @@ public class Tube : MonoBehaviour
         index = BottomIndex();     
     }
 
-    public int BottomIndex()
+    public int BottomIndex() // returns the index of the last ball
     {
         for (int i = 1; i < spots.Count; ++i)
         {
@@ -148,9 +140,7 @@ public class Tube : MonoBehaviour
             if (spots[i] != 0)
             {
                 return spots[i];
-            }
-
-            
+            } 
         }
 
         return InvalidIndex;
@@ -197,7 +187,7 @@ public class Tube : MonoBehaviour
         return false;
     }
 
-    public void NewBallsToBottom(int ball, Tube ogTube, int ogLocation)
+    public void NewBallsToBottom(int ball, Tube ogTube, int ogLocation) // puts a new ball into the bottom of this tube from another tube
     {
         if (BottomIndex() != InvalidIndex)
         {
@@ -215,7 +205,7 @@ public class Tube : MonoBehaviour
         
     }
 
-    public bool CheckForMovement()
+    public bool CheckForMovement() // checks to see if any balls in the tube are moving
     {
         for (int j = 0; j < ballObjects.Count; ++j)
         {
@@ -231,7 +221,7 @@ public class Tube : MonoBehaviour
         return false;
     }
 
-        public void NewBallsFromTT(int ball, TinyTube ogTube, int ogLocation)
+    public void NewBallsFromTT(int ball, TinyTube ogTube, int ogLocation) // puts a new ball into the bottom of this tube from a tiny tube
     {
         if (BottomIndex() != InvalidIndex)
         {
@@ -247,14 +237,12 @@ public class Tube : MonoBehaviour
         ogTube.ballObjects[ogLocation] = null;
     }
 
-    public bool CheckIfNextIsSameColor(int ball)
+    public bool CheckIfNextIsSameColor(int ball) // check if the ball at the bottom index is equal to the parameter ball
     {
-        //Debug.Log("check if next is same color: " + BottomIndex());
         if (BottomIndex() != InvalidIndex)
         {
             if (spots[BottomIndex()] != 0)
             {
-
                 if (spots[BottomIndex()] == ball)
                 {
                     return true;
@@ -265,7 +253,7 @@ public class Tube : MonoBehaviour
         return false;
     }
 
-    public int CheckHowManyNextIsSameColor(int ball)
+    public int CheckHowManyNextIsSameColor(int ball) // returns how many balls from the bottom index ball are the same color
     {
         int num = 0;
         if (BottomIndex() != InvalidIndex)
@@ -282,7 +270,6 @@ public class Tube : MonoBehaviour
                     }
                 }
             }
-            //Debug.Log("num same: " + num);
         }
         return num;
     }
@@ -297,9 +284,8 @@ public class Tube : MonoBehaviour
         return false;
     }
 
-    public int ReturnNext()
+    public int ReturnNext() // returns the bottom ball
     {
-        //Debug.Log("return next: " + BottomIndex());
         if (BottomIndex() != InvalidIndex)
         {
             if (spots[BottomIndex()] != 0)
@@ -311,10 +297,8 @@ public class Tube : MonoBehaviour
         return InvalidIndex;
     }
 
-    public bool CanMoveIntoNextTube(GameObject tube)
+    public bool CanMoveIntoNextTube(GameObject tube) // checks if this tubes top ball can move into the parameter tube
     {
-        //Debug.Log("check if moveable");
-
         if (tube.GetComponent<Tube>().ReturnNumOpenSpots() != 0)
         {
             int ball = InvalidIndex;
@@ -328,7 +312,6 @@ public class Tube : MonoBehaviour
                 {
                     if (CheckTwo(ball, spots[i]))
                     {
-                        //Debug.Log("is same color");
                         numMoving++;
                     }
                     else
@@ -337,8 +320,6 @@ public class Tube : MonoBehaviour
                     }
                 }
             }
-
-            //Debug.Log("numMoving: " + numMoving);
 
             if (numMoving <= tube.GetComponent<Tube>().ReturnNumOpenSpots())
             {
@@ -349,7 +330,7 @@ public class Tube : MonoBehaviour
         return false;
     }
 
-    public int ReturnNumOpenSpots()
+    public int ReturnNumOpenSpots() // returns the number of open spots at the top of the tube
     {
         int num = 0;
 
@@ -362,7 +343,7 @@ public class Tube : MonoBehaviour
         return num;
     }
 
-    public int NumSameAtTop()
+    public int NumSameAtTop() // checks how many at the top of the tube are the same
     {
         int num = 0;
         if (spots[4] == 0) { return 0; }
@@ -381,20 +362,17 @@ public class Tube : MonoBehaviour
                 }
             }
         }
-        //Debug.Log("num same at top: " + num);
 
         return num;
     }
 
-    public void ResetSelf()
+    public void ResetSelf() // resets the game balls in the tube to be matched with the spots and spot objects lists
     {
-        Debug.Log("reset self");
         for (int i = 0; i < spots.Count; ++i)
         {
             if (spots[i] != 0)
             {
                 GameObject ball = Instantiate(ballPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                Debug.Log("made ball");
                 ball.GetComponent<Image>().color = gm.GetComponent<LevelCreator>().mats[spots[i] - 1].color;
                 ball.tag = "C" + spots[i].ToString();
                 ballObjects[i] = ball;
@@ -418,43 +396,33 @@ public class Tube : MonoBehaviour
                     Destroy(transform.GetChild(i).GetChild(0).gameObject);
                 }
             }
-            else
-            {
-                Debug.Log("empty spot");
-            }
-            
         }
     }
 
-    void Clicked()
+    void Clicked() // setup for button click
     {
         
         gm.GetComponent<GameManager>().Clicked(gameObject);
 
     }
 
-    void TutorialClicked()
+    void TutorialClicked() // setup for button click
     {
         gm.GetComponent<TutorialManager>().Clicked(gameObject);
     }
 
-    public void Cork()
+    public void Cork() // corks the tube and play confetti
     {
-        //Debug.Log("corked");
-
         corked = true;
 
         GameObject Cork = Instantiate(CorkPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         ParticleSystem confetti = Instantiate(confettiPrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
-        //confetti.gameObject.transform.SetParent(gameObject.transform);
         Vector3 pos = spotObjects[spotObjects.Count - 1].transform.position;
         pos.z = -1;
         pos.y = pos.y - 0.1f;
         confetti.gameObject.transform.position = pos;
-        confetti.gameObject.transform.localScale = new Vector3(1, 1, 1);
-        
-        
+        confetti.gameObject.transform.localScale = new Vector3(1, 1, 1);    
 
         if (canConfetti)
         {

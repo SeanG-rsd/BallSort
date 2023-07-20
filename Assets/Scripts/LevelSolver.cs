@@ -25,11 +25,10 @@ public class LevelSolver : MonoBehaviour
     public HintFlash hintFlash;
 
     public GameObject resetFlash;
+    public GameObject tinyTubeFlash;
 
     public Popup noSolution;
-
-    // Start is called before the first frame update
-    void Start()
+    void Start() // initializes the original board
     {
         for (int i = 0; i < 14; ++i)
         {
@@ -41,20 +40,14 @@ public class LevelSolver : MonoBehaviour
             }
 
             initialLevel.Add(tube);
-            //currentState.Add(tube);
         }
     }
 
-    public bool InitiateLevel(List<List<int>> input, int index)
+    public bool InitiateLevel(List<List<int>> input, int index) // takes the input and creates a copy then starts to solve it
     {
         levelIndex = index;
-
         initialLevel = CopyBoard(input);
-        Debug.Log(initialLevel.Count);
-        OutputState(initialLevel);
-
         StartCoroutine(SolveLevel());
-
         
         Debug.LogError("finish");
         return solvable;
@@ -64,9 +57,8 @@ public class LevelSolver : MonoBehaviour
     {
         return solveCheck.text;
     }
-    private IEnumerator SolveLevel()
+    private IEnumerator SolveLevel() // main solve function
     {
-        original = GetLevels();
         List<List<int>> currentState = new List<List<int>>(initialLevel);
 
         // Create a copy of InitialLevel
@@ -94,11 +86,7 @@ public class LevelSolver : MonoBehaviour
         while (!CheckForWin(currentState))
         {
             
-            List<List<int>> add = CopyBoard(currentState);
-
-            // Create a copy of CurrentState
-
-            
+            List<List<int>> add = CopyBoard(currentState); // Create a copy of CurrentState
 
             // Add a new state to all lists
             if (!same && !stepBack)
@@ -114,14 +102,8 @@ public class LevelSolver : MonoBehaviour
             // If the number of moves in the last state is greater than the index of the last state then create a new state
             if (movesForEachState[movesForEachState.Count - 1].Count >= indexForState[indexForState.Count - 1] + 1)
             {
-                //Debug.Log("move");
-                //Debug.Log(possibleMoves[indexForState[indexForState.Count - 1]]);
-                //Debug.Log(possibleMoves.Count);
-
                 // make a move on currentState based on the index of its possible moves and edit current state
                 MakeMove(currentState, possibleMoves[indexForState[indexForState.Count - 1]]);
-                OutputState(currentState);
-
 
                 // checks if this board is creating a loop in the statesMade
                 // same portion
@@ -129,13 +111,9 @@ public class LevelSolver : MonoBehaviour
                 {
                     if (CheckIfEqualStates(statesVisited[j], currentState))
                     {
-                        //Debug.Log("same");
-                        OutputState(statesVisited[j]);
-                        OutputState(currentState);
                         indexForState[indexForState.Count - 1]++;
                         currentState = CopyBoard(statesMade[statesMade.Count - 1]);
                         same = true;
-                        
 
                         break;
                     }
@@ -152,6 +130,7 @@ public class LevelSolver : MonoBehaviour
                 {
                     int other = 0;
                     Debug.LogError("found win");
+                    tinyTubeFlash.SetActive(false);
                     Debug.Log(movesForEachState[0][indexForState[0]]);
                     gameObject.GetComponent<LevelCreator>().hintTubes = movesForEachState[0][indexForState[0]];
                     
@@ -161,7 +140,6 @@ public class LevelSolver : MonoBehaviour
                     Debug.Log(iteration);
                     for (int i = 0; i < statesMade.Count; ++i)
                     {
-                        //Debug.Log(movesForEachState[i][indexForState[i]]);
                         winText.text = winText.text + movesForEachState[i][indexForState[i]];
                         if (other != 2)
                         {
@@ -173,7 +151,6 @@ public class LevelSolver : MonoBehaviour
                             winText.text = winText.text + "\n";
                             other = 0;
                         }
-                        //StopCoroutine(SolveLevel());
                     }
                     showButton.interactable = true;
 
@@ -188,28 +165,29 @@ public class LevelSolver : MonoBehaviour
             else
             {
                 // if there are no moves then remove the last item in each list and get the new moves for the new last state
-
-                //Debug.Log("no moves on current state");
-                //Debug.Log(movesForEachState[movesForEachState.Count - 1].Count + "   " + indexForState[indexForState.Count - 1]);
-
                 statesMade.RemoveAt(statesMade.Count - 1);
-
-
-
-                movesForEachState.RemoveAt(movesForEachState.Count - 1);
-                
+                movesForEachState.RemoveAt(movesForEachState.Count - 1);            
                 indexForState.RemoveAt(indexForState.Count - 1);
 
                 // if the new index for the first state is greater than the number of moves, there is no win
-
                 if (statesMade.Count == 0)
                 {
                     Debug.LogError("no win");
                     Debug.Log(iteration);
                     solvable = false;
-                    resetFlash.SetActive(true);
-                    noSolution.Activate(5f);
-                    gameObject.GetComponent<LevelCreator>().lookingForHint = false;
+
+                    if (gameObject.GetComponent<GameManager>().TinyTube.activeSelf && !gameObject.GetComponent<GameManager>().TinyTube.GetComponent<TinyTube>().FullTube())
+                    {
+                        tinyTubeFlash.SetActive(true);
+                        Debug.Log("tinytube flash");
+                    }
+                    else
+                    {
+                        resetFlash.SetActive(true);
+                        noSolution.Activate(5f);
+                        gameObject.GetComponent<LevelCreator>().lookingForHint = false;
+                    }
+
                     yield break;
                 }
                 else if (movesForEachState[0].Count < indexForState[0] + 1)
@@ -217,9 +195,18 @@ public class LevelSolver : MonoBehaviour
                     Debug.LogError("no win");
                     Debug.Log(iteration);
                     solvable = false;
-                    resetFlash.SetActive(true);
-                    noSolution.Activate(5f);
-                    gameObject.GetComponent<LevelCreator>().lookingForHint = false;
+
+                    if (gameObject.GetComponent<GameManager>().TinyTube.activeSelf && !gameObject.GetComponent<GameManager>().TinyTube.GetComponent<TinyTube>().FullTube())
+                    {
+                        tinyTubeFlash.SetActive(true);
+                    }
+                    else
+                    {
+                        resetFlash.SetActive(true);
+                        noSolution.Activate(5f);
+                        gameObject.GetComponent<LevelCreator>().lookingForHint = false;
+                    }
+
                     yield break;
                     
                 }
@@ -233,28 +220,27 @@ public class LevelSolver : MonoBehaviour
                 // step backwards if the last "same" portion was not triggered ^^ and do not step backwards if it was triggered
                 same = false;
                 stepBack = true;
-                //Debug.Log("removed last index.");
-                OutputState(currentState);
-
-                
             }
-
-            Debug.LogWarning(statesMade.Count);
-            Debug.Log(iteration);
             iteration++;
 
             if (iteration > 10000)
             {
                 Debug.LogError(movesForEachState[0].Count + "   " + indexForState[0]);
                 Debug.LogError("no solution");
-                resetFlash.SetActive(true);
-                noSolution.Activate(5f);
-                gameObject.GetComponent<LevelCreator>().lookingForHint = false;
-                original = "Level " + (levelIndex + 1).ToString() + ": No Solution\n";
+
+                if (gameObject.GetComponent<GameManager>().TinyTube.activeSelf && !gameObject.GetComponent<GameManager>().TinyTube.GetComponent<TinyTube>().FullTube())
+                {
+                    tinyTubeFlash.SetActive(true);
+                }
+                else
+                {
+                    resetFlash.SetActive(true);
+                    noSolution.Activate(5f);
+                    gameObject.GetComponent<LevelCreator>().lookingForHint = false;
+                }
                 solvable = false;
 
                 yield break;
-
             }
 
             yield return null;
@@ -270,10 +256,9 @@ public class LevelSolver : MonoBehaviour
         writer.WriteLine(original);
 
         writer.Close();
-
     }
 
-    public List<List<int>> CopyBoard(List<List<int>> board)
+    public List<List<int>> CopyBoard(List<List<int>> board) // creates a copy of the parameter board and returns it
     {
         List<List<int>> copy = new List<List<int>>(board);
 
@@ -285,14 +270,12 @@ public class LevelSolver : MonoBehaviour
         return copy;
     }
 
-    bool CheckIfEqualStates(List<List<int>> first, List<List<int>> second)
+    bool CheckIfEqualStates(List<List<int>> first, List<List<int>> second) // checks if two boards are equal
     {
-
         List<int> sameOnFirst = new List<int>();
         List<int> sameOnSecond = new List<int>();
 
         bool same = false;
-
 
         for (int i = 0; i < first.Count; ++i)
         {
@@ -309,7 +292,6 @@ public class LevelSolver : MonoBehaviour
                         }
 
                         same = true;
-
                     }
                     if (same)
                     {
@@ -328,14 +310,9 @@ public class LevelSolver : MonoBehaviour
         return true;
     }
 
-    void MakeMove(List<List<int>> initial, Vector2 move)
+    void MakeMove(List<List<int>> initial, Vector2 move) // makes a particular move on a board
     {
-
-
-
         int numMoving = NumSameAtTop(initial, (int)move.x);
-
-
 
         for (int i = 0; i < numMoving; ++i)
         {
@@ -343,8 +320,6 @@ public class LevelSolver : MonoBehaviour
             int bottom2 = BottomIndex(initial, (int)move.y);
             if (bottom2 != InvalidIndex)
             {
-
-
                 initial[(int)move.y][bottom2 - 1] = initial[(int)move.x][bottom1];
                 initial[(int)move.x][bottom1] = 0;
             }
@@ -354,8 +329,6 @@ public class LevelSolver : MonoBehaviour
                 initial[(int)move.x][bottom1] = 0;
             }
         }
-
-
     }
 
     // Determine if state is a winner.
@@ -368,12 +341,10 @@ public class LevelSolver : MonoBehaviour
                 return false; 
             }
         }
-
-        //Debug.Log("win");
         return true;
     }
 
-    List<Vector2> ReturnPossibleMoves(List<List<int>> state)
+    List<Vector2> ReturnPossibleMoves(List<List<int>> state) // finds all the posible moves in a current state
     {
         List<Vector2> moves = new List<Vector2>();
         bool oneEmpty = false;
@@ -389,15 +360,10 @@ public class LevelSolver : MonoBehaviour
                     {
                         if (!EmptyTube(state, i) && !EmptyTube(state, ii))
                         {
-                            //Debug.Log("num same at top: " + NumSameAtTop(i));
-                            //Debug.Log("open spots: " + ReturnNumOpenSpots(ii));
-
                             if (state[i][BottomIndex(state, i)] == state[ii][BottomIndex(state, ii)])
                             {
                                 if (NumSameAtTop(state, i) <= ReturnNumOpenSpots(state, ii))
                                 {
-                                    //Debug.Log(i + " " + ii);
-                                    //Debug.LogWarning("there is a move");
                                     moves.Add(new Vector2(i, ii));
                                 }
 
@@ -407,8 +373,6 @@ public class LevelSolver : MonoBehaviour
                         {
                             if (NumSameAtTop(state, i) != NumBallInTube(state, i))
                             {
-                                //Debug.Log(NumSameAtTop(state, i) + "   " + NumBallInTube(state, i));
-
                                 if (!oneEmpty)
                                 {
                                     emptyIndex = ii;
@@ -417,8 +381,6 @@ public class LevelSolver : MonoBehaviour
 
                                 if (ii == emptyIndex)
                                 {
-                                    //Debug.Log(i + " " + ii);
-                                    //Debug.LogWarning("there is a move");
                                     oneEmpty = true;
                                     moves.Add(new Vector2(i, ii));
                                 }
@@ -432,7 +394,7 @@ public class LevelSolver : MonoBehaviour
         return moves;
     }
 
-    void OutputState(List<List<int>> state)
+    void OutputState(List<List<int>> state) // outputs a state to the log
     {
         string level = "";
 
@@ -450,22 +412,25 @@ public class LevelSolver : MonoBehaviour
             level += "\n";
         }
 
-        //Debug.Log(level);
+        Debug.Log(level);
     }
 
-    int NumBallInTube(List<List<int>> initial, int tube)
+    int NumBallInTube(List<List<int>> initial, int tube) // finds the number of ball in a tube
     {
         int num = 0;
 
         for (int i = 0; i < initial[tube].Count; ++i)
         {
-            if (initial[tube][i] != 0) { num++; }
+            if (initial[tube][i] != 0)
+            {
+                num++;
+            }
         }
 
         return num;
     }
 
-    int ReturnNumOpenSpots(List<List<int>> initial, int tube)
+    int ReturnNumOpenSpots(List<List<int>> initial, int tube) // returns the number of open spots in a tube
     {
         int num = 0;
 
@@ -480,7 +445,7 @@ public class LevelSolver : MonoBehaviour
         return num;
     }
 
-    int NumSameAtTop(List<List<int>> initial, int tube)
+    int NumSameAtTop(List<List<int>> initial, int tube) // returns the number of same balls at the top of a tube
     {
         int num = 0;
         if (initial[tube][initial[tube].Count - 1] == 0) { return 0; }
@@ -499,12 +464,11 @@ public class LevelSolver : MonoBehaviour
                 }
             }
         }
-        //Debug.Log("num same at top: " + num);
 
         return num;
     }
 
-    int BottomIndex(List<List<int>> initial, int tube)
+    int BottomIndex(List<List<int>> initial, int tube) // returns the bottom index of a tube
     {
         for (int i = 0; i < initial[tube].Count; ++i)
         {
@@ -514,7 +478,6 @@ public class LevelSolver : MonoBehaviour
             }
         }
 
-        //Debug.Log("empty");
         return InvalidIndex;
     }
 
