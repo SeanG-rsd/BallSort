@@ -321,9 +321,12 @@ public class LevelCreator : MonoBehaviour
     }
     bool ChallengeRequirement() // checks if the player can play the challenge
     {
-        for (int i = 0; i < levelButtons[0].Count; ++i)
+        for (int j = 0; j < 2; ++j)
         {
-            if (levelButtons[0][i].GetComponent<Image>().color != completedMat.color) { return true; }
+            for (int i = 0; i < levelButtons[j].Count; ++i)
+            {
+                if (levelButtons[j][i].GetComponent<Image>().color != completedMat.color) { return true; }
+            }
         }
         return false;
     }
@@ -1567,7 +1570,7 @@ public class LevelCreator : MonoBehaviour
 
     public void AddPageToCompleted() // Debug feature
     {
-        for (int j = 0; j < 5; ++j)
+        for (int j = 0; j < 2; ++j)
         {
             for (int i = 0; i < levelButtons[j].Count; ++i)
             {
