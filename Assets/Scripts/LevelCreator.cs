@@ -14,6 +14,8 @@ using Unity.VisualScripting;
 
 public class LevelCreator : MonoBehaviour
 {
+    public static LevelCreator Instance;
+
     public List<GameObject> tubes;
     public List<GameObject> balls;
 
@@ -121,6 +123,15 @@ public class LevelCreator : MonoBehaviour
     public int loadingLevelNum;
     void Start()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+
         gameManager = GetComponent<GameManager>();
         savedLevels = GetLevels();
         LoadGame();
@@ -957,6 +968,11 @@ public class LevelCreator : MonoBehaviour
         currentLevelPage = cp;
         UpdateListPage();
         UpdatePageButtons();
+    }
+
+    public List<List<int>> GetLevel(int levelNumber)
+    {
+        return levels[levelNumber];
     }
 
     public void LoadLevel(int index) // load a certain level based on the index given

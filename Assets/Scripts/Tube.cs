@@ -37,6 +37,8 @@ public class Tube : MonoBehaviour
 
     public int siblingIndex = 0;
 
+    [SerializeField] private int tubeSize;
+
     // Start is called before the first frame update
 
     void Awake()
@@ -272,6 +274,104 @@ public class Tube : MonoBehaviour
             }
         }
         return num;
+    }
+
+    public int NumberMoving() // returns how many balls from the bottom index ball are the same color as the top ball
+        // only valid given the top ball is not null
+    {
+        int num = 1;
+        if (BottomIndex() != InvalidIndex)
+        {
+            for (int i = BottomIndex(); i < 5; ++i)
+            {
+                if (spots[i] != 0)
+                {
+                    if (spots[i] != GetTopBall()) { return num; }
+                    if (spots[i] == GetTopBall())
+                    {
+                        num++;
+
+                    }
+                }
+            }
+        }
+        return num;
+    }
+
+    public int NumOpenSpots() // returns the number of open spots at the top of the tube
+    {
+        int num = 0;
+
+        for (int i = 1; i < spots.Count; ++i)
+        {
+            if (spots[i] == 0) { num++; }
+        }
+
+        //Debug.Log("open spots: " + num);
+        return num;
+    }
+
+    public int OpenSpotIndex()
+    {
+        for (int i = spots.Count - 1; i >= 1; i--)
+        {
+            if (spots[i] == 0)
+            {
+                return spots[i];
+            }
+        }
+
+        return tubeSize;
+    }
+
+    public void NewBallToBottom(int ball) // puts a new ball into the bottom of this tube from another tube
+    {
+        if (GetOpenSpot() != InvalidIndex)
+        {
+            spots[GetOpenSpot()] = ball;
+        }
+    }
+
+    public void RemoveTopBall()
+    {
+        spots[0] = 0;
+        ballObjects[0] = null;
+    }
+
+    public void RemoveBottomBall()
+    {
+        if (BottomIndex() != InvalidIndex)
+        {
+            ballObjects[BottomIndex()] = null;
+            spots[BottomIndex()] = 0;   
+        }
+    }
+
+    public void RemoveBall(int position)
+    {
+        Destroy(ballObjects[position]);
+        ballObjects[position] = null;
+        spots[position] = 0;
+    }
+
+    public int GetOpenSpot()
+    {
+        for (int i = spots.Count - 1; i >= 1; i--)
+        {
+            if (spots[i] == 0)
+            {
+                return i;
+            }
+        }
+
+        return InvalidIndex;
+    }
+
+    public void SetBall(int position, Color color, int colorIndex)
+    {
+        ballObjects[position].GetComponent<Image>().color = color;
+        ballObjects[position].tag = "C" + (colorIndex + 1).ToString();
+        SetSpot(colorIndex + 1, position);
     }
 
     public bool CheckTwo(int ball, int other)
