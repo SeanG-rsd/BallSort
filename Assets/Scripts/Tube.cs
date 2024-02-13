@@ -354,6 +354,33 @@ public class Tube : MonoBehaviour
         spots[position] = 0;
     }
 
+    public void AddBall(int position, Color color, int colorIndex)
+    {
+        if (spots[position] == 0 && ballObjects[position] != null)
+        {
+            GameObject newBall = Instantiate(ballPrefab, spotObjects[position].transform);
+            newBall.GetComponent<Image>().color = color;
+            ballObjects[position] = newBall;
+            spots[position] = colorIndex;
+        }
+        else
+        {
+            spots[position] = colorIndex;
+            ballObjects[position].GetComponent<Image>().color = color;
+        }
+    }
+
+    public void EmptyEntireTube()
+    {
+        for (int i = 0; i < spots.Count; i++)
+        {
+            if (spots[i] != 0)
+            {
+                RemoveBall(i);
+            }
+        }
+    }
+
     public int GetOpenSpot()
     {
         for (int i = spots.Count - 1; i >= 1; i--)

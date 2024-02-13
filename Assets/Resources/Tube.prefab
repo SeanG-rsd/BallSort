@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.67058825, g: 0.67058825, b: 0.67058825, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -163,6 +163,7 @@ MonoBehaviour:
   confettiPrefab: {fileID: 3535071747406023843, guid: e703a86947bd2b6499e22c4cdc1d11f5, type: 3}
   ballPrefab: {fileID: 1057911745711522576, guid: 6ef4958dbcc38cf4793439b6d89569c5, type: 3}
   siblingIndex: 0
+  tubeSize: 0
 --- !u!1 &1208351212285713882
 GameObject:
   m_ObjectHideFlags: 0

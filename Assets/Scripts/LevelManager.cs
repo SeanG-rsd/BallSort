@@ -10,15 +10,31 @@ public class LevelManager : MonoBehaviour
     private bool clickState; // true means there is a ball waiting to be moved, false is all balls are in a tube
     private GameObject firstTubeClicked = null;
 
+    [Header("---GamePlay---")]
     private List<GameObject> tubeObjects;
     [SerializeField] private GameObject tubePrefab;
+    [SerializeField] private Transform tubeContainer;
 
-    private List<List<GameObject>> undoHolster = new List<List<GameObject>>();
-    private List<GameObject> tinyTubeUndoHolster = new List<GameObject>();
+    [Header("---UNDO---")]
+    [SerializeField] private int freeGivenUndos;
+    [SerializeField] private int undoCost;
+    private List<string> undoHolster = new List<string>();
+    private List<string> tinyTubeUndoHolster = new List<string>();
+    private int undosLeft;
+    private bool canUndo;
+
+    [Header("--Challenge---")]
+    private bool isInChallenge;
+
+    [Header("--TinyTube---")]
+    [SerializeField] private GameObject tinyTube;
+    [SerializeField] private int tinyTubeCost;
+    private bool isTinyTubeActive;
 
     [SerializeField] private Color[] ballColors;
 
     private int lastLevelLoaded = -1;
+    private int lastLoadedTubeCount = -1;
 
 
     public void OnClickTube(GameObject tubeObject)
@@ -29,17 +45,33 @@ public class LevelManager : MonoBehaviour
     public void OnClickLoadLevel(int levelNumber)
     {
         lastLevelLoaded = levelNumber;
+        
         LoadLevel(LevelCreator.Instance.GetLevel(levelNumber));
     }
 
     public void OnClickResetGame()
     {
-
+        ResetGame();
+        LoadLevel(LevelCreator.Instance.GetLevel(lastLevelLoaded));
     }
 
     public void OnClickUndo()
     {
+        if (canUndo)
+        {
+            int coins = undoCost;
 
+            if (undosLeft > 0)
+            {
+                UndoLastMove();
+                undosLeft--;
+            }
+            else if (coins >= undoCost)
+            {
+                UndoLastMove();
+                coins -= undoCost;
+            }
+        }
     }
 
     public void OnClickHint()
@@ -50,6 +82,34 @@ public class LevelManager : MonoBehaviour
     public void OnClickMenu()
     {
 
+    }
+
+    private bool CheckForWin()
+    {
+        for (int tube = 0; tube < tubeObjects.Count; tube++)
+        {
+            Tube currentTube = tubeObjects[tube].GetComponent<Tube>();
+
+            if (!currentTube.FullTube() && !currentTube.EmptyTube())
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void CorkTubes()
+    {
+        for (int tube = 0; tube < tubeObjects.Count; tube++)
+        {
+            Tube currentTube = tubeObjects[tube].GetComponent<Tube>();
+
+            if (!currentTube.corked && currentTube.FullTube())
+            {
+                currentTube.Cork();
+            }
+        }
     }
 
     private void MoveBalls(GameObject tubeObject)
@@ -104,14 +164,94 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public bool CheckIfAnyMovesLeft()
+    {
+        for (int tube = 0; tube < tubeObjects.Count; tube++)
+        {
+            for (int otherTube = 0; otherTube < tubeObjects.Count; otherTube++)
+            {
+                if (tube != otherTube)
+                {
+                    Tube TUBE = tubeObjects[tube].GetComponent<Tube>();
+                    Tube OTHER_TUBE = tubeObjects[otherTube].GetComponent<Tube>();
+
+                    if (TUBE.EmptyTube() || OTHER_TUBE.EmptyTube()) { return true; }
+
+                    int ball1 = TUBE.GetBottomBall();
+                    int ball2 = OTHER_TUBE.GetBottomBall();
+
+                    if (ball1 == ball2)
+                    {
+                        if (TUBE.NumSameAtTop() <= OTHER_TUBE.ReturnNumOpenSpots())
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            if (isTinyTubeActive) // assuming the tiny tube only has 1 spot to move into
+            {
+                Tube TUBE = tubeObjects[tube].GetComponent<Tube>();
+                Tube OTHER_TUBE = tinyTube.GetComponent<Tube>();
+
+                if (TUBE.EmptyTube() || OTHER_TUBE.EmptyTube()) { return true; }
+
+                int ball1 = TUBE.GetBottomBall();
+                int ball2 = OTHER_TUBE.GetBottomBall();
+
+                if (ball1 == ball2)
+                {
+                    if (OTHER_TUBE.NumSameAtTop() <= TUBE.ReturnNumOpenSpots())
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     private void ResetGame()
     {
+        undosLeft = freeGivenUndos;
 
+        LoadBlankLevel();
     }
 
     private void LoadBlankLevel()
     {
+        for (int i = 0; i < tubeObjects.Count; ++i)
+        {
+            Destroy(tubeObjects[i]);
+        }
 
+        tubeObjects.Clear();
+
+        for (int i = 0; i < lastLoadedTubeCount; i++)
+        {
+            GameObject newTube = Instantiate(tubePrefab, new Vector3(0, 0, 0), Quaternion.identity);
+
+            newTube.transform.SetParent(tubeContainer);
+
+            newTube.GetComponent<Tube>().siblingIndex = i;
+            tubeObjects.Add(newTube);
+        }
+
+        tubeObjects[tubeObjects.Count - 1].GetComponent<Tube>().EmptyEntireTube();
+        tubeObjects[tubeObjects.Count - 2].GetComponent<Tube>().EmptyEntireTube();
+
+        canUndo = false;
+        clickState = false;
+
+        EmptyMoveHolders();
+    }
+
+    private void EmptyMoveHolders()
+    {
+        undoHolster.Clear();
+        tinyTubeUndoHolster.Clear();
     }
 
     private void LoadLevel(List<List<int>> level)
@@ -147,11 +287,156 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-
+        lastLoadedTubeCount = level.Count + 2;
     }
 
     private void SetUndoTubes()
     {
+        string currentState = "";
 
+        for (int tube = 0; tube < tubeObjects.Count; tube++)
+        {
+            Tube currentTube = tubeObjects[tube].GetComponent<Tube>();
+
+            currentState += AddTubeToString(currentTube);
+
+            if (tube != tubeObjects.Count - 1) { currentState += ":"; }
+        }
+
+        string tinyTubeState = "";
+
+        tinyTubeState += AddTubeToString(tinyTube.GetComponent<Tube>());
+
+        currentState += "-";
+
+        undoHolster.Add(currentState);
+        tinyTubeUndoHolster.Add(tinyTubeState);
+    }
+
+    private void UndoLastMove()
+    {
+        string lastState = undoHolster[undoHolster.Count - 1];
+        string lastTinyTubeState = tinyTubeUndoHolster[tinyTubeUndoHolster.Count - 1];
+        List<List<int>> level = GetStateFromString(lastState);
+
+        for (int tube = 0; tube < level.Count; tube++)
+        {
+            Tube currentTube = tubeObjects[tube].GetComponent<Tube>();
+            for (int ball = 0; ball < level[tube].Count; ball++)
+            {
+                if (level[tube][ball] == 0)
+                {
+                    currentTube.RemoveBall(ball);
+                }
+                else
+                {
+                    currentTube.AddBall(ball, ballColors[level[tube][ball]], level[tube][ball]);
+                }
+            }
+        }
+
+        undoHolster.RemoveAt(undoHolster.Count - 1);
+        tinyTubeUndoHolster.RemoveAt(tinyTubeUndoHolster.Count - 1);
+
+        if (undoHolster.Count == 0)
+        {
+            canUndo = false;
+        }
+    }
+
+    private string AddTubeToString(Tube currentTube)
+    {
+        string tube = "";
+        for (int ball = 0; ball < currentTube.spots.Count; ball++)
+        {
+            string nextBall = currentTube.spots[ball].ToString();
+
+            if (ball == currentTube.spots.Count - 1) { tube += nextBall; }
+            else {  tube += nextBall + ","; }
+        }
+
+        return tube;
+    }
+
+    private List<List<int>> GetStateFromString(string str)
+    {
+        string ball = "";
+
+        int loadBall = 0;
+        List<int> loadTube = new List<int>();
+        List<List<int>> loadLevel = new List<List<int>>();
+
+        string level = "";
+
+        // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
+
+        for (int index = 0; index < str.Length; index++)
+        {
+            level += str[index];
+
+            if (str[index] != '-')
+            {
+                if (str[index] != ':')
+                {
+                    if (str[index] != ',') // add to ball
+                    {
+                        ball = ball + str[index];
+                    }
+                    else if (str[index] == ',') // finish ball
+                    {
+
+                        loadBall = System.Convert.ToInt32(ball);
+                        ball = "";
+                        int newBall = loadBall;
+
+                        loadTube.Add(newBall);
+
+                    }
+
+
+                }
+                else if (str[index] == ':') // finish tube
+                {
+                    if (ball != "")
+                    {
+                        loadBall = System.Convert.ToInt32(ball);
+                        ball = "";
+                        int newBall = loadBall;
+
+                        loadTube.Add(newBall);
+                    }
+
+                    List<int> newTube = loadTube;
+
+                    loadLevel.Add(newTube);
+
+                    loadTube = new List<int>();
+                }
+            }
+            else if (str[index] == '-')
+            {
+                if (loadTube.Count > 0)
+                {
+                    if (ball != "")
+                    {
+                        loadBall = System.Convert.ToInt32(ball);
+                        ball = "";
+                        int newBall = loadBall;
+
+                        loadTube.Add(newBall);
+                    }
+
+                    List<int> newTube = loadTube;
+
+                    loadLevel.Add(newTube);
+
+                    loadTube = new List<int>();
+                }
+
+                return loadLevel;
+            }
+        }
+
+        return null;
     }
 }
