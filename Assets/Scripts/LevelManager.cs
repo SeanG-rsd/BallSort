@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    public static LevelManager instance;
+
     private bool clickState; // true means there is a ball waiting to be moved, false is all balls are in a tube
     private GameObject firstTubeClicked = null;
 
@@ -14,6 +16,7 @@ public class LevelManager : MonoBehaviour
     private List<GameObject> tubeObjects;
     [SerializeField] private GameObject tubePrefab;
     [SerializeField] private Transform tubeContainer;
+    private int coins;
 
     [Header("---UNDO---")]
     [SerializeField] private int freeGivenUndos;
@@ -22,6 +25,7 @@ public class LevelManager : MonoBehaviour
     private List<string> tinyTubeUndoHolster = new List<string>();
     private int undosLeft;
     private bool canUndo;
+    [SerializeField] private GameObject undoButton;
 
     [Header("--Challenge---")]
     private bool isInChallenge;
@@ -30,13 +34,47 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject tinyTube;
     [SerializeField] private int tinyTubeCost;
     private bool isTinyTubeActive;
+    [SerializeField] private GameObject tinyTubeButton;
+
+    [Header("---Hint---")]
+    [SerializeField] private GameObject hintButton;
 
     [SerializeField] private Color[] ballColors;
 
     private int lastLevelLoaded = -1;
     private int lastLoadedTubeCount = -1;
 
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
 
+        MenuManager.OnChangeMode += HandleModeChange;
+    }
+
+    private void OnDestroy()
+    {
+        MenuManager.OnChangeMode -= HandleModeChange;
+    }
+
+    public int Coin
+    {
+        get { return coins; }
+        private set { }
+    }
+
+    public void RemoveCoins(int amount)
+    {
+        coins -= amount;
+    }
+
+    #region OnClickEvents
     public void OnClickTube(GameObject tubeObject)
     {
         MoveBalls(tubeObject);
@@ -58,8 +96,7 @@ public class LevelManager : MonoBehaviour
     public void OnClickUndo()
     {
         if (canUndo)
-        {
-            int coins = undoCost;
+        { 
 
             if (undosLeft > 0)
             {
@@ -78,12 +115,20 @@ public class LevelManager : MonoBehaviour
     {
 
     }
+    #endregion
 
-    public void OnClickMenu()
+    #region Actions
+
+    private void HandleModeChange(bool mode)
     {
-
+        undoButton.SetActive(mode);
+        tinyTubeButton.SetActive(mode);
+        hintButton.SetActive(mode);
     }
 
+    #endregion
+
+    #region Gameplay
     private bool CheckForWin()
     {
         for (int tube = 0; tube < tubeObjects.Count; tube++)
@@ -213,6 +258,39 @@ public class LevelManager : MonoBehaviour
         return false;
     }
 
+    private void UndoLastMove()
+    {
+        string lastState = undoHolster[undoHolster.Count - 1];
+        string lastTinyTubeState = tinyTubeUndoHolster[tinyTubeUndoHolster.Count - 1];
+        List<List<int>> level = GetStateFromString(lastState);
+
+        for (int tube = 0; tube < level.Count; tube++)
+        {
+            Tube currentTube = tubeObjects[tube].GetComponent<Tube>();
+            for (int ball = 0; ball < level[tube].Count; ball++)
+            {
+                if (level[tube][ball] == 0)
+                {
+                    currentTube.RemoveBall(ball);
+                }
+                else
+                {
+                    currentTube.AddBall(ball, ballColors[level[tube][ball]], level[tube][ball]);
+                }
+            }
+        }
+
+        undoHolster.RemoveAt(undoHolster.Count - 1);
+        tinyTubeUndoHolster.RemoveAt(tinyTubeUndoHolster.Count - 1);
+
+        if (undoHolster.Count == 0)
+        {
+            canUndo = false;
+        }
+    }
+    #endregion
+
+    #region GameLoad
     private void ResetGame()
     {
         undosLeft = freeGivenUndos;
@@ -313,37 +391,6 @@ public class LevelManager : MonoBehaviour
         tinyTubeUndoHolster.Add(tinyTubeState);
     }
 
-    private void UndoLastMove()
-    {
-        string lastState = undoHolster[undoHolster.Count - 1];
-        string lastTinyTubeState = tinyTubeUndoHolster[tinyTubeUndoHolster.Count - 1];
-        List<List<int>> level = GetStateFromString(lastState);
-
-        for (int tube = 0; tube < level.Count; tube++)
-        {
-            Tube currentTube = tubeObjects[tube].GetComponent<Tube>();
-            for (int ball = 0; ball < level[tube].Count; ball++)
-            {
-                if (level[tube][ball] == 0)
-                {
-                    currentTube.RemoveBall(ball);
-                }
-                else
-                {
-                    currentTube.AddBall(ball, ballColors[level[tube][ball]], level[tube][ball]);
-                }
-            }
-        }
-
-        undoHolster.RemoveAt(undoHolster.Count - 1);
-        tinyTubeUndoHolster.RemoveAt(tinyTubeUndoHolster.Count - 1);
-
-        if (undoHolster.Count == 0)
-        {
-            canUndo = false;
-        }
-    }
-
     private string AddTubeToString(Tube currentTube)
     {
         string tube = "";
@@ -439,4 +486,5 @@ public class LevelManager : MonoBehaviour
 
         return null;
     }
+    #endregion
 }
