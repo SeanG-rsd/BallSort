@@ -35,9 +35,9 @@ public class MenuManager : MonoBehaviour
         OnChangeMode?.Invoke(modeState);
     }
 
-    public void OnClickSettingsScreen()
+    public void OnToggleScreen(int screenIndex)
     {
-        screens[settingsScreenIndex].SetActive(!screens[settingsScreenIndex].activeSelf);
+        screens[screenIndex].SetActive(!screens[screenIndex].activeSelf);
     }
 
     public void OnClickLevelsButton()

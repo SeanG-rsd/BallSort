@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System;
 
 public class LevelManager : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject tubePrefab;
     [SerializeField] private Transform tubeContainer;
     private int coins;
+    [SerializeField] private TMP_Text levelNumberText;
+
+    public static Action<int, bool> OnBeatLevel = delegate { };
 
     [Header("---UNDO---")]
     [SerializeField] private int freeGivenUndos;
@@ -83,14 +87,16 @@ public class LevelManager : MonoBehaviour
     public void OnClickLoadLevel(int levelNumber)
     {
         lastLevelLoaded = levelNumber;
-        
-        LoadLevel(LevelCreator.Instance.GetLevel(levelNumber));
+        levelNumberText.text = "Level " + (levelNumber + 1).ToString();
+
+
+        LoadLevel(GameManager.instance.GetLevel(levelNumber));
     }
 
     public void OnClickResetGame()
     {
         ResetGame();
-        LoadLevel(LevelCreator.Instance.GetLevel(lastLevelLoaded));
+        LoadLevel(GameManager.instance.GetLevel(lastLevelLoaded));
     }
 
     public void OnClickUndo()

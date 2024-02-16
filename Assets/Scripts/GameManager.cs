@@ -4,10 +4,229 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System;
 
 public class GameManager : MonoBehaviour
 { 
-    
+    public static GameManager instance;
+
+    private List<List<List<int>>> levels = new List<List<List<int>>>(); // a list of levels
+
+    private List<int> chosen = new List<int>();
+
+    private string savedLevels = "";
+
+
+    private List<LevelSpot> levelButtonSpots;
+    [SerializeField] private GameObject levelButtonPrefab;
+
+    [SerializeField] private Button[] pageButtons;
+
+    private int currentPage;
+
+    private List<int> completedLevels = new List<int>();
+    private string completedSaveLevels = "";
+
+    [SerializeField] private TextAsset levelsFile;
+
+    [SerializeField] private Vector2 pageLevelLayout;
+    [SerializeField] private GameObject levelList;
+    [SerializeField] private GameObject spotPrefab;
+
+    [SerializeField] private int generateXLevels;
+
+    public void AddToDatabase(int index) // add a new level to the saved string
+    {
+        string level = "";
+
+        for (int i = 0; i < levels[index].Count; ++i)
+        {
+            string tube = "";
+
+            for (int ii = 0; ii < levels[index][i].Count; ++ii)
+            {
+                string ball = levels[index][i][ii].ToString();
+
+                if (ii == levels[index][i].Count - 1) { tube += ball; }
+                else { tube = tube + ball + ","; }
+            }
+
+            if (i == levels[index].Count - 1) { level += tube; }
+            else { level = level + tube + ":"; }
+        }
+
+        level += "-";
+
+        savedLevels += level;
+    }
+
+    public void LoadCompleted() // this loads the completed levels of the player
+    {
+        if (PlayerPrefs.HasKey("SavedString"))
+        {
+            completedSaveLevels = PlayerPrefs.GetString("SavedString");
+        }
+
+        completedLevels = new List<int>();
+        string set = "";
+
+        if (completedSaveLevels.Length > 0)
+        {
+            for (int i = 0; i < completedSaveLevels.Length; ++i)
+            {
+                if (completedSaveLevels[i] != ',')
+                {
+                    set += completedSaveLevels[i];
+                }
+                else
+                {
+                    int add = Convert.ToInt32(set);
+                    completedLevels.Add(add);
+
+                    set = "";
+                }
+
+            }
+        }
+
+        for (int spot = 0; spot < levelButtonSpots.Count; ++spot)
+        {
+            for (int level = 0; level < levelButtonSpots[spot].levelSpots.Count; level++)
+            {
+                if (completedLevels.Contains(levelButtonSpots[spot].GetLevelNumber(level)))
+                {
+                    levelButtonSpots[spot].UpdateLevel(level);
+                }
+            }
+        }
+
+        UpdateCompleted();
+    }
+
+    public void UpdateCompleted() // this updates the completed levels of the player then saves them
+    {
+        string newCompleted = "";
+        completedLevels.Clear();
+
+        for (int spot = 0; spot < levelButtonSpots.Count; ++spot)
+        {
+            for (int level = 0; level < levelButtonSpots[spot].levelSpots.Count; level++)
+            {
+                if (levelButtonSpots[spot].GetLevel(level))
+                {
+                    int value = levelButtonSpots[spot].GetLevelNumber(level);
+                    newCompleted += value + ",";
+                    completedLevels.Add(value - 1);
+                }
+            }
+        }
+
+        completedSaveLevels = newCompleted;
+        SaveCompleted();
+    }
+    public void SaveCompleted()
+    {
+        PlayerPrefs.SetString("SavedString", completedSaveLevels);
+    }
+
+    public void LoadGame() // load all the levels from a string to their list versions
+    {
+        string ball = "";
+
+        int loadBall = 0;
+        List<int> loadTube = new List<int>();
+        List<List<int>> loadLevel = new List<List<int>>();
+
+        string level = "";
+
+        // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
+
+        if (savedLevels.Length > 0)
+        {
+            for (int index = 0; index < savedLevels.Length; index++)
+            {
+                level += savedLevels[index];
+
+                if (savedLevels[index] != '-')
+                {
+                    if (savedLevels[index] != ':')
+                    {
+                        if (savedLevels[index] != ',') // add to ball
+                        {
+                            ball = ball + savedLevels[index];
+                        }
+                        else if (savedLevels[index] == ',') // finish ball
+                        {
+                            int newBall = Convert.ToInt32(ball);
+                            ball = "";
+
+                            loadTube.Add(newBall);
+
+                        }
+                    }
+                    else if (savedLevels[index] == ':') // finish tube
+                    {
+                        if (ball != "")
+                        {
+                            int newBall = Convert.ToInt32(ball);
+                            ball = "";
+
+                            loadTube.Add(newBall);
+                        }
+
+                        List<int> newTube = loadTube;
+
+                        loadLevel.Add(newTube);
+
+                        loadTube = new List<int>();
+                    }
+                }
+                else if (savedLevels[index] == '-')
+                {
+                    if (loadTube.Count > 0)
+                    {
+                        if (ball != "")
+                        {
+                            loadBall = System.Convert.ToInt32(ball);
+                            ball = "";
+                            int newBall = loadBall;
+
+                            loadTube.Add(newBall);
+                        }
+
+                        List<int> newTube = loadTube;
+
+                        loadLevel.Add(newTube);
+
+                        loadTube = new List<int>();
+                    }
+
+                    if (loadLevel.Count > 0)
+                    {
+                        List<List<int>> newLevel = new List<List<int>>(loadLevel);
+
+                        levels.Add(newLevel);
+
+                        loadLevel = new List<List<int>>();
+
+                        level = "";
+                    }
+                }
+            }
+        }
+    }
+    public string GetLevels() // open the text file containing the string of levels
+    {
+        return levelsFile.text;
+    }
+
+    public List<List<int>> GetLevel(int levelNumber)
+    {
+        return levels[levelNumber];
+    }
+
+
+    // new stuff is anything above
     public List<GameObject> tubes;
     private int tinyTubeIndex = -1;
 
