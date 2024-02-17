@@ -8,7 +8,7 @@ using static UnityEngine.ParticleSystem;
 
 public class TutorialManager : MonoBehaviour
 {
-    public List<GameObject> tubes;
+    /*public List<GameObject> tubes;
 
     public bool clickState;
     public GameObject firstTubeClicked;
@@ -202,5 +202,5 @@ public class TutorialManager : MonoBehaviour
     public void StartGame() // loads the main game scene
     {
         SceneManager.LoadScene(2);
-    }
+    }*/
 }

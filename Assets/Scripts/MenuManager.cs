@@ -9,7 +9,7 @@ public class MenuManager : MonoBehaviour
 {
     [Header("---Menu---")]
     [SerializeField] private GameObject[] screens;
-    [SerializeField] private int mainScreenIndex, levelScreenIndex, gameScreenIndex, makeScreenIndex, settingsScreenIndex, howToPlayScreenIndex;
+    [SerializeField] private int levelScreenIndex, gameScreenIndex, settingsScreenIndex, howToPlayScreenIndex, winScreenIndex;
 
     [Header("---Mode---")]
     [SerializeField] private GameObject modeButton;
@@ -18,6 +18,21 @@ public class MenuManager : MonoBehaviour
 
     public static Action<bool> OnChangeMode = delegate { };
     public static Action OnGoToLevelsMenu = delegate { };
+
+    private void Awake()
+    {
+        LevelManager.OnLoadLevel += HandleLoadLevel;
+    }
+
+    private void OnDestroy()
+    {
+        LevelManager.OnLoadLevel -= HandleLoadLevel;
+    }
+
+    private void HandleLoadLevel()
+    {
+        OpenMenuNumber(gameScreenIndex);
+    }
 
     public void OnClickModeChange()
     {
@@ -59,7 +74,8 @@ public class MenuManager : MonoBehaviour
         {
             if (index == number)
             {
-                screens[index].SetActive(true);
+                Debug.Log(number);
+                screens[number].SetActive(true);
             }
             else
             {

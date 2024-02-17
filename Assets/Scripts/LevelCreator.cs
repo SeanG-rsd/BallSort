@@ -14,7 +14,7 @@ using Unity.VisualScripting;
 
 public class LevelCreator : MonoBehaviour
 {
-    public static LevelCreator Instance;
+    /*public static LevelCreator Instance;
 
     public List<GameObject> tubes;
     public List<GameObject> balls;
@@ -1595,5 +1595,5 @@ public class LevelCreator : MonoBehaviour
         }
 
         UpdateCompleted();
-    }
+    }*/
 }

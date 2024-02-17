@@ -18,23 +18,56 @@ public class GameManager : MonoBehaviour
 
 
     private List<LevelSpot> levelButtonSpots;
+
+    [Header("---Levels---")]
     [SerializeField] private GameObject levelButtonPrefab;
-
-    [SerializeField] private Button[] pageButtons;
-
-    private int currentPage;
 
     private List<int> completedLevels = new List<int>();
     private string completedSaveLevels = "";
 
     [SerializeField] private TextAsset levelsFile;
 
-    [SerializeField] private Vector2 pageLevelLayout;
-    [SerializeField] private GameObject levelList;
+    [SerializeField] private Vector2Int pageLevelLayout;
     [SerializeField] private GameObject spotPrefab;
+    [SerializeField] private Transform levelSpotContainer;
 
     [SerializeField] private int generateXLevels;
 
+    [Header("---Pages---")]
+    [SerializeField] private Button[] pageButtons;
+    [SerializeField] private int leftIndex, rightIndex, farLeftIndex, farRightIndex;
+    private int currentPage;
+    private int numberOfPages;
+
+    [SerializeField] private GameObject pageRequirementBox;
+    [SerializeField] private TMP_Text pageRequirementText;
+
+    [SerializeField] private TMP_Text pageNumberText;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void Start()
+    {
+        savedLevels = GetLevels();
+        LoadGame();
+        LoadLevelChooseList();
+        LoadCompleted();
+
+        currentPage = 0;
+        UpdateListPage();
+    }
+
+    #region Initialize Game
     public void AddToDatabase(int index) // add a new level to the saved string
     {
         string level = "";
@@ -187,7 +220,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (ball != "")
                         {
-                            loadBall = System.Convert.ToInt32(ball);
+                            loadBall = Convert.ToInt32(ball);
                             ball = "";
                             int newBall = loadBall;
 
@@ -224,10 +257,155 @@ public class GameManager : MonoBehaviour
     {
         return levels[levelNumber];
     }
+    #endregion
 
+    #region GenerateLevels
+
+
+
+    #endregion
+
+    #region Page Initializer
+
+    private void GenerateLevelSpots()
+    {
+        levelButtonSpots = new List<LevelSpot>();
+        int levelsPerPage = pageLevelLayout.x * pageLevelLayout.y;
+
+        for (int current = 0; current < levelsPerPage; current++)
+        {
+            GameObject newSpot = Instantiate(spotPrefab, levelSpotContainer);
+
+            levelButtonSpots.Add(newSpot.GetComponent<LevelSpot>());
+        }
+    }
+
+    private void LoadLevelChooseList()
+    {
+        GenerateLevelSpots();
+
+        int levelsPerPage = pageLevelLayout.x * pageLevelLayout.y;
+
+        for (int current = 0; current < levels.Count; current++)
+        {
+            LevelSpot currentSpot = levelButtonSpots[current % levelsPerPage];
+
+            GameObject newButton = Instantiate(levelButtonPrefab, currentSpot.gameObject.transform);
+            newButton.transform.localScale = Vector3.one;
+
+            currentSpot.AddNewLevel(newButton, current + 1);
+        }
+
+        numberOfPages = levels.Count / levelsPerPage;
+
+        if (levels.Count % levelsPerPage != 0)
+        {
+            numberOfPages++;
+        }
+    }
+
+    #endregion
+
+    #region Page Manager
+
+    public void PageLeft()
+    {
+        currentPage--;
+        UpdateListPage();
+    }
+
+    public void PageRight()
+    {
+        currentPage++;
+        UpdateListPage();
+    }
+
+    public void PageFarLeft()
+    {
+        currentPage = 0;
+        UpdateListPage();
+    }
+
+    public void PageFarRight()
+    {
+        int currentCheck = currentPage;
+
+        while (!CheckRequirement(currentCheck))
+        {
+            currentCheck++;
+        }
+
+        currentPage = currentCheck - 1;
+
+        UpdateListPage();
+    }
+
+    private void UpdateListPage()
+    {
+        currentPage = Mathf.Clamp(currentPage, 0, numberOfPages);
+
+        UpdateButtons();
+
+        pageNumberText.text = (currentPage + 1).ToString();
+
+        for (int spotIndex = 0; spotIndex < levelButtonSpots.Count; spotIndex++)
+        {
+            levelButtonSpots[spotIndex].SetPage(currentPage + 1);
+        }
+
+        pageRequirementBox.SetActive(CheckRequirement(currentPage));
+
+        if (pageRequirementBox.activeSelf)
+        {
+            int levelsPerPage = pageLevelLayout.x * pageLevelLayout.y;
+            pageRequirementText.text = "Complete levels " + levelButtonSpots[0].GetLevelNumber(currentPage) + "-" + (levelButtonSpots[0].GetLevelNumber(currentPage) + levelsPerPage - 1) + " to unlock";
+        }
+    }
+
+    private void UpdateButtons()
+    {
+        if (currentPage == 0)
+        {
+            pageButtons[leftIndex].interactable = false;
+            pageButtons[farLeftIndex].interactable = false;
+        }
+        else
+        {
+            pageButtons[leftIndex].interactable = true;
+            pageButtons[farLeftIndex].interactable = true;
+        }
+
+        if (currentPage == levelButtonSpots[0].levelSpots.Count - 1)
+        {
+            pageButtons[rightIndex].interactable = false;
+            pageButtons[farRightIndex].interactable = false;
+        }
+        else
+        {
+            pageButtons[rightIndex].interactable = true;
+            pageButtons[farRightIndex].interactable = true;
+        }
+    }
+
+    private bool CheckRequirement(int page)
+    {
+        if (page != 0 && page != 1 && page != 2)
+        {
+            for (int i = 0; i < levelButtonSpots.Count; ++i)
+            {
+                if (!levelButtonSpots[i].GetLevel(page))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    #endregion
 
     // new stuff is anything above
-    public List<GameObject> tubes;
+    /*public List<GameObject> tubes;
     private int tinyTubeIndex = -1;
 
     public bool clickState;
@@ -1257,5 +1435,5 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("Tutorial", 0);
 
         SceneManager.LoadScene(1);
-    }
+    }*/
 }

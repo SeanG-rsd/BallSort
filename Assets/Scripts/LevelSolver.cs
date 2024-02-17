@@ -8,7 +8,7 @@ using System.IO;
 
 public class LevelSolver : MonoBehaviour
 {
-    private int InvalidIndex = 5;
+    /*private int InvalidIndex = 5;
 
     List<List<int>> initialLevel = new List<List<int>>();
 
@@ -512,5 +512,5 @@ public class LevelSolver : MonoBehaviour
         }
 
         return true;
-    }
+    }*/
 }

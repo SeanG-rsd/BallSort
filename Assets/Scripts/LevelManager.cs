@@ -21,6 +21,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private TMP_Text levelNumberText;
 
     public static Action<int, bool> OnBeatLevel = delegate { };
+    public static Action OnLoadLevel = delegate { };
 
     [Header("---UNDO---")]
     [SerializeField] private int freeGivenUndos;
@@ -50,6 +51,8 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
+        tubeObjects = new List<GameObject>();
+
         if (instance == null)
         {
             instance = this;
@@ -70,7 +73,7 @@ public class LevelManager : MonoBehaviour
     public int Coin
     {
         get { return coins; }
-        private set { }
+        set { }
     }
 
     public void RemoveCoins(int amount)
@@ -86,6 +89,8 @@ public class LevelManager : MonoBehaviour
 
     public void OnClickLoadLevel(int levelNumber)
     {
+        OnLoadLevel?.Invoke();
+        Debug.Log("load level : " + levelNumber);
         lastLevelLoaded = levelNumber;
         levelNumberText.text = "Level " + (levelNumber + 1).ToString();
 
@@ -180,21 +185,21 @@ public class LevelManager : MonoBehaviour
                 {
                     Tube firstTube = firstTubeClicked.GetComponent<Tube>(); // move balls into tubeObject from firstTubeClicked
 
-                    if (firstTube.NumberMoving() <= currentTube.NumOpenSpots())
+                    if (firstTube.NumberMoving() <= currentTube.NumOpenSpots() && (firstTube.GetTopBall() == currentTube.GetBottomBall() || currentTube.EmptyTube()))
                     {
                         int ballCount = firstTube.NumberMoving() - 1;
 
-                        currentTube.NewBallToBottom(firstTube.GetTopBall());
+                        currentTube.NewBallToBottom(firstTube.GetTopBall(), firstTube.ballObjects[0]);
                         firstTube.RemoveTopBall();
 
                         for (int i = 0; i < ballCount; ++i)
                         {
-                            currentTube.NewBallToBottom(firstTube.GetBottomBall());
+                            currentTube.NewBallToBottom(firstTube.GetBottomBall(), firstTube.ballObjects[firstTube.BottomIndex()]);
                             firstTube.RemoveBottomBall();
                         }
 
                         firstTubeClicked = null;
-                        clickState = false;
+                        clickState = false;    
                     }
                     else
                     {
@@ -202,16 +207,18 @@ public class LevelManager : MonoBehaviour
                         firstTube.MoveTopToBottom();
                         firstTubeClicked = tubeObject;
                     }
+
+                    SetUndoTubes();
                 }
             }
             else // move ball from tubeObject to top
             {
+                
                 firstTubeClicked = tubeObject;
 
                 currentTube.MoveBottomToTop();
+                clickState = true;
             }
-
-            clickState = !clickState;
         }
     }
 
@@ -266,9 +273,13 @@ public class LevelManager : MonoBehaviour
 
     private void UndoLastMove()
     {
-        string lastState = undoHolster[undoHolster.Count - 1];
-        string lastTinyTubeState = tinyTubeUndoHolster[tinyTubeUndoHolster.Count - 1];
+        int index = undoHolster.Count > 1 ? undoHolster.Count - 2 : undoHolster.Count - 1;
+
+        string lastState = undoHolster[index];
+        string lastTinyTubeState = tinyTubeUndoHolster[index];
         List<List<int>> level = GetStateFromString(lastState);
+
+        //Debug.Log(lastState);
 
         for (int tube = 0; tube < level.Count; tube++)
         {
@@ -281,7 +292,7 @@ public class LevelManager : MonoBehaviour
                 }
                 else
                 {
-                    currentTube.AddBall(ball, ballColors[level[tube][ball]], level[tube][ball]);
+                    currentTube.AddBall(ball, ballColors[level[tube][ball] - 1], level[tube][ball]);
                 }
             }
         }
@@ -318,6 +329,7 @@ public class LevelManager : MonoBehaviour
             GameObject newTube = Instantiate(tubePrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
             newTube.transform.SetParent(tubeContainer);
+            newTube.transform.localScale = Vector3.one;
 
             newTube.GetComponent<Tube>().siblingIndex = i;
             tubeObjects.Add(newTube);
@@ -343,6 +355,8 @@ public class LevelManager : MonoBehaviour
         undoHolster.Clear();
         tinyTubeUndoHolster.Clear();
 
+        lastLoadedTubeCount = level.Count + 2;
+
         ResetGame();
 
         if (level != null)
@@ -354,7 +368,7 @@ public class LevelManager : MonoBehaviour
                 {
                     if (level[tube][position] != -1)
                     {
-                        currentTube.SetBall(position, ballColors[level[tube][position] - 1], level[tube][position]);
+                        currentTube.SetBall(position + 1, ballColors[level[tube][position]], level[tube][position]);
                         if (!currentTube.corked)
                         {
                             if (currentTube.FullTube())
@@ -371,7 +385,7 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        lastLoadedTubeCount = level.Count + 2;
+        SetUndoTubes();
     }
 
     private void SetUndoTubes()
@@ -382,6 +396,7 @@ public class LevelManager : MonoBehaviour
         {
             Tube currentTube = tubeObjects[tube].GetComponent<Tube>();
 
+
             currentState += AddTubeToString(currentTube);
 
             if (tube != tubeObjects.Count - 1) { currentState += ":"; }
@@ -389,12 +404,15 @@ public class LevelManager : MonoBehaviour
 
         string tinyTubeState = "";
 
-        tinyTubeState += AddTubeToString(tinyTube.GetComponent<Tube>());
+        //tinyTubeState += AddTubeToString(tinyTube.GetComponent<Tube>());
 
         currentState += "-";
 
         undoHolster.Add(currentState);
         tinyTubeUndoHolster.Add(tinyTubeState);
+
+        Debug.Log(currentState);
+        canUndo = true;
     }
 
     private string AddTubeToString(Tube currentTube)

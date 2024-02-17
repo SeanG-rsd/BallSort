@@ -7,45 +7,43 @@ public class Ball : MonoBehaviour
 {
 
     public bool move = false;
-    bool otherTube = false;
     
     public float speed = 1500.0f; // time it takes to get there
 
-    bool hasBeenAtTop = false;
-
-    private int tinyTubeIndex = -1;
-    Vector3 targetPoint = new Vector3();
-    Vector3 secondPoint = new Vector3();
-    Vector3 topPoint = new();
-    int index = 0;
-
-    public GameObject targetSpot;
-
-    int thisIndex = 0;
-
-    GameObject gameManager;
-
-    GameObject tutorialManager;
-    bool tutorial;
-
-    GameObject lastTube;
-
-    public int destinationSpot;
-
-    private Transform moveSpace;
-    private Transform tubeSpace;
+    private List<Vector2> currentTargets;
 
     // Start is called before the first frame update
-    void Start()
-    {
-        gameManager = GameObject.Find("GameManager");
-        tutorialManager = GameObject.Find("Manager");
-        tubeSpace = gameManager.GetComponent<GameManager>().tubeContainer;
 
-        moveSpace = transform.parent.parent.parent.parent;
+    private void Awake()
+    {
+        currentTargets = new List<Vector2>();
+    }
+    private void Update()
+    {
+        if (currentTargets.Count > 0)
+        {
+            Vector2 currentTarget = currentTargets[0];
+
+            Vector2 ballPos = transform.position;
+
+            if (ballPos == currentTarget)
+            {
+                currentTargets.RemoveAt(0);
+            }
+            else
+            {
+                transform.position = currentTarget;
+            }
+        }
     }
 
-    public void MoveBall(int tubeNum, GameObject targetTube, int spotIndex) // setting the balls destination and figuring out the target spot where the ball is to be placed
+    public void MoveBall(List<Vector2> targetSpots)
+    {
+        currentTargets = targetSpots;
+        move = true;
+    }
+
+    /*public void MoveBall(int tubeNum, GameObject targetTube, int spotIndex) // setting the balls destination and figuring out the target spot where the ball is to be placed
     {
         if (!move)
         {
@@ -180,7 +178,7 @@ public class Ball : MonoBehaviour
 
                     if (!tutorial)
                     {
-                        gameManager.GetComponent<GameManager>().Cork();
+                        /*gameManager.GetComponent<GameManager>().Cork();
                         if (gameManager.GetComponent<GameManager>().CheckForWin())
                         {
                             gameManager.GetComponent<GameManager>().Win();
@@ -188,7 +186,7 @@ public class Ball : MonoBehaviour
                     }
                     else if (tutorial)
                     {
-                        tutorialManager.GetComponent<TutorialManager>().Cork();
+                        //tutorialManager.GetComponent<TutorialManager>().Cork();
                     }         
                 }
             }
@@ -220,5 +218,5 @@ public class Ball : MonoBehaviour
                 }
             }
         }   
-    }
+    }*/
 }

@@ -69,8 +69,7 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
         if (adUnitId.Equals(_adUnitId) && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
         {
             Debug.Log("Unity Ads Rewarded Ad Completed");
-            int coins = gameObject.GetComponent<LevelCreator>().coins + reward;
-            gameObject.GetComponent<LevelCreator>().coins = coins;
+            LevelManager.instance.Coin += reward;
             LoadAd();
             // Grant a reward.
         }

@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class LevelSpot : MonoBehaviour
 {
-    public List<GameObject> levelSpots = new List<GameObject>();
+    public List<GameObject> levelSpots;
+
+    private void Awake()
+    {
+        levelSpots = new List<GameObject>();
+    }
 
     public void SetLevel(int level, bool completed)
     {
@@ -26,8 +31,24 @@ public class LevelSpot : MonoBehaviour
         levelSpots[levelIndex].GetComponent<LevelButton>().UpdateSelf();
     }
 
-    public void AddNewLevel(GameObject level)
+    public void AddNewLevel(GameObject level, int index)
     {
+        level.GetComponent<LevelButton>().Initialize(index);
         levelSpots.Add(level);
+    }
+
+    public void SetPage(int page)
+    {
+        for (int index = 0;  index < levelSpots.Count; index++)
+        {
+            if (index == page)
+            {
+                levelSpots[index].SetActive(true);
+            }
+            else
+            {
+                levelSpots[index].SetActive(false);
+            }
+        }
     }
 }

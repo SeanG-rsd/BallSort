@@ -46,7 +46,7 @@ public class HintFlash : MonoBehaviour
         if (playerMadeMove) // if the player finished the hint move then set the tube inactive
         {
             tubes = Vector2.zero;
-            gm.GetComponent<LevelCreator>().lookingForHint = false;
+            //gm.GetComponent<LevelCreator>().lookingForHint = false;
             index = 0;
             playerMadeMove = false;
             gameObject.SetActive(false);
