@@ -29,7 +29,7 @@ public class LevelButton : MonoBehaviour
         return levelNumber;
     }
 
-    public void SetColor(Color c, bool isCompleted)
+    public void SetColor(bool isCompleted)
     {
         this.isCompleted = isCompleted;
         UpdateSelf();

@@ -13,7 +13,7 @@ public class LevelSpot : MonoBehaviour
 
     public void SetLevel(int level, bool completed)
     {
-        
+        levelSpots[level].GetComponent<LevelButton>().SetColor(completed);
     }
 
     public int GetLevelNumber(int levelIndex)

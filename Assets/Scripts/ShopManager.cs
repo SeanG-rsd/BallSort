@@ -14,6 +14,11 @@ public class ShopManager : MonoBehaviour
 
     private string LAST_KEY = "lastBackground";
 
+    private void Awake()
+    {
+        LoadBackgrounds();
+    }
+
     public void BuyBackground(int index)
     {
         int coins = LevelManager.instance.Coin;
@@ -35,7 +40,7 @@ public class ShopManager : MonoBehaviour
         PlayerPrefs.SetInt(LAST_KEY, index);
     }
 
-    public void LoadBackgrounds()
+    private void LoadBackgrounds()
     {
         if (PlayerPrefs.HasKey(LAST_KEY))
         {

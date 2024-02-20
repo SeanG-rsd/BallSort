@@ -19,6 +19,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private Transform tubeContainer;
     private int coins;
     [SerializeField] private TMP_Text levelNumberText;
+    [SerializeField] private TubeContainer tubeContainerObj;
+
+    private bool inChallenge;
 
     public static Action<int, bool> OnBeatLevel = delegate { };
     public static Action OnLoadLevel = delegate { };
@@ -52,6 +55,7 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         tubeObjects = new List<GameObject>();
+        coins = PlayerPrefs.GetInt("CoinCount");
 
         if (instance == null)
         {
@@ -73,7 +77,7 @@ public class LevelManager : MonoBehaviour
     public int Coin
     {
         get { return coins; }
-        set { }
+        private set { }
     }
 
     public void RemoveCoins(int amount)
@@ -90,7 +94,7 @@ public class LevelManager : MonoBehaviour
     public void OnClickLoadLevel(int levelNumber)
     {
         OnLoadLevel?.Invoke();
-        Debug.Log("load level : " + levelNumber);
+        //Debug.Log("load level : " + levelNumber);
         lastLevelLoaded = levelNumber;
         levelNumberText.text = "Level " + (levelNumber + 1).ToString();
 
@@ -108,7 +112,6 @@ public class LevelManager : MonoBehaviour
     {
         if (canUndo)
         { 
-
             if (undosLeft > 0)
             {
                 UndoLastMove();
@@ -142,11 +145,14 @@ public class LevelManager : MonoBehaviour
     #region Gameplay
     private bool CheckForWin()
     {
+        Debug.Log("cork");
+        CorkTubes();
+
         for (int tube = 0; tube < tubeObjects.Count; tube++)
         {
             Tube currentTube = tubeObjects[tube].GetComponent<Tube>();
 
-            if (!currentTube.FullTube() && !currentTube.EmptyTube())
+            if (!currentTube.corked && !currentTube.EmptyTube())  
             {
                 return false;
             }
@@ -185,30 +191,30 @@ public class LevelManager : MonoBehaviour
                 {
                     Tube firstTube = firstTubeClicked.GetComponent<Tube>(); // move balls into tubeObject from firstTubeClicked
 
-                    if (firstTube.NumberMoving() <= currentTube.NumOpenSpots() && (firstTube.GetTopBall() == currentTube.GetBottomBall() || currentTube.EmptyTube()))
+                    if (firstTube.NumberMoving() <= currentTube.NumOpenSpots() && (firstTube.GetTopBall() == currentTube.GetBottomBall() || currentTube.EmptyTube() || currentTube.isTinyTube))
                     {
                         int ballCount = firstTube.NumberMoving() - 1;
 
-                        currentTube.NewBallToBottom(firstTube.GetTopBall(), firstTube.ballObjects[0]);
+                        currentTube.NewBallToBottom(firstTube.GetTopBall(), firstTube.ballObjects[0], firstTube);
                         firstTube.RemoveTopBall();
 
                         for (int i = 0; i < ballCount; ++i)
                         {
-                            currentTube.NewBallToBottom(firstTube.GetBottomBall(), firstTube.ballObjects[firstTube.BottomIndex()]);
+                            currentTube.NewBallToBottom(firstTube.GetBottomBall(), firstTube.ballObjects[firstTube.BottomIndex()], firstTube);
                             firstTube.RemoveBottomBall();
                         }
 
                         firstTubeClicked = null;
-                        clickState = false;    
+                        clickState = false;
+
+                        SetUndoTubes();
                     }
-                    else
+                    else if (!currentTube.EmptyTube())
                     {
                         currentTube.MoveBottomToTop();
                         firstTube.MoveTopToBottom();
                         firstTubeClicked = tubeObject;
                     }
-
-                    SetUndoTubes();
                 }
             }
             else // move ball from tubeObject to top
@@ -219,6 +225,11 @@ public class LevelManager : MonoBehaviour
                 currentTube.MoveBottomToTop();
                 clickState = true;
             }
+        }
+
+        if (CheckForWin())
+        {
+            BeatLevel(lastLevelLoaded, inChallenge);
         }
     }
 
@@ -273,13 +284,13 @@ public class LevelManager : MonoBehaviour
 
     private void UndoLastMove()
     {
-        int index = undoHolster.Count > 1 ? undoHolster.Count - 2 : undoHolster.Count - 1;
+        int index = undoHolster.Count  > 1 ? undoHolster.Count - 2 : undoHolster.Count - 1;
 
         string lastState = undoHolster[index];
         string lastTinyTubeState = tinyTubeUndoHolster[index];
         List<List<int>> level = GetStateFromString(lastState);
 
-        //Debug.Log(lastState);
+        Debug.Log(lastState);
 
         for (int tube = 0; tube < level.Count; tube++)
         {
@@ -340,6 +351,11 @@ public class LevelManager : MonoBehaviour
 
         canUndo = false;
         clickState = false;
+
+        int row = lastLoadedTubeCount / 8;
+        row++;
+
+        tubeContainerObj.SetGrid(row);
 
         EmptyMoveHolders();
     }
@@ -411,7 +427,7 @@ public class LevelManager : MonoBehaviour
         undoHolster.Add(currentState);
         tinyTubeUndoHolster.Add(tinyTubeState);
 
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
         canUndo = true;
     }
 
@@ -510,5 +526,19 @@ public class LevelManager : MonoBehaviour
 
         return null;
     }
+    #endregion
+
+    #region Win
+
+    private void BeatLevel(int levelIndex, bool isChallenge)
+    {
+        OnBeatLevel?.Invoke(levelIndex, isChallenge);
+    }
+
+    public void AddCoins(int add)
+    {
+        coins += add;
+    }
+
     #endregion
 }

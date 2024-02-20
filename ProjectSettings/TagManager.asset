@@ -26,7 +26,7 @@ TagManager:
   - Foreground
   - Background
   - Glow
-  - 
+  - Ball
   - 
   - 
   - 
@@ -58,4 +58,7 @@ TagManager:
     locked: 0
   - name: Confetti
     uniqueID: 4225296529
+    locked: 0
+  - name: Ball
+    uniqueID: 733628837
     locked: 0

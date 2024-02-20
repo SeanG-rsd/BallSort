@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8369070729597947565}
   - component: {fileID: 3066681134553891982}
   - component: {fileID: 918531485104482924}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: Ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,6 +90,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   move: 0
-  speed: 1100
-  targetSpot: {fileID: 0}
-  destinationSpot: 0
+  speed: 500

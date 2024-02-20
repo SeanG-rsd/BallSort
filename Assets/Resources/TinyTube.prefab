@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: 2700641151460316623}
   - component: {fileID: 782004613138824025}
   - component: {fileID: 2707661357950342781}
-  - component: {fileID: 9055971214887712401}
+  - component: {fileID: 3696223527549732949}
   m_Layer: 5
   m_Name: TinyTube
   m_TagString: Untagged
@@ -196,7 +196,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &9055971214887712401
+--- !u!114 &3696223527549732949
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -205,19 +205,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 9055971214887712402}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43e2df6a3ade8fe42b375ff4848ce6b4, type: 3}
+  m_Script: {fileID: 11500000, guid: e5bcac6ee001a2e4c9f945458c3a9259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spots: 0000000000000000
   ballObjects:
   - {fileID: 0}
   - {fileID: 0}
-  index: 0
+  spots: 0000000000000000
   GameTube: 0
+  TutorialTube: 0
   isFull: 0
-  gm: {fileID: 0}
   button: {fileID: 2707661357950342781}
+  CorkPrefab: {fileID: 6003194038069275040, guid: 9c9d068f6d3fc684886ac489f4c3ad1f, type: 3}
+  corked: 0
   spotObjects:
   - {fileID: 4006500289172957428}
   - {fileID: 5968700287347142467}
+  confettiPrefab: {fileID: 3535071747406023843, guid: e703a86947bd2b6499e22c4cdc1d11f5, type: 3}
   ballPrefab: {fileID: 1057911745711522576, guid: 6ef4958dbcc38cf4793439b6d89569c5, type: 3}
+  siblingIndex: 0
+  tubeSize: 2
+  topSpot: {fileID: 4006500289172957428}

@@ -9,6 +9,7 @@ public class TubeContainer : MonoBehaviour
 
     public void SetGrid(int rowCount)
     {
+        //Debug.Log("set grid : " + rowCount);
         grid.constraint = GridLayoutGroup.Constraint.FixedRowCount;
         grid.constraintCount = rowCount;
     }

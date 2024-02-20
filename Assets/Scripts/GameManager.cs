@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 { 
@@ -33,6 +34,20 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private int generateXLevels;
 
+    [Header("---Win---")]
+    [SerializeField] private GameObject winScreen;
+    [SerializeField] private Button winNextButton;
+
+    [SerializeField] private Transform[] confettiSpots;
+    [SerializeField] private ParticleSystem confettiPrefab;
+    [SerializeField] private TMP_Text winCoinText;
+    [SerializeField] private int coinIncrement;
+
+    [SerializeField] private float winScreenWaitTime;
+    private float winScreenTimer;
+    private bool isWaitingForWinScreen;
+
+
     [Header("---Pages---")]
     [SerializeField] private Button[] pageButtons;
     [SerializeField] private int leftIndex, rightIndex, farLeftIndex, farRightIndex;
@@ -46,6 +61,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        LevelManager.OnBeatLevel += HandleBeatLevel;
+
         if (instance == null)
         {
             instance = this;
@@ -54,6 +71,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnDestroy()
+    {
+        LevelManager.OnBeatLevel -= HandleBeatLevel;
     }
 
     private void Start()
@@ -65,6 +87,20 @@ public class GameManager : MonoBehaviour
 
         currentPage = 0;
         UpdateListPage();
+    }
+
+    private void Update()
+    {
+        if (isWaitingForWinScreen)
+        {
+            winScreenTimer -= Time.deltaTime;
+
+            if (winScreenTimer < 0)
+            {
+                isWaitingForWinScreen = false;
+                WinScreen();
+            }
+        }
     }
 
     #region Initialize Game
@@ -128,18 +164,15 @@ public class GameManager : MonoBehaviour
             {
                 if (completedLevels.Contains(levelButtonSpots[spot].GetLevelNumber(level)))
                 {
-                    levelButtonSpots[spot].UpdateLevel(level);
+                    levelButtonSpots[spot].SetLevel(level, true);
                 }
             }
         }
-
-        UpdateCompleted();
     }
 
     public void UpdateCompleted() // this updates the completed levels of the player then saves them
     {
         string newCompleted = "";
-        completedLevels.Clear();
 
         for (int spot = 0; spot < levelButtonSpots.Count; ++spot)
         {
@@ -149,7 +182,10 @@ public class GameManager : MonoBehaviour
                 {
                     int value = levelButtonSpots[spot].GetLevelNumber(level);
                     newCompleted += value + ",";
-                    completedLevels.Add(value - 1);
+                    if (!completedLevels.Contains(value))
+                    {
+                        completedLevels.Add(value - 1);
+                    }
                 }
             }
         }
@@ -261,7 +297,125 @@ public class GameManager : MonoBehaviour
 
     #region GenerateLevels
 
+    public bool FinishedMaking() // check to see if all the dropdowns are filled in the level maker
+    {
+        for (int i = 0; i < chosen.Count; ++i)
+        {
+            if (chosen[i] != 4) { return false; }
+        }
 
+        return true;
+    }
+    public void ResetMaker(int tubeCount) // reset the dropdowns for the level maker
+    {
+        chosen.Clear();
+
+        for (int i = 0; i < tubeCount; ++i)
+        {
+            chosen.Add(0);
+        }
+    }
+
+    public int tubeCount;
+    public void GenerateLevelsButton() // generate a certain number of levels and then solve them
+    {
+        for (int i = 0; i < generateXLevels; ++i)
+        {
+            List<List<int>> newLevel = GenerateLevel(i, tubeCount - 2);
+            if (newLevel != null)
+            {
+                AddToDatabase(levels.Count - 1);
+                WriteLevels("Assets/Resources/Levels.txt");
+            }
+            else
+            {
+                Debug.LogError("had full tube or was not solvable");
+            }
+        }
+    }
+
+    public void WriteLevels(string path) // save the string of levels to a text file
+    {
+        StreamWriter writer = new(path);
+
+        writer.WriteLine(savedLevels);
+
+        writer.Close();
+    }
+
+    List<int> FindPossibleChoices(int tubeCount) // find the possible ball options for generating a level
+    {
+        List<int> choices = new List<int>();
+
+        for (int i = 0; i < tubeCount; ++i)
+        {
+            if (chosen[i] < 4)
+            {
+                choices.Add(i);
+            }
+        }
+        return choices;
+    }
+
+    bool CompletedTube(List<int> tube) // checks if a tube has been completed when generating
+    {
+        for (int i = 0; i < tube.Count; ++i)
+        {
+            if (tube[i] != tube[0])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    List<List<int>> GenerateLevel(int index, int tubeCount) // generates a random new level then solves it
+    {
+        ResetMaker(tubeCount);
+
+        if (!FinishedMaking())
+        {
+            List<List<int>> newLevel = new List<List<int>>(tubeCount);
+
+            for (int ii = 0; ii < tubeCount; ii++)
+            {
+                List<int> newTube = new List<int>(4);
+
+                for (int i = 0; i < 4; ++i)
+                {
+                    List<int> choices = FindPossibleChoices(tubeCount);
+                    int add = UnityEngine.Random.Range(0, choices.Count);
+                    newTube.Add(choices[add]);
+
+                    chosen[choices[add]]++;
+                }
+
+                if (CompletedTube(newTube))
+                {
+                    Debug.Log("error");
+                    GenerateLevel(index, tubeCount);
+                    return null;
+                }
+                newLevel.Add(newTube);
+            }
+
+            if (FinishedMaking())
+            {
+                bool output = true;// SolveList(newLevel, index);
+
+                if (!output)
+                {
+                    Debug.Log("no solution");
+                    GenerateLevel(index, tubeCount);
+                }
+
+                return newLevel;
+            }
+        }
+
+        return null;
+    }
 
     #endregion
 
@@ -350,7 +504,7 @@ public class GameManager : MonoBehaviour
 
         for (int spotIndex = 0; spotIndex < levelButtonSpots.Count; spotIndex++)
         {
-            levelButtonSpots[spotIndex].SetPage(currentPage + 1);
+            levelButtonSpots[spotIndex].SetPage(currentPage);
         }
 
         pageRequirementBox.SetActive(CheckRequirement(currentPage));
@@ -400,6 +554,149 @@ public class GameManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+    #endregion
+
+    #region Level Win
+
+    private int lastLevelBeat;
+    private bool isChallenge;
+
+    public void WinNext()
+    {
+        int LPP = pageLevelLayout.x * pageLevelLayout.y;
+
+        int position = lastLevelBeat % LPP;
+
+        if (position == 0) // look for levels in the page
+        {
+            if (CheckRequirement(currentPage + 1))
+            {
+                LevelManager.instance.OnClickLoadLevel(lastLevelBeat + 1);
+            }
+            else
+            {
+                for (int index = 0;  index < LPP; index++)
+                {
+                    if (!levelButtonSpots[index].GetLevel(currentPage))
+                    {
+                        LevelManager.instance.OnClickLoadLevel(levelButtonSpots[index].GetLevelNumber(currentPage));
+                        return;
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int index = 0; index < LPP - 1; index++)
+            {
+                if (!levelButtonSpots[(index + lastLevelBeat) % LPP].GetLevel(currentPage))
+                {
+                    LevelManager.instance.OnClickLoadLevel(levelButtonSpots[(index + lastLevelBeat) % LPP].GetLevelNumber(currentPage) - 1);
+                    return;
+                }
+            }
+        }
+
+        MenuManager.instance.ToggleWinScreen();
+    }
+
+    public void WinLevels()
+    {
+        MenuManager.instance.OnClickLevelsButton();
+        MenuManager.instance.ToggleWinScreen();
+    }
+
+    private bool BeatLevel(int levelIndex)
+    {
+        int LPP = pageLevelLayout.x * pageLevelLayout.y;
+
+        int pageNumber = levelIndex / LPP;
+        int number = levelIndex % LPP;
+
+        if (levelButtonSpots[number].GetLevel(pageNumber))
+        {
+            return false;
+        }
+
+        LevelManager.instance.AddCoins(coinIncrement);
+        levelButtonSpots[number].SetLevel(pageNumber, true);
+        return true;
+    }
+
+    private bool BeatChallengeLevel(int levelIndex)
+    {
+        return false;
+    }
+
+    private void WinScreen()
+    {
+
+        MenuManager.instance.ToggleWinScreen();
+        winCoinText.text = "+" + coinIncrement.ToString() + " Coins";
+
+        for (int i = 0; i < confettiSpots.Length; ++i)
+        {
+            ParticleSystem confetti = Instantiate(confettiPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+
+            confetti.gameObject.transform.localScale = new Vector3(1, 1, 1);
+            Vector3 pos = confettiSpots[i].position;
+            pos.z = -1;
+
+            confetti.gameObject.transform.position = pos;
+
+            confetti.Play();
+        }
+
+        if (!isChallenge)
+        {
+            if (!BeatLevel(lastLevelBeat))
+            {
+                winCoinText.text = "You've Already Beat This Level!";
+            }
+            else
+            {
+                
+            }
+
+            UpdateCompleted();
+
+
+            if (lastLevelBeat >= levels.Count - 1)
+            {
+                winNextButton.interactable = false;
+                winCoinText.text = "You've Beat the Game!\n" + "+" + coinIncrement.ToString() + " Coins";
+            }
+        }
+        else if (isChallenge)
+        {
+            /*winCoinText.text = "Challenge " + (levelIndex + 1).ToString() + " completed";
+            if (!BeatLastChallengeLevel())
+            {
+                winCoinText.text = "You've Already Beat This Challenge Level!";
+            }
+
+            BeatLastChallengeLevel();
+
+            if (BeatChallenge())
+            {
+                winCoinText.text = "You've Beat The Challenge!";
+                winNextButton.gameObject.SetActive(false);
+                levelsPageButton.gameObject.SetActive(false);
+
+                goToWinChallengeButton.gameObject.SetActive(true);
+            }*/
+        }
+    }
+
+    private void HandleBeatLevel(int levelIndex, bool isChallenge)
+    {
+        lastLevelBeat = levelIndex;
+        this.isChallenge = isChallenge;
+
+        winScreenTimer = winScreenWaitTime;
+        isWaitingForWinScreen = true;
     }
 
     #endregion

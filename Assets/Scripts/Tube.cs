@@ -10,16 +10,14 @@ public class Tube : MonoBehaviour
 
     public List<int> spots = new List<int>();
 
-    public bool GameTube;
-
-    public bool TutorialTube;
-
+    [SerializeField] public bool isTinyTube; 
     public bool isFull;
 
     public Button button;
 
     public GameObject CorkPrefab;
-    public bool corked = true;
+    public bool corked;
+    private bool isWaitingToBeCorked;
 
     private int InvalidIndex = -1;
 
@@ -42,7 +40,6 @@ public class Tube : MonoBehaviour
     void Awake()
     {        
         button.onClick.AddListener(Clicked);
-        corked = false;
         
         for (int i = 0; i < tubeSize; i++)
         {
@@ -56,6 +53,12 @@ public class Tube : MonoBehaviour
             }
         }
 
+        Ball.OnMadeItHome += HandleBallMadeItHome;
+    }
+
+    private void OnDestroy()
+    {
+        Ball.OnMadeItHome -= HandleBallMadeItHome;
     }
 
     public void SetSpot(int given, int where) // sets a spot in the tube
@@ -72,6 +75,33 @@ public class Tube : MonoBehaviour
                 canConfetti = true;
             }
         }
+
+        if (isWaitingToBeCorked)
+        {
+            if (!IsMovement())
+            {
+                isWaitingToBeCorked = false;
+                CloseTube();
+            }
+        }
+    }
+
+    private bool IsMovement()
+    {
+        for (int i = 0; i < ballObjects.Count; i++)
+        {
+            if (ballObjects[i] != null)
+            {
+                if (ballObjects[i].GetComponent<Ball>().IsMoving())
+                {
+                    
+                    return true;
+                }
+                Debug.Log(ballObjects[i].transform.localPosition);
+            }
+        }
+
+        return false;
     }
 
     public void MoveBottomToTop() // moves the first ball to the top of the tube
@@ -82,7 +112,7 @@ public class Tube : MonoBehaviour
         spots[index] = 0;
         ballObjects[index] = null;
 
-        MoveBallToHome(true, 0);
+        MoveBallToHome(true, 0, this);
     }
 
     public int BottomIndex() // returns the index of the last ball
@@ -95,7 +125,7 @@ public class Tube : MonoBehaviour
             }
         }
 
-        return InvalidIndex;
+        return tubeSize - 1;
     }
 
     public void MoveTopToBottom() // 
@@ -106,7 +136,7 @@ public class Tube : MonoBehaviour
             {
                 spots[i] = spots[0];
                 ballObjects[i] = ballObjects[0];
-                MoveBallToHome(true, i);
+                MoveBallToHome(true, i, this);
                 spots[0] = 0;
                 ballObjects[0] = null;
                 
@@ -140,7 +170,7 @@ public class Tube : MonoBehaviour
 
     public bool EmptyTube() // check if the tube is empty
     {
-        if (spots[4] == 0)
+        if (spots[tubeSize - 1] == 0)
         {
             return true;
         }
@@ -185,7 +215,7 @@ public class Tube : MonoBehaviour
         int num = 1;
         if (BottomIndex() != InvalidIndex)
         {
-            for (int i = BottomIndex(); i < 5; ++i)
+            for (int i = BottomIndex(); i < tubeSize; ++i)
             {
                 if (spots[i] != 0)
                 {
@@ -214,16 +244,15 @@ public class Tube : MonoBehaviour
         return num;
     }
 
-    public void NewBallToBottom(int ball, GameObject ballObject) // puts a new ball into the bottom of this tube from another tube
+    public void NewBallToBottom(int ball, GameObject ballObject, Tube originalTube) // puts a new ball into the bottom of this tube from another tube
     {
-        
 
         int openSpot = GetOpenSpot();
         ballObjects[openSpot] = ballObject;
 
         spots[openSpot] = ball;
 
-        MoveBallToHome(false, openSpot);
+        MoveBallToHome(false, openSpot, originalTube);
     }
 
     public void RemoveTopBall()
@@ -247,7 +276,7 @@ public class Tube : MonoBehaviour
 
     public void AddBall(int position, Color color, int colorIndex)
     {
-        if (spots[position] == 0 && ballObjects[position] != null)
+        if (spots[position] == 0 && ballObjects[position] == null)
         {
             GameObject newBall = Instantiate(ballPrefab, spotObjects[position].transform);
             newBall.GetComponent<Image>().color = color;
@@ -274,7 +303,7 @@ public class Tube : MonoBehaviour
 
     public int GetOpenSpot()
     {
-        for (int i = spots.Count - 1; i >= 1; i--)
+        for (int i = tubeSize - 1; i >= 1; i--)
         {
             if (spots[i] == 0)
             {
@@ -328,20 +357,26 @@ public class Tube : MonoBehaviour
         return num;
     }
 
-    private void MoveBallToHome(bool isFromThisTube, int position)
+    private void MoveBallToHome(bool isFromThisTube, int position, Tube originalTube)
     {
         List<Vector2> targetSpots = new List<Vector2>();
-        ballObjects[position].transform.SetParent(spotObjects[position].transform);
-        ballObjects[position].transform.localScale = Vector3.one;
 
         if (!isFromThisTube)
         {
-            if (ballObjects[position].transform.position.y - spotObjects[position].transform.position.y > 0) // top to bottom
+            targetSpots.Add(originalTube.topSpot.transform.position);
+            
+            if (transform.GetSiblingIndex() > originalTube.transform.GetSiblingIndex())
+            {
+                ballObjects[position].transform.SetParent(spotObjects[position].transform);
+                ballObjects[position].transform.localScale = Vector3.one;
+            }
+
+            if (originalTube.topSpot.transform.position.y > topSpot.transform.position.y) // top to bottom
             {
                 targetSpots.Add(new Vector2(spotObjects[position].transform.position.x, ballObjects[position].transform.position.y));
                 targetSpots.Add(topSpot.transform.position);
             }
-            else if (ballObjects[position].transform.position.y - spotObjects[position].transform.position.y < 0) // bottom to top
+            else if (originalTube.topSpot.transform.position.y < topSpot.transform.position.y) // bottom to top
             {
                 targetSpots.Add(new Vector2(ballObjects[position].transform.position.x, spotObjects[position].transform.position.y));
                 targetSpots.Add(topSpot.transform.position);
@@ -354,7 +389,16 @@ public class Tube : MonoBehaviour
 
         targetSpots.Add(spotObjects[position].transform.position);
 
-        ballObjects[position].GetComponent<Ball>().MoveBall(targetSpots);
+        ballObjects[position].GetComponent<Ball>().MoveBall(targetSpots, position, this);
+    }
+
+    private void HandleBallMadeItHome(GameObject ball, int position, Tube homeTube)
+    {
+        if (this == homeTube)
+        {
+            ball.transform.SetParent(spotObjects[position].transform);
+            ball.transform.localScale = Vector3.one;
+        }
     }
 
     void Clicked() // setup for button click
@@ -365,6 +409,11 @@ public class Tube : MonoBehaviour
     {
         corked = true;
 
+        isWaitingToBeCorked = true;
+    }
+
+    private void CloseTube()
+    {
         GameObject Cork = Instantiate(CorkPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         ParticleSystem confetti = Instantiate(confettiPrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
@@ -372,11 +421,10 @@ public class Tube : MonoBehaviour
         pos.z = -1;
         pos.y = pos.y - 0.1f;
         confetti.gameObject.transform.position = pos;
-        confetti.gameObject.transform.localScale = new Vector3(1, 1, 1);    
+        confetti.gameObject.transform.localScale = new Vector3(1, 1, 1);
 
         if (canConfetti)
         {
-            Debug.Log("confetti");
             confetti.Play();
             canConfetti = false;
         }

@@ -146,11 +146,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   spots: 0000000000000000000000000000000000000000
-  index: 0
   GameTube: 0
   TutorialTube: 0
   isFull: 0
-  gm: {fileID: 4918382706571430367, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
   button: {fileID: 6566811625261048976}
   CorkPrefab: {fileID: 6003194038069275040, guid: 9c9d068f6d3fc684886ac489f4c3ad1f, type: 3}
   corked: 0
@@ -164,6 +162,7 @@ MonoBehaviour:
   ballPrefab: {fileID: 1057911745711522576, guid: 6ef4958dbcc38cf4793439b6d89569c5, type: 3}
   siblingIndex: 0
   tubeSize: 0
+  topSpot: {fileID: 0}
 --- !u!1 &1208351212285713882
 GameObject:
   m_ObjectHideFlags: 0
