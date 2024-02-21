@@ -36,6 +36,7 @@ public class Ball : MonoBehaviour
             {
                 currentTarget = currentTargets[0];
                 currentDirection = currentTarget - transform.position;
+                currentDirection.z = 0;
             }
 
             Vector3 ballPos = transform.position;
@@ -78,7 +79,7 @@ public class Ball : MonoBehaviour
 
     public void MoveBall(List<Vector2> targetSpots, int position, Tube homeTube)
     {
-        Debug.Log("move ball");
+        //Debug.Log("move ball");
         currentTargets = targetSpots;
         move = true;
         this.position = position;

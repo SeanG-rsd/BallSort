@@ -208,7 +208,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080903}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: LevelCreator, Assembly-CSharp
         m_MethodName: EndChallenge
         m_Mode: 1
@@ -1132,7 +1132,7 @@ RectTransform:
   - {fileID: 1094400006}
   - {fileID: 841886163}
   m_Father: {fileID: 135091203}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1235,6 +1235,7 @@ RectTransform:
   - {fileID: 409195919}
   - {fileID: 212038180}
   - {fileID: 1055464240}
+  - {fileID: 1302060508}
   - {fileID: 131347281}
   - {fileID: 1099955320}
   - {fileID: 1840039390}
@@ -1246,28 +1247,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &137080901 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-  m_PrefabInstance: {fileID: 4918382706438896027}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1282209937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11874e57bf8d53540acfdc4ff68708de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &137080903 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-  m_PrefabInstance: {fileID: 4918382706438896027}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1282209937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 813996fab4d21924a961fe917ca267b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &143438600
 GameObject:
   m_ObjectHideFlags: 0
@@ -2646,7 +2625,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080903}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: LevelCreator, Assembly-CSharp
         m_MethodName: GiveUpChallenge
         m_Mode: 1
@@ -4614,6 +4593,8 @@ MonoBehaviour:
   - {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
   - {r: 0, g: 1, b: 0.3102684, a: 1}
   - {r: 0, g: 0.6320754, b: 0.43625596, a: 1}
+  tutorialTubes: []
+  isTutorial: 0
 --- !u!1 &741751029
 GameObject:
   m_ObjectHideFlags: 0
@@ -4698,7 +4679,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080903}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: LevelCreator, Assembly-CSharp
         m_MethodName: StartChallengeCoroutine
         m_Mode: 1
@@ -5173,7 +5154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &841886163
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6357,7 +6338,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1055464239
 GameObject:
@@ -6966,7 +6947,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 135091203}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -7190,7 +7171,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080901}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: ShowHowToPlay
         m_Mode: 1
@@ -7839,7 +7820,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080901}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: ShowSolveText
         m_Mode: 1
@@ -8051,7 +8032,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080903}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: LevelCreator, Assembly-CSharp
         m_MethodName: WinChallengeScreen
         m_Mode: 1
@@ -8461,23 +8442,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1255296699}
   m_CullTransparentMesh: 1
---- !u!1 &1282209937 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4918382706571430367, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-  m_PrefabInstance: {fileID: 4918382706438896027}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1282209944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1282209937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6dd1099fd1f617419a8ba1667656802, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1296505154
 GameObject:
   m_ObjectHideFlags: 0
@@ -8760,6 +8724,82 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1299046408}
+  m_CullTransparentMesh: 1
+--- !u!1 &1302060507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1302060508}
+  - component: {fileID: 1302060510}
+  - component: {fileID: 1302060509}
+  m_Layer: 7
+  m_Name: LoadingScreen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1302060508
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302060507}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 135091203}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1302060509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302060507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1302060510
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302060507}
   m_CullTransparentMesh: 1
 --- !u!1 &1310785759
 GameObject:
@@ -9646,7 +9686,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080901}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: ResetChallenge
         m_Mode: 1
@@ -10590,7 +10630,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080903}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: LevelCreator, Assembly-CSharp
         m_MethodName: Hint
         m_Mode: 1
@@ -11595,7 +11635,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080901}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: PlayTutorial
         m_Mode: 1
@@ -11731,7 +11771,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080901}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: SetBackground
         m_Mode: 3
@@ -12209,7 +12249,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080901}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: TinyTubeTime
         m_Mode: 1
@@ -13004,7 +13044,7 @@ RectTransform:
   m_Children:
   - {fileID: 1493599437}
   m_Father: {fileID: 135091203}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -13221,6 +13261,7 @@ MonoBehaviour:
   pageRequirementBox: {fileID: 451888264}
   pageRequirementText: {fileID: 933778834}
   pageNumberText: {fileID: 664221241}
+  loadingScreen: {fileID: 1302060507}
   tubeCount: 0
 --- !u!1 &1871454794
 GameObject:
@@ -14018,7 +14059,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137080903}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: LevelCreator, Assembly-CSharp
         m_MethodName: GenerateLevelsButton
         m_Mode: 1
@@ -14660,7 +14701,7 @@ Transform:
   - {fileID: 720853412}
   - {fileID: 430885095}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2124223854
 GameObject:
@@ -14960,979 +15001,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 14857357246590468, guid: 0ccdc39e9643e994da72e80d016a9439, type: 3}
   m_PrefabInstance: {fileID: 1914627905482610015}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &4918382706438896027
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: list
-      value: 
-      objectReference: {fileID: 448789073}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: coins
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: blankMat
-      value: 
-      objectReference: {fileID: 2100000, guid: bed4ecbc99d19f5409d805813c01a4e5, type: 2}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: hintCost
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: textfile
-      value: 
-      objectReference: {fileID: 4900000, guid: 23dec4cef1145b64abb6fcd48be57211, type: 3}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: coinsText
-      value: 
-      objectReference: {fileID: 2031465694}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubeCount
-      value: 14
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: winScreen
-      value: 
-      objectReference: {fileID: 1055464239}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballPrefab
-      value: 
-      objectReference: {fileID: 1057911745711522576, guid: 6ef4958dbcc38cf4793439b6d89569c5, type: 3}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: genXLevels
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: recordText
-      value: 
-      objectReference: {fileID: 153296409}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: saveButton
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: solveCheck
-      value: 
-      objectReference: {fileID: 4900000, guid: 0695f9c5f87454d4b8fc1ab546a12a20, type: 3}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: spotPrefab
-      value: 
-      objectReference: {fileID: 1891005995998222646, guid: c3d0e7bc0326d98458d2c00874cbc9d2, type: 3}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: loadingIcon
-      value: 
-      objectReference: {fileID: 841886162}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: pageNumText
-      value: 
-      objectReference: {fileID: 664221241}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetButton
-      value: 
-      objectReference: {fileID: 917684649}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: winCoinText
-      value: 
-      objectReference: {fileID: 295337652}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: completedMat
-      value: 
-      objectReference: {fileID: 2100000, guid: 4ab1282690facc34db9022d134ae3110, type: 2}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: fixCompleted
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: giveUpButton
-      value: 
-      objectReference: {fileID: 360143144}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelNumText
-      value: 
-      objectReference: {fileID: 1792906168}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeList
-      value: 
-      objectReference: {fileID: 675005855}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: coinIncriment
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: completedSave
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: winNextButton
-      value: 
-      objectReference: {fileID: 1254049889}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeReset
-      value: 
-      objectReference: {fileID: 1492348606}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: confettiPrefab
-      value: 
-      objectReference: {fileID: 3535071747406023843, guid: e703a86947bd2b6499e22c4cdc1d11f5, type: 3}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: pageLeftButton
-      value: 
-      objectReference: {fileID: 1636998329}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: requirementBox
-      value: 
-      objectReference: {fileID: 451888264}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeButton
-      value: 
-      objectReference: {fileID: 741751029}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsPerPage.x
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsPerPage.y
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: pageRightButton
-      value: 
-      objectReference: {fileID: 745623812}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: requirementText
-      value: 
-      objectReference: {fileID: 933778834}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsPageButton
-      value: 
-      objectReference: {fileID: 1814165763}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeTimeText
-      value: 
-      objectReference: {fileID: 1765497823}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeWinCoins
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: pageLeftFarButton
-      value: 
-      objectReference: {fileID: 701951501}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeWinScreen
-      value: 
-      objectReference: {fileID: 1840039389}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: pageRightFarButton
-      value: 
-      objectReference: {fileID: 143438600}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.size
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[1]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[2]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[3]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[4]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[5]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[6]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[7]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[8]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[9]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: spots.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: spots.Array.data[1]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: spots.Array.data[2]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: spots.Array.data[3]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: spots.Array.data[4]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: spots.Array.data[5]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: spots.Array.data[6]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: spots.Array.data[7]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[1]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[2]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[3]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[4]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[5]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[6]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[7]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[8]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[9]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[10]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: balls.Array.data[11]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeRequirement
-      value: 
-      objectReference: {fileID: 1204210815}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeWinCoinText
-      value: 
-      objectReference: {fileID: 1534979191}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeWinTimeText
-      value: 
-      objectReference: {fileID: 1959749966}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[10]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[11]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeTimeTextGame
-      value: 
-      objectReference: {fileID: 1765497823}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeTimeTextList
-      value: 
-      objectReference: {fileID: 681437928}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[0]
-      value: C1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[1]
-      value: C2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[2]
-      value: C3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[3]
-      value: C4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[4]
-      value: C5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[5]
-      value: C6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[6]
-      value: C7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[7]
-      value: C8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[8]
-      value: C9
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[9]
-      value: C10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeWinRecordText
-      value: 
-      objectReference: {fileID: 1347821585}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: goToWinChallengeButton
-      value: 
-      objectReference: {fileID: 1211834771}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[10]
-      value: C11
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballTags.Array.data[11]
-      value: C12
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeLevelsPerPage.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeLevelsPerPage.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: confettiSpots.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeSpots.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: confettiSpots.Array.data[0]
-      value: 
-      objectReference: {fileID: 705548318}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: confettiSpots.Array.data[1]
-      value: 
-      objectReference: {fileID: 1185752096}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: confettiSpots.Array.data[2]
-      value: 
-      objectReference: {fileID: 219875371}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: confettiSpots.Array.data[3]
-      value: 
-      objectReference: {fileID: 389254544}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeSpots.Array.data[0]
-      value: 
-      objectReference: {fileID: 1891005995998222646, guid: c3d0e7bc0326d98458d2c00874cbc9d2, type: 3}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: challengeSpots.Array.data[1]
-      value: 
-      objectReference: {fileID: 1891005995998222646, guid: c3d0e7bc0326d98458d2c00874cbc9d2, type: 3}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.size
-      value: 22
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[0]
-      value: 5,5,3,2:3,2,9,7:5,2,3,9:9,8,5,11:1,2,4,10:4,1,10,6:8,11,3,7:7,4,1,6:11,9,10,7:6,4,1,8:8,6,11,10:0,0,0,0-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[1]
-      value: 4,6,8,5:3,11,8,11:2,7,1,2:3,10,4,3:4,2,4,7:5,10,8,1:10,9,8,10:9,7,1,9:2,9,1,5:3,7,6,5:6,11,11,6:0,0,0,0-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[2]
-      value: 6,6,8,4:11,4,11,7:3,11,6,0:6,8,0,8:11,10,8,3:5,9,4,3:0,7,7,4:3,0,10,5:1,9,9,10:1,10,7,1:5,1,9,5:2,2,2,2-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[3]
-      value: 2,1,8,0:6,1,10,0:9,5,7,11:4,4,2,11:9,4,10,5:10,0,2,6:0,7,2,1:11,9,5,4:10,11,7,9:6,5,1,8:7,8,8,6:3,3,3,3-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[4]
-      value: 1,3,9,3:6,0,3,7:9,1,3,7:10,2,0,10:7,7,1,6:11,2,0,6:2,11,10,8:1,8,5,9:11,8,6,11:8,5,0,9:10,5,2,5:4,4,4,4-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[5]
-      value: 7,6,1,8:2,11,1,7:10,5,2,5:11,10,3,1:3,10,7,10:2,7,2,6:8,1,8,11:11,6,8,3:3,6,5,9:5,9,0,9:9,0,0,0:4,4,4,4-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[6]
-      value: 1,3,9,3:6,0,3,7:9,1,3,7:10,2,0,10:7,7,1,6:11,2,0,6:2,11,10,8:1,8,5,9:11,8,6,11:8,5,0,9:10,5,2,5:4,4,4,4-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[7]
-      value: 7,6,1,8:2,11,1,7:10,5,2,5:11,10,3,1:3,10,7,10:2,7,2,6:8,1,8,11:11,6,8,3:3,6,5,9:5,9,0,9:9,0,0,0:4,4,4,4-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[8]
-      value: 1,3,9,3:6,0,3,7:9,1,3,7:10,2,0,10:7,7,1,6:11,2,0,6:2,11,10,8:1,8,5,9:11,8,6,11:8,5,0,9:10,5,2,5:4,4,4,4-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[9]
-      value: 9,10,4,6:3,9,0,0:10,6,9,2:3,9,6,10:8,10,4,8:2,8,7,6:7,1,2,1:2,4,1,7:11,7,8,1:11,3,4,0:11,0,11,3:5,5,5,5-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[10]
-      value: 4,4,9,3:9,1,10,8:7,2,9,10:11,3,6,7:8,3,11,9:0,10,6,10:1,11,11,2:3,1,0,7:6,1,6,4:7,0,4,8:2,0,8,2:5,5,5,5-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[11]
-      value: 6,8,8,7:9,6,9,2:8,7,10,10:8,11,11,2:3,7,0,11:4,10,11,1:5,5,5,5:9,0,9,6:6,4,7,4:2,1,2,10:3,0,0,3:4,3,1,1-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[12]
-      value: 9,10,4,6:3,9,0,0:10,6,9,2:3,9,6,10:8,10,4,8:2,8,7,6:7,1,2,1:2,4,1,7:11,7,8,1:11,3,4,0:11,0,11,3:5,5,5,5-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[13]
-      value: 2,5,8,10:11,4,11,6:10,8,11,8:10,6,5,11:5,6,0,9:3,1,10,3:5,2,4,0:9,4,8,6:2,0,9,0:2,1,3,3:1,1,4,9:7,7,7,7-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[14]
-      value: 1,1,6,0:9,10,0,2:2,9,0,10:8,8,3,9:1,3,8,6:11,4,6,10:6,5,4,1:2,2,3,11:3,4,0,8:5,10,11,11:5,4,9,5:7,7,7,7-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[15]
-      value: 10,5,1,7:6,6,0,1:10,7,0,2:10,7,2,10:7,0,2,0:11,6,9,6:9,5,5,11:11,2,9,1:11,5,9,3:4,3,1,3:4,4,3,4:8,8,8,8-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[16]
-      value: 3,11,1,1:5,2,2,2:7,9,11,10:3,11,9,0:5,0,3,1:3,7,6,5:5,9,4,9:4,10,10,10:11,1,2,4:4,0,6,6:7,0,7,6:8,8,8,8-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[17]
-      value: 7,0,1,6:1,1,10,10:1,5,3,11:3,11,10,3:4,10,11,4:4,8,8,3:2,8,0,2:7,5,8,6:11,5,6,2:2,6,4,7:0,7,5,0:9,9,9,9-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[18]
-      value: 4,7,5,10:4,6,0,2:11,1,4,8:11,10,2,11:3,10,6,0:2,4,2,6:1,5,8,10:5,6,7,11:7,1,3,8:7,3,1,8:5,0,3,0:9,9,9,9-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[19]
-      value: 4,3,11,2:4,5,10,5:1,7,5,8:7,3,0,10:10,5,4,2:8,0,0,10:1,11,11,0:7,1,4,2:11,7,1,6:3,6,3,6:2,6,8,8:9,9,9,9-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[20]
-      value: 1,7,5,0:1,9,6,1:6,7,4,2:6,7,8,0:3,0,11,5:1,2,7,3:0,9,5,8:11,2,5,9:9,8,3,11:2,11,8,4:4,3,4,6:10,10,10,10-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430364, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelsWithFullTubes.Array.data[21]
-      value: 9,1,10,8:1,2,3,1:6,2,8,1:9,6,10,2:8,0,4,2:5,3,5,6:8,5,0,10:0,0,5,7:6,10,4,7:4,7,9,7:4,3,3,9:11,11,11,11-
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 409.66666
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 205.33333
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430365, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: blank
-      value: 
-      objectReference: {fileID: 2100000, guid: bed4ecbc99d19f5409d805813c01a4e5, type: 2}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: solve
-      value: 
-      objectReference: {fileID: 1201414471}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: TTTExt
-      value: 
-      objectReference: {fileID: 2019051615}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: badRed
-      value: 
-      objectReference: {fileID: 2100000, guid: 3118cd4e90d6e4d49afa65cf72828e45, type: 2}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insult
-      value: 
-      objectReference: {fileID: 505431080}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: menuNum
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: TinyTube
-      value: 
-      objectReference: {fileID: 7439764311521371085}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: textfile
-      value: 
-      objectReference: {fileID: 4900000, guid: 23dec4cef1145b64abb6fcd48be57211, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: undoCost
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: solveText
-      value: 
-      objectReference: {fileID: 1909141234}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: corkedTube
-      value: 
-      objectReference: {fileID: 21300000, guid: 3083b0b8ebe794d4fb5a46d643cbe599, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: gameScreen
-      value: 
-      objectReference: {fileID: 409195918}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: givenUndos
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: hintButton
-      value: 
-      objectReference: {fileID: 1572139668}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insultText
-      value: 
-      objectReference: {fileID: 1400200952}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insultTime
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: mainScreen
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: makeScreen
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: modeButton
-      value: 
-      objectReference: {fileID: 308417114}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: moveHolder
-      value: 
-      objectReference: {fileID: 605102459}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: noMoveTime
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: normalTube
-      value: 
-      objectReference: {fileID: 21300000, guid: cc110359b9481314ab2126c6ab574fd4, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: redSetting
-      value: 
-      objectReference: {fileID: 21300000, guid: ca2ed960e0b7d8a4eb0280d274b6ca10, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: undoButton
-      value: 
-      objectReference: {fileID: 1078815231}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: HowToScreen
-      value: 
-      objectReference: {fileID: 1744103098}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: blueSetting
-      value: 
-      objectReference: {fileID: 21300000, guid: 0e8775e6c764ab742a9ba10f5a2f0ec6, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelScreen
-      value: 
-      objectReference: {fileID: 379984838}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: TinyTubeCost
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: completedMat
-      value: 
-      objectReference: {fileID: 2100000, guid: 4ab1282690facc34db9022d134ae3110, type: 2}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: greenSetting
-      value: 
-      objectReference: {fileID: 21300000, guid: 93763e5870ee33b4bac8000b8a1120f4, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: hintCostText
-      value: 
-      objectReference: {fileID: 1947032820}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: redLockButton
-      value: 
-      objectReference: {fileID: 1564963774}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: settingScreen
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubeContainer
-      value: 
-      objectReference: {fileID: 149259737}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: undosLeftCoin
-      value: 
-      objectReference: {fileID: 956638755}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: undosLeftText
-      value: 
-      objectReference: {fileID: 320591020}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: BackgroundCost
-      value: 2000
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: NoMovesLeftBox
-      value: 
-      objectReference: {fileID: 985218699}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: SettingsScreen
-      value: 
-      objectReference: {fileID: 212038179}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: TinyTubeButton
-      value: 
-      objectReference: {fileID: 1771291137}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: TinyTubePrefab
-      value: 
-      objectReference: {fileID: 9055971214887712402, guid: 0ccdc39e9643e994da72e80d016a9439, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: ballPathPrefab
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: blueLockButton
-      value: 
-      objectReference: {fileID: 1296505156}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: defaultSetting
-      value: 
-      objectReference: {fileID: 21300000, guid: 130e388f0baef544ab9b3e1197c816ee, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: fullTubePrefab
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: gameBackground
-      value: 
-      objectReference: {fileID: 409195920}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: modeButtonText
-      value: 
-      objectReference: {fileID: 1579882691}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: emptyTubePrefab
-      value: 
-      objectReference: {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: greenLockButton
-      value: 
-      objectReference: {fileID: 1196381791}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: levelBackground
-      value: 
-      objectReference: {fileID: 278435202}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubePrefab
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: redSettingButton
-      value: 
-      objectReference: {fileID: 27488280}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubeContainerObj
-      value: 
-      objectReference: {fileID: 149259739}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.size
-      value: 14
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: blueSettingButton
-      value: 
-      objectReference: {fileID: 1072429990}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: greenSettingButton
-      value: 
-      objectReference: {fileID: 1142030693}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insults.Array.size
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: screens.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: settingsBackground
-      value: 
-      objectReference: {fileID: 2135541802}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[1]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[2]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[3]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[4]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[5]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[6]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[7]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[8]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[9]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: defaultSettingButton
-      value: 
-      objectReference: {fileID: 1644264436}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[10]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[11]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[12]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: tubes.Array.data[13]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insults.Array.data[0]
-      value: Why don't you just think harder next time
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insults.Array.data[1]
-      value: Wowww had to use the undo button huh
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insults.Array.data[2]
-      value: You know this game just isn't for everybody
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insults.Array.data[3]
-      value: Maybe you can get it right this time
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insults.Array.data[4]
-      value: Most people aren't on easy mode
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: insults.Array.data[5]
-      value: Most people aren't on easy mode
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.size
-      value: 14
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: screens.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: screens.Array.data[1]
-      value: 
-      objectReference: {fileID: 379984838}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: screens.Array.data[2]
-      value: 
-      objectReference: {fileID: 409195918}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: screens.Array.data[3]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: screens.Array.data[4]
-      value: 
-      objectReference: {fileID: 212038179}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: winConfettis.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[0]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[1]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[2]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[3]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[4]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[5]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[6]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[7]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[8]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[9]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[10]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[11]
-      value: 
-      objectReference: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[12]
-      value: 
-      objectReference: {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
-    - target: {fileID: 4918382706571430366, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: resetTubes.Array.data[13]
-      value: 
-      objectReference: {fileID: 224280715841422463, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
-    - target: {fileID: 4918382706571430367, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_Name
-      value: GameManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 4918382706571430367, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d7b621d6c8603604284ed6aefe47d3cd, type: 3}
 --- !u!1 &7439764311521371085 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9055971214887712402, guid: 0ccdc39e9643e994da72e80d016a9439, type: 3}

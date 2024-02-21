@@ -49,6 +49,11 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private Color[] ballColors;
 
+    [Header("---Tutorial---")]
+    [SerializeField] private List<GameObject> tutorialTubes;
+    [SerializeField] private bool isTutorial;
+    private string tutorialString = "0,0,1,1:1,1,0,0-";
+
     private int lastLevelLoaded = -1;
     private int lastLoadedTubeCount = -1;
 
@@ -67,6 +72,12 @@ public class LevelManager : MonoBehaviour
         }
 
         MenuManager.OnChangeMode += HandleModeChange;
+
+        if (isTutorial)
+        {
+            tubeObjects = tutorialTubes;
+            LoadTutorial();
+        }
     }
 
     private void OnDestroy()
@@ -145,7 +156,6 @@ public class LevelManager : MonoBehaviour
     #region Gameplay
     private bool CheckForWin()
     {
-        Debug.Log("cork");
         CorkTubes();
 
         for (int tube = 0; tube < tubeObjects.Count; tube++)
@@ -158,6 +168,7 @@ public class LevelManager : MonoBehaviour
             }
         }
 
+        Debug.Log("cork");
         return true;
     }
 
@@ -373,7 +384,10 @@ public class LevelManager : MonoBehaviour
 
         lastLoadedTubeCount = level.Count + 2;
 
-        ResetGame();
+        if (!isTutorial)
+        {
+            ResetGame();
+        }
 
         if (level != null)
         {
@@ -427,7 +441,7 @@ public class LevelManager : MonoBehaviour
         undoHolster.Add(currentState);
         tinyTubeUndoHolster.Add(tinyTubeState);
 
-        //Debug.Log(currentState);
+        Debug.Log(currentState);
         canUndo = true;
     }
 
@@ -538,6 +552,16 @@ public class LevelManager : MonoBehaviour
     public void AddCoins(int add)
     {
         coins += add;
+    }
+
+    #endregion
+
+    #region Tutorial
+
+    private void LoadTutorial()
+    {
+        LoadLevel(GetStateFromString(tutorialString));
+        tubeObjects[2].GetComponent<Tube>().EmptyEntireTube();
     }
 
     #endregion

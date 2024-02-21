@@ -41,5 +41,8 @@ public class TutorialHelper : MonoBehaviour
         }
     }
 
-
+    public void StartGame()
+    {
+        SceneManager.LoadScene("MainScene");
+    }
 }
