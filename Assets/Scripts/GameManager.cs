@@ -61,6 +61,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject loadingScreen;
 
+    [SerializeField] private TMP_Text loadingScreenText;
+
     private void Awake()
     {
         StartLoadingGame();
@@ -81,19 +83,18 @@ public class GameManager : MonoBehaviour
         LevelManager.OnBeatLevel -= HandleBeatLevel;
     }
 
+    DateTime time = DateTime.Now;
+
 
     private void StartLoadingGame()
     {
         loadingScreen.SetActive(true);
-        DateTime time = DateTime.Now;
 
         savedLevels = GetLevels();
         LoadGame();
         GenerateLevelSpots();
 
-        StartCoroutine(LoadLevelChooseList());
-
-        Debug.Log((DateTime.Now - time).TotalMilliseconds);
+        LoadLevelChooseList();
     }
 
     private void Update()
@@ -107,6 +108,11 @@ public class GameManager : MonoBehaviour
                 isWaitingForWinScreen = false;
                 WinScreen();
             }
+        }
+
+        if (loadingScreen.activeSelf)
+        {
+            loadingScreenText.text = ((int)(highestLoadedLevel / (float)levels.Count * 100)).ToString();
         }
     }
 
@@ -431,6 +437,8 @@ public class GameManager : MonoBehaviour
 
     #region Page Initializer
 
+    private int highestLoadedLevel = 0;
+
     private void GenerateLevelSpots()
     {        
         levelButtonSpots = new List<LevelSpot>();
@@ -444,25 +452,45 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator LoadLevelChooseList()
+    private IEnumerator LoadLevelSpot(int index)
     {
         int levelsPerPage = pageLevelLayout.x * pageLevelLayout.y;
 
-        for (int current = 0; current < levels.Count; current++)
+        for (int current = 0; current < numberOfPages; current++)
         {
-            LevelSpot currentSpot = levelButtonSpots[current % levelsPerPage];
+            int currentLevel = current * levelsPerPage + index + 1;
+            if (currentLevel <= levels.Count)
+            {
+                LevelSpot currentSpot = levelButtonSpots[index];
 
-            GameObject newButton = Instantiate(levelButtonPrefab, currentSpot.gameObject.transform);
-            newButton.transform.localScale = Vector3.one;
+                GameObject newButton = Instantiate(levelButtonPrefab, currentSpot.gameObject.transform);
+                newButton.transform.localScale = Vector3.one;
 
-            currentSpot.AddNewLevel(newButton, current + 1);
+                currentSpot.AddNewLevel(newButton, currentLevel);
 
-            if (current % levelsPerPage == 0)
+                highestLoadedLevel++;
+            }
+
+            if (currentLevel == levels.Count)
+            {
+                StopAllCoroutines();
+                loadingScreen.SetActive(false);
+                Debug.Log((DateTime.Now - time).TotalMilliseconds);
+
+                LoadCompleted();
+                PageFarRight();
+            }
+
+            if (current % 5 == 0)
             {
                 yield return null;
             }
-            yield return null;
         }
+    }
+
+    private void LoadLevelChooseList()
+    {
+        int levelsPerPage = pageLevelLayout.x * pageLevelLayout.y;
 
         numberOfPages = levels.Count / levelsPerPage;
 
@@ -471,15 +499,10 @@ public class GameManager : MonoBehaviour
             numberOfPages++;
         }
 
-        Debug.Log("stop");
-        LoadCompleted();
-        loadingScreen.SetActive(false);
-
-        currentPage = 0;
-        UpdateListPage();
-        StopAllCoroutines();
-
-        yield return null;
+        for (int index = 0; index < levelsPerPage; index++)
+        {
+            StartCoroutine(LoadLevelSpot(index));
+        }
     }
 
     #endregion

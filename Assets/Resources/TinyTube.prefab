@@ -111,8 +111,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 180, y: -308}
-  m_SizeDelta: {x: 55, y: 60}
+  m_AnchoredPosition: {x: 180, y: -317.5426}
+  m_SizeDelta: {x: 55, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2700641151460316623
 CanvasRenderer:
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: cc110359b9481314ab2126c6ab574fd4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c750e17a5b500384da3f74fd3317726d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -212,8 +212,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   spots: 0000000000000000
-  GameTube: 0
-  TutorialTube: 0
+  isTinyTube: 1
   isFull: 0
   button: {fileID: 2707661357950342781}
   CorkPrefab: {fileID: 6003194038069275040, guid: 9c9d068f6d3fc684886ac489f4c3ad1f, type: 3}

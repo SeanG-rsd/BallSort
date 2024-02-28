@@ -17,7 +17,7 @@ public class LevelManager : MonoBehaviour
     private List<GameObject> tubeObjects;
     [SerializeField] private GameObject tubePrefab;
     [SerializeField] private Transform tubeContainer;
-    private int coins;
+    public int coins;
     [SerializeField] private TMP_Text levelNumberText;
     [SerializeField] private TubeContainer tubeContainerObj;
 
@@ -57,6 +57,8 @@ public class LevelManager : MonoBehaviour
     private int lastLevelLoaded = -1;
     private int lastLoadedTubeCount = -1;
 
+    private bool currentGameMode = false;
+
     private void Awake()
     {
         tubeObjects = new List<GameObject>();
@@ -72,6 +74,7 @@ public class LevelManager : MonoBehaviour
         }
 
         MenuManager.OnChangeMode += HandleModeChange;
+        MenuManager.OnGoToLevelsMenu += HandleLevelsMenu;
 
         if (isTutorial)
         {
@@ -83,6 +86,7 @@ public class LevelManager : MonoBehaviour
     private void OnDestroy()
     {
         MenuManager.OnChangeMode -= HandleModeChange;
+        MenuManager.OnGoToLevelsMenu -= HandleLevelsMenu;
     }
 
     public int Coin
@@ -136,6 +140,17 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public void OnClickTinyTube()
+    {
+        if (coins >= tinyTubeCost)
+        {
+            tinyTubeButton.SetActive(false);
+            tinyTube.SetActive(true);
+            coins -= tinyTubeCost;
+            isTinyTubeActive = true;
+        }
+    }
+
     public void OnClickHint()
     {
 
@@ -146,9 +161,27 @@ public class LevelManager : MonoBehaviour
 
     private void HandleModeChange(bool mode)
     {
+        currentGameMode = mode;
         undoButton.SetActive(mode);
         tinyTubeButton.SetActive(mode);
-        hintButton.SetActive(mode);
+        if (!mode)
+        {
+            tinyTube.SetActive(false);
+        }
+        else if (mode)
+        {
+            if (isTinyTubeActive) { tinyTubeButton.SetActive(false); }
+            else { tinyTubeButton.SetActive(true); }
+            //hintButton.SetActive(mode);
+            
+        }
+    }
+
+    private void HandleLevelsMenu()
+    {
+        isTinyTubeActive = false;
+        tinyTube.SetActive(false);
+        HandleModeChange(currentGameMode);
     }
 
     #endregion
@@ -156,6 +189,7 @@ public class LevelManager : MonoBehaviour
     #region Gameplay
     private bool CheckForWin()
     {
+        HandleMovesLeft();
         CorkTubes();
 
         for (int tube = 0; tube < tubeObjects.Count; tube++)
@@ -168,8 +202,12 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        Debug.Log("cork");
         return true;
+    }
+
+    private void HandleMovesLeft()
+    {
+
     }
 
     private void CorkTubes()
@@ -300,6 +338,7 @@ public class LevelManager : MonoBehaviour
         string lastState = undoHolster[index];
         string lastTinyTubeState = tinyTubeUndoHolster[index];
         List<List<int>> level = GetStateFromString(lastState);
+        List<List<int>> tinyTubeState = GetStateFromString(lastTinyTubeState);
 
         Debug.Log(lastState);
 
@@ -319,13 +358,31 @@ public class LevelManager : MonoBehaviour
             }
         }
 
+        for (int tube = 0; tube < tinyTubeState.Count; tube++)
+        {
+            Tube currentTube = tinyTube.GetComponent<Tube>();
+            for (int ball = 0; ball < tinyTubeState[tube].Count; ball++)
+            {
+                if (tinyTubeState[tube][ball] == 0)
+                {
+                    currentTube.RemoveBall(ball);
+                }
+                else
+                {
+                    currentTube.AddBall(ball, ballColors[tinyTubeState[tube][ball] - 1], tinyTubeState[tube][ball]);
+                }
+            }
+        }
+
         undoHolster.RemoveAt(undoHolster.Count - 1);
         tinyTubeUndoHolster.RemoveAt(tinyTubeUndoHolster.Count - 1);
 
-        if (undoHolster.Count == 0)
+        if (undoHolster.Count <= 1)
         {
             canUndo = false;
         }
+
+        Debug.Log("Count : " + undoHolster.Count);
     }
     #endregion
 
@@ -333,6 +390,7 @@ public class LevelManager : MonoBehaviour
     private void ResetGame()
     {
         undosLeft = freeGivenUndos;
+        HandleModeChange(currentGameMode);
 
         LoadBlankLevel();
     }
@@ -359,6 +417,8 @@ public class LevelManager : MonoBehaviour
 
         tubeObjects[tubeObjects.Count - 1].GetComponent<Tube>().EmptyEntireTube();
         tubeObjects[tubeObjects.Count - 2].GetComponent<Tube>().EmptyEntireTube();
+
+        tinyTube.GetComponent<Tube>().EmptyEntireTube();
 
         canUndo = false;
         clickState = false;
@@ -432,9 +492,8 @@ public class LevelManager : MonoBehaviour
             if (tube != tubeObjects.Count - 1) { currentState += ":"; }
         }
 
-        string tinyTubeState = "";
-
-        //tinyTubeState += AddTubeToString(tinyTube.GetComponent<Tube>());
+        string tinyTubeState = AddTubeToString(tinyTube.GetComponent<Tube>()) + "-";
+        Debug.Log(tinyTubeState);
 
         currentState += "-";
 
@@ -486,7 +545,7 @@ public class LevelManager : MonoBehaviour
                     else if (str[index] == ',') // finish ball
                     {
 
-                        loadBall = System.Convert.ToInt32(ball);
+                        loadBall = Convert.ToInt32(ball);
                         ball = "";
                         int newBall = loadBall;
 
