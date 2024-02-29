@@ -59,12 +59,14 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private TMP_Text pageNumberText;
 
+    [Header("---LoadingScreen---")]
     [SerializeField] private GameObject loadingScreen;
-
-    [SerializeField] private TMP_Text loadingScreenText;
+    [SerializeField] private RectTransform loadingBarMask;
+    private float loadingBarStartingWidth;
 
     private void Awake()
     {
+        loadingBarStartingWidth = loadingBarMask.rect.width;
         StartLoadingGame();
         LevelManager.OnBeatLevel += HandleBeatLevel;
 
@@ -112,7 +114,7 @@ public class GameManager : MonoBehaviour
 
         if (loadingScreen.activeSelf)
         {
-            loadingScreenText.text = ((int)(highestLoadedLevel / (float)levels.Count * 100)).ToString();
+            loadingBarMask.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, highestLoadedLevel / (float)levels.Count * loadingBarStartingWidth);
         }
     }
 

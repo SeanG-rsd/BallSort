@@ -20,6 +20,7 @@ public class LevelManager : MonoBehaviour
     public int coins;
     [SerializeField] private TMP_Text levelNumberText;
     [SerializeField] private TubeContainer tubeContainerObj;
+    [SerializeField] private Popup noMovesLeftPopup;
 
     private bool inChallenge;
 
@@ -207,7 +208,10 @@ public class LevelManager : MonoBehaviour
 
     private void HandleMovesLeft()
     {
-
+        if (!CheckIfAnyMovesLeft())
+        {
+            noMovesLeftPopup.Activate(10);
+        }
     }
 
     private void CorkTubes()
@@ -340,7 +344,7 @@ public class LevelManager : MonoBehaviour
         List<List<int>> level = GetStateFromString(lastState);
         List<List<int>> tinyTubeState = GetStateFromString(lastTinyTubeState);
 
-        Debug.Log(lastState);
+        noMovesLeftPopup.Deactivate();
 
         for (int tube = 0; tube < level.Count; tube++)
         {
@@ -390,6 +394,7 @@ public class LevelManager : MonoBehaviour
     private void ResetGame()
     {
         undosLeft = freeGivenUndos;
+        noMovesLeftPopup.Deactivate();
         HandleModeChange(currentGameMode);
 
         LoadBlankLevel();
@@ -493,14 +498,14 @@ public class LevelManager : MonoBehaviour
         }
 
         string tinyTubeState = AddTubeToString(tinyTube.GetComponent<Tube>()) + "-";
-        Debug.Log(tinyTubeState);
+        //Debug.Log(tinyTubeState);
 
         currentState += "-";
 
         undoHolster.Add(currentState);
         tinyTubeUndoHolster.Add(tinyTubeState);
 
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
         canUndo = true;
     }
 

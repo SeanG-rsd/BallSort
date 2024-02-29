@@ -104,7 +104,7 @@ public class MenuManager : MonoBehaviour
         {
             if (index == number)
             {
-                Debug.Log(number);
+                //Debug.Log(number);
                 screens[number].SetActive(true);
             }
             else
