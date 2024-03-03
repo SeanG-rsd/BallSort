@@ -11,7 +11,7 @@ public class MenuManager : MonoBehaviour
 
     [Header("---Menu---")]
     [SerializeField] private GameObject[] screens;
-    [SerializeField] private int levelScreenIndex, gameScreenIndex, settingsScreenIndex, howToPlayScreenIndex, winScreenIndex;
+    [SerializeField] private int levelScreenIndex, gameScreenIndex, settingsScreenIndex, howToPlayScreenIndex, winScreenIndex, tutorialScreenIndex;
 
     [Header("---Mode---")]
     [SerializeField] private GameObject modeButton;
@@ -20,9 +20,13 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private TMP_Text coinText;
     private string coinKeyString = "CoinCount";
 
+    // Tutorial
+    private string tutorialKeyString = "TUTORIAL";
+
 
     public static Action<bool> OnChangeMode = delegate { };
     public static Action OnGoToLevelsMenu = delegate { };
+    public static Action OnStartTutorial = delegate { };
 
     private void Awake()
     {
@@ -33,6 +37,15 @@ public class MenuManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+
+        if (PlayerPrefs.HasKey(tutorialKeyString))
+        {
+            screens[tutorialScreenIndex].SetActive(false);
+        }
+        else
+        {
+            PlayerPrefs.SetString(tutorialKeyString, tutorialKeyString);
         }
 
         LevelManager.OnLoadLevel += HandleLoadLevel;
@@ -52,6 +65,17 @@ public class MenuManager : MonoBehaviour
     private void HandleLoadLevel()
     {
         OpenMenuNumber(gameScreenIndex);
+    }
+
+    public void OnClickStartGame()
+    {
+        OpenMenuNumber(levelScreenIndex);
+    }
+
+    public void OnClickTutorial()
+    {
+        OnStartTutorial?.Invoke();
+        OpenMenuNumber(tutorialScreenIndex);
     }
 
     public void OnClickModeChange()
@@ -77,7 +101,17 @@ public class MenuManager : MonoBehaviour
 
     public void ToggleSettingsScreen()
     {
+        if (screens[settingsScreenIndex].activeSelf)
+        {
+            screens[tutorialScreenIndex].SetActive(false);
+        }
         OnToggleScreen(settingsScreenIndex);
+        
+    }
+
+    public void ToggleHowToScreen()
+    {
+        OnToggleScreen(howToPlayScreenIndex);
     }
 
     private void OnToggleScreen(int screenIndex)

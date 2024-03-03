@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int leftIndex, rightIndex, farLeftIndex, farRightIndex;
     private int currentPage;
     private int numberOfPages;
+    private int numberOfTutorialPages = 2;
 
     [SerializeField] private GameObject pageRequirementBox;
     [SerializeField] private TMP_Text pageRequirementText;

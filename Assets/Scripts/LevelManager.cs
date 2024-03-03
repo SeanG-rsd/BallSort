@@ -76,6 +76,7 @@ public class LevelManager : MonoBehaviour
 
         MenuManager.OnChangeMode += HandleModeChange;
         MenuManager.OnGoToLevelsMenu += HandleLevelsMenu;
+        MenuManager.OnStartTutorial += HandleStartTutorial;
 
         if (isTutorial)
         {
@@ -88,6 +89,7 @@ public class LevelManager : MonoBehaviour
     {
         MenuManager.OnChangeMode -= HandleModeChange;
         MenuManager.OnGoToLevelsMenu -= HandleLevelsMenu;
+        MenuManager.OnStartTutorial -= HandleStartTutorial;
     }
 
     public int Coin
@@ -192,6 +194,8 @@ public class LevelManager : MonoBehaviour
     {
         HandleMovesLeft();
         CorkTubes();
+
+        if (isTutorial) return false;
 
         for (int tube = 0; tube < tubeObjects.Count; tube++)
         {
@@ -421,7 +425,10 @@ public class LevelManager : MonoBehaviour
         }
 
         tubeObjects[tubeObjects.Count - 1].GetComponent<Tube>().EmptyEntireTube();
-        tubeObjects[tubeObjects.Count - 2].GetComponent<Tube>().EmptyEntireTube();
+        if (!isTutorial)
+        {
+            tubeObjects[tubeObjects.Count - 2].GetComponent<Tube>().EmptyEntireTube();
+        }
 
         tinyTube.GetComponent<Tube>().EmptyEntireTube();
 
@@ -624,8 +631,18 @@ public class LevelManager : MonoBehaviour
 
     private void LoadTutorial()
     {
+        lastLoadedTubeCount = 3;
+        LoadBlankLevel();
         LoadLevel(GetStateFromString(tutorialString));
         tubeObjects[2].GetComponent<Tube>().EmptyEntireTube();
+    }
+
+    private void HandleStartTutorial()
+    {
+        if (isTutorial)
+        {
+            LoadTutorial();
+        }
     }
 
     #endregion
