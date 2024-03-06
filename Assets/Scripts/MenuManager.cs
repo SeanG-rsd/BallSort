@@ -11,7 +11,7 @@ public class MenuManager : MonoBehaviour
 
     [Header("---Menu---")]
     [SerializeField] private GameObject[] screens;
-    [SerializeField] private int levelScreenIndex, gameScreenIndex, settingsScreenIndex, howToPlayScreenIndex, winScreenIndex, tutorialScreenIndex;
+    [SerializeField] private int levelScreenIndex, gameScreenIndex, settingsScreenIndex, howToPlayScreenIndex, winScreenIndex, tutorialScreenIndex, loadingScreenIndex;
 
     [Header("---Mode---")]
     [SerializeField] private GameObject modeButton;
@@ -30,6 +30,7 @@ public class MenuManager : MonoBehaviour
 
     private void Awake()
     {
+        
         if (instance == null)
         {
             instance = this;
@@ -38,6 +39,8 @@ public class MenuManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        screens[loadingScreenIndex].SetActive(true);
 
         if (PlayerPrefs.HasKey(tutorialKeyString))
         {

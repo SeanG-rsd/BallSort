@@ -480,8 +480,11 @@ public class GameManager : MonoBehaviour
                 loadingScreen.SetActive(false);
                 Debug.Log((DateTime.Now - time).TotalMilliseconds);
 
+                MenuManager.instance.OnClickStartGame();
                 LoadCompleted();
                 PageFarRight();
+
+                StopAllCoroutines();
             }
 
             if (current % 5 == 0)
