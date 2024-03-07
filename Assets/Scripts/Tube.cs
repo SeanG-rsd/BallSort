@@ -321,6 +321,17 @@ public class Tube : MonoBehaviour
         SetSpot(colorIndex + 1, position);
     }
 
+    public void SetNewPallette(Color[] pallette)
+    {
+        for (int i = 0; i < spots.Count; i++)
+        {
+            if (spots[i] != 0)
+            {
+                ballObjects[i].GetComponent<Image>().color = pallette[spots[i] - 1];
+            }
+        }
+    }
+
     public int ReturnNumOpenSpots() // returns the number of open spots at the top of the tube
     {
         int num = 0;

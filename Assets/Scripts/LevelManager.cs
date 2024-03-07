@@ -77,12 +77,6 @@ public class LevelManager : MonoBehaviour
         MenuManager.OnChangeMode += HandleModeChange;
         MenuManager.OnGoToLevelsMenu += HandleLevelsMenu;
         MenuManager.OnStartTutorial += HandleStartTutorial;
-
-        if (isTutorial)
-        {
-            tubeObjects = tutorialTubes;
-            LoadTutorial();
-        }
     }
 
     private void OnDestroy()
@@ -187,6 +181,18 @@ public class LevelManager : MonoBehaviour
         HandleModeChange(currentGameMode);
     }
 
+    public void HandleBallColorChange(Color[] newColor)
+    {
+        ballColors = newColor;
+        
+        for (int i = 0; i < tubeObjects.Count; ++i)
+        {
+            Tube tube = tubeObjects[i].GetComponent<Tube>();
+
+            tube.SetNewPallette(newColor);
+        }
+    }
+
     #endregion
 
     #region Gameplay
@@ -274,7 +280,7 @@ public class LevelManager : MonoBehaviour
                     }
                 }
             }
-            else // move ball from tubeObject to top
+            else if (!clickState && !currentTube.EmptyTube()) // move ball from tubeObject to top
             {
                 
                 firstTubeClicked = tubeObject;
@@ -617,7 +623,10 @@ public class LevelManager : MonoBehaviour
 
     private void BeatLevel(int levelIndex, bool isChallenge)
     {
-        OnBeatLevel?.Invoke(levelIndex, isChallenge);
+        if (!isTutorial)
+        {
+            OnBeatLevel?.Invoke(levelIndex, isChallenge);
+        }
     }
 
     public void AddCoins(int add)
@@ -639,10 +648,9 @@ public class LevelManager : MonoBehaviour
 
     private void HandleStartTutorial()
     {
-        if (isTutorial)
-        {
-            LoadTutorial();
-        }
+        tubeObjects = tutorialTubes;
+        isTutorial = true;
+        LoadTutorial();
     }
 
     #endregion

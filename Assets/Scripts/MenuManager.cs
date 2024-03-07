@@ -49,6 +49,7 @@ public class MenuManager : MonoBehaviour
         else
         {
             PlayerPrefs.SetString(tutorialKeyString, tutorialKeyString);
+            screens[tutorialScreenIndex].SetActive(true);
         }
 
         LevelManager.OnLoadLevel += HandleLoadLevel;
@@ -97,9 +98,9 @@ public class MenuManager : MonoBehaviour
         OnChangeMode?.Invoke(modeState);
     }
 
-    public void ToggleWinScreen()
+    public void ToggleWinScreen(bool active)
     {
-        OnToggleScreen(winScreenIndex);
+        screens[winScreenIndex].SetActive(active);
     }
 
     public void ToggleSettingsScreen()

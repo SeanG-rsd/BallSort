@@ -32,6 +32,7 @@ public class Ball : MonoBehaviour
     {
         if (currentTargets.Count > 0)
         {
+
             if (currentTarget == Vector3.zero)
             {
                 currentTarget = currentTargets[0];

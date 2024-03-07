@@ -13,6 +13,12 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private GameObject shopItemPrefab;
     [SerializeField] private Transform scrollBar;
 
+    [SerializeField] private Color selectedTabColor;
+    [SerializeField] private Color unSelectedTabColor;
+
+    [SerializeField] private Image backgroundTab;
+    [SerializeField] private Image ballTab;
+
     [Header("---Backgrounds---")]
 
     [SerializeField] private Sprite[] backgrounds;
@@ -53,7 +59,7 @@ public class ShopManager : MonoBehaviour
         LoadBackgrounds();
         LoadBalls();
 
-        ClickBallTab();
+        ClickBackgroundTab();
     }
 
     public void SetBackground(int index)
@@ -63,15 +69,43 @@ public class ShopManager : MonoBehaviour
             image.sprite = backgrounds[index];
         }
         PlayerPrefs.SetInt(LAST_BACKGROUND_KEY, index);
+
+        for (int i = 0; i < backgroundShopItems.Count; i++)
+        {
+            if (index == i)
+            {
+                backgroundShopItems[i].GetComponent<ShopItem>().Select();
+            }
+            else
+            {
+                backgroundShopItems[i].GetComponent<ShopItem>().DeSelect();
+            }
+        }
     }
 
     public void SetBalls(int index)
     {
+        LevelManager.instance.HandleBallColorChange(balls[index].GetBallColors());
+        PlayerPrefs.SetInt(LAST_BALL_KEY, index);
 
+        for (int i = 0; i < ballShopItems.Count; i++)
+        {
+            if (index == i)
+            {
+                ballShopItems[i].GetComponent<ShopItem>().Select();
+            }
+            else
+            {
+                ballShopItems[i].GetComponent<ShopItem>().DeSelect();
+            }
+        }
     }
 
     public void ClickBallTab()
     {
+        ballTab.color = selectedTabColor;
+        backgroundTab.color = unSelectedTabColor;
+
         foreach (GameObject shopItem in ballShopItems)
         {
             shopItem.SetActive(true);
@@ -85,6 +119,9 @@ public class ShopManager : MonoBehaviour
 
     public void ClickBackgroundTab()
     {
+        backgroundTab.color = selectedTabColor;
+        ballTab.color = unSelectedTabColor;
+
         foreach (GameObject shopItem in backgroundShopItems)
         {
             shopItem.SetActive(true);
@@ -98,16 +135,6 @@ public class ShopManager : MonoBehaviour
 
     private void LoadBackgrounds()
     {
-        if (PlayerPrefs.HasKey(LAST_BACKGROUND_KEY))
-        {
-            SetBackground(PlayerPrefs.GetInt(LAST_BACKGROUND_KEY));
-        }
-        else
-        {
-            PlayerPrefs.SetInt(LAST_BACKGROUND_KEY, 0);
-            SetBackground(0);
-        }
-
         for (int i = 0; i < backgroundKeys.Length; i++)
         {
             GameObject backgroundItem = Instantiate(shopItemPrefab, scrollBar);
@@ -117,29 +144,29 @@ public class ShopManager : MonoBehaviour
             {
                 if (PlayerPrefs.GetInt(backgroundKeys[i]) == 1)
                 {
-                    newShopItem.Initialize(shopItemBackgroundImages[i], backgroundCosts[i], true, backgroundKeys[i], i);
+                    newShopItem.Initialize(shopItemBackgroundImages[i], backgroundCosts[i], true, backgroundKeys[i], i, true);
                     backgroundShopItems.Add(backgroundItem);
                     continue;
                 }
             }
 
-            newShopItem.Initialize(shopItemBackgroundImages[i], backgroundCosts[i], false, backgroundKeys[i], i);
+            newShopItem.Initialize(shopItemBackgroundImages[i], backgroundCosts[i], false, backgroundKeys[i], i, true);
             backgroundShopItems.Add(backgroundItem);
+        }
+
+        if (PlayerPrefs.HasKey(LAST_BACKGROUND_KEY))
+        {
+            SetBackground(PlayerPrefs.GetInt(LAST_BACKGROUND_KEY));
+        }
+        else
+        {
+            PlayerPrefs.SetInt(LAST_BACKGROUND_KEY, 0);
+            SetBackground(0);
         }
     }
 
     private void LoadBalls()
     {
-        if (PlayerPrefs.HasKey(LAST_BALL_KEY))
-        {
-            SetBalls(PlayerPrefs.GetInt(LAST_BALL_KEY));
-        }
-        else
-        {
-            PlayerPrefs.SetInt(LAST_BALL_KEY, 0);
-            SetBackground(0);
-        }
-
         for (int i = 0; i < ballKeys.Length; i++)
         {
             GameObject backgroundItem = Instantiate(shopItemPrefab, scrollBar);
@@ -149,14 +176,24 @@ public class ShopManager : MonoBehaviour
             {
                 if (PlayerPrefs.GetInt(ballKeys[i]) == 1)
                 {
-                    newShopItem.Initialize(shopItemBallImages[i], ballCosts[i], true, ballKeys[i], i);
-                    backgroundShopItems.Add(backgroundItem);
+                    newShopItem.Initialize(shopItemBallImages[i], ballCosts[i], true, ballKeys[i], i, false);
+                    ballShopItems.Add(backgroundItem);
                     continue;
                 }
             }
 
-            newShopItem.Initialize(shopItemBallImages[i], ballCosts[i], false, ballKeys[i], i);
+            newShopItem.Initialize(shopItemBallImages[i], ballCosts[i], false, ballKeys[i], i, false);
             ballShopItems.Add(backgroundItem);
+        }
+
+        if (PlayerPrefs.HasKey(LAST_BALL_KEY))
+        {
+            SetBalls(PlayerPrefs.GetInt(LAST_BALL_KEY));
+        }
+        else
+        {
+            PlayerPrefs.SetInt(LAST_BALL_KEY, 0);
+            SetBalls(0);
         }
     }
 }

@@ -16,10 +16,15 @@ public class TutorialHelper : MonoBehaviour
 
     public GameObject moveOnButton;
     public GameObject startGameButton;
-    void Start() 
+    void Awake() 
     {
-        index = 0;
-        infoText.text = infoStrings[index];
+        HandleStartTutorial();
+        MenuManager.OnStartTutorial += HandleStartTutorial;
+    }
+
+    private void OnDestroy()
+    {
+        MenuManager.OnStartTutorial -= HandleStartTutorial;
     }
     public void MoveOn() // is called when the next button is click and moves to the next message in the tutorial sequence
     {
@@ -44,5 +49,14 @@ public class TutorialHelper : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadScene("MainScene");
+    }
+
+    private void HandleStartTutorial()
+    {
+        index = 0;
+        infoText.text = infoStrings[index];
+
+        moveOnButton.SetActive(true);
+        startGameButton.SetActive(false);
     }
 }

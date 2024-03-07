@@ -652,13 +652,13 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        MenuManager.instance.ToggleWinScreen();
+        MenuManager.instance.ToggleWinScreen(false);
     }
 
     public void WinLevels()
     {
         MenuManager.instance.OnClickLevelsButton();
-        MenuManager.instance.ToggleWinScreen();
+        MenuManager.instance.ToggleWinScreen(false);
     }
 
     private bool BeatLevel(int levelIndex)
@@ -686,7 +686,7 @@ public class GameManager : MonoBehaviour
     private void WinScreen()
     {
 
-        MenuManager.instance.ToggleWinScreen();
+        MenuManager.instance.ToggleWinScreen(true);
         winCoinText.text = "+" + coinIncrement.ToString() + " Coins";
 
         for (int i = 0; i < confettiSpots.Length; ++i)

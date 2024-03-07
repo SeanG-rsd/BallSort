@@ -10,11 +10,14 @@ public class ShopItem : MonoBehaviour
     [SerializeField] private Image itemImage;
     [SerializeField] private GameObject lockObject;
     [SerializeField] private TMP_Text price;
+    [SerializeField] private TMP_Text itemName;
+    [SerializeField] private GameObject selectedObject;
     private int cost;
     private string key;
     private int index;
+    private bool isBackground;
 
-    public void Initialize(Sprite image, int price, bool bought, string key, int index)
+    public void Initialize(Sprite image, int price, bool bought, string key, int index, bool isBackground)
     {
         itemImage.sprite = image;
         this.price.text = price + " Coins";
@@ -22,10 +25,12 @@ public class ShopItem : MonoBehaviour
         cost = price;
         this.key = key;
         this.index = index;
+        this.isBackground = isBackground;
 
         if (price == 0)
         {
             lockObject.SetActive(false);
+            itemName.text = "DEFAULT";
         }
     }
 
@@ -43,6 +48,23 @@ public class ShopItem : MonoBehaviour
 
     public void Activate()
     {
-        ShopManager.instance.SetBackground(index);
+        if (isBackground)
+        {
+            ShopManager.instance.SetBackground(index);
+        }
+        else
+        {
+            ShopManager.instance.SetBalls(index);
+        }
+    }
+
+    public void Select()
+    {
+        selectedObject.SetActive(true);
+    }
+
+    public void DeSelect()
+    {
+        selectedObject.SetActive(false);
     }
 }
