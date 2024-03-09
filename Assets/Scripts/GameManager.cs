@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
     private float winScreenTimer;
     private bool isWaitingForWinScreen;
 
+    public static Action OnWinScreen = delegate { };
+
 
     [Header("---Pages---")]
     [SerializeField] private Button[] pageButtons;
@@ -212,6 +214,11 @@ public class GameManager : MonoBehaviour
     public void SaveCompleted()
     {
         PlayerPrefs.SetString("SavedString", completedSaveLevels);
+    }
+
+    public int GetNumberOfCompletedLevels()
+    {
+        return completedLevels.Count;
     }
 
     public void LoadGame() // load all the levels from a string to their list versions
@@ -685,7 +692,7 @@ public class GameManager : MonoBehaviour
 
     private void WinScreen()
     {
-
+        OnWinScreen?.Invoke();
         MenuManager.instance.ToggleWinScreen(true);
         winCoinText.text = "+" + coinIncrement.ToString() + " Coins";
 
@@ -706,7 +713,7 @@ public class GameManager : MonoBehaviour
         {
             if (!BeatLevel(lastLevelBeat))
             {
-                winCoinText.text = "You've Already Beat This Level!";
+                winCoinText.text = "You've Already Beaten This Level!";
             }
             else
             {
@@ -719,7 +726,7 @@ public class GameManager : MonoBehaviour
             if (lastLevelBeat >= levels.Count - 1)
             {
                 winNextButton.interactable = false;
-                winCoinText.text = "You've Beat the Game!\n" + "+" + coinIncrement.ToString() + " Coins";
+                winCoinText.text = "You've Won the Game!\n+" + coinIncrement.ToString() + " Coins";
             }
         }
         else if (isChallenge)
