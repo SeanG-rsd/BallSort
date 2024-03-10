@@ -80,8 +80,9 @@ public class Ball : MonoBehaviour
 
     public void MoveBall(List<Vector2> targetSpots, int position, Tube homeTube)
     {
-        //Debug.Log("move ball");
+        Debug.Log("move ball");
         currentTargets = targetSpots;
+        currentTarget = Vector3.zero;
         move = true;
         this.position = position;
         tube = homeTube;

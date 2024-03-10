@@ -384,13 +384,14 @@ public class Tube : MonoBehaviour
 
             if (originalTube.topSpot.transform.position.y > topSpot.transform.position.y) // top to bottom
             {
-                targetSpots.Add(new Vector2(spotObjects[position].transform.position.x, ballObjects[position].transform.position.y));
+                targetSpots.Add(new Vector2(spotObjects[position].transform.position.x, originalTube.topSpot.transform.position.y));
                 targetSpots.Add(topSpot.transform.position);
             }
             else if (originalTube.topSpot.transform.position.y < topSpot.transform.position.y) // bottom to top
             {
-                targetSpots.Add(new Vector2(ballObjects[position].transform.position.x, spotObjects[position].transform.position.y));
+                targetSpots.Add(new Vector2(ballObjects[position].transform.position.x, spotObjects[0].transform.position.y));
                 targetSpots.Add(topSpot.transform.position);
+                Debug.Log("bottomToTop");
             }
             else // same to same
             {

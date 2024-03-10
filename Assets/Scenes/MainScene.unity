@@ -3418,8 +3418,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _androidAdUnitId: Interstitial_Android
   _iOsAdUnitId: Interstitial_iOS
-  initialWinsBeforeAd: {x: 6, y: 8}
-  normalWinsBeforeAd: {x: 4, y: 6}
+  initialWinsBeforeAd: {x: 7, y: 9}
+  normalWinsBeforeAd: {x: 5, y: 7}
   initialThreshold: 120
 --- !u!1 &448789073
 GameObject:
@@ -7121,7 +7121,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -2}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 350, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &985218697
@@ -15902,7 +15902,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2104157042
 RectTransform:
   m_ObjectHideFlags: 0
