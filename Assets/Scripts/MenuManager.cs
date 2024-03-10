@@ -27,6 +27,7 @@ public class MenuManager : MonoBehaviour
     public static Action<bool> OnChangeMode = delegate { };
     public static Action OnGoToLevelsMenu = delegate { };
     public static Action OnStartTutorial = delegate { };
+    public static Action OnStartGame = delegate { };
 
     private void Awake()
     {
@@ -74,6 +75,7 @@ public class MenuManager : MonoBehaviour
     public void OnClickStartGame()
     {
         OpenMenuNumber(levelScreenIndex);
+        OnStartGame?.Invoke();
     }
 
     public void OnClickTutorial()

@@ -55,6 +55,7 @@ public class TutorialHelper : MonoBehaviour
     {
         index = 0;
         infoText.text = infoStrings[index];
+        gameLock.SetActive(true);
 
         moveOnButton.SetActive(true);
         startGameButton.SetActive(false);

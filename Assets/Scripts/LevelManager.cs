@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System;
+using Unity.Burst;
 
 public class LevelManager : MonoBehaviour
 {
@@ -53,12 +54,15 @@ public class LevelManager : MonoBehaviour
     [Header("---Tutorial---")]
     [SerializeField] private List<GameObject> tutorialTubes;
     [SerializeField] private bool isTutorial;
+    [SerializeField] private Transform tutorialTubeContainer;
     private string tutorialString = "0,0,1,1:1,1,0,0-";
 
     private int lastLevelLoaded = -1;
     private int lastLoadedTubeCount = -1;
 
     private bool currentGameMode = false;
+
+    private string nextUse = "";
 
     private void Awake()
     {
@@ -77,6 +81,7 @@ public class LevelManager : MonoBehaviour
         MenuManager.OnChangeMode += HandleModeChange;
         MenuManager.OnGoToLevelsMenu += HandleLevelsMenu;
         MenuManager.OnStartTutorial += HandleStartTutorial;
+        MenuManager.OnStartGame += HandleStartGame;
     }
 
     private void OnDestroy()
@@ -84,6 +89,7 @@ public class LevelManager : MonoBehaviour
         MenuManager.OnChangeMode -= HandleModeChange;
         MenuManager.OnGoToLevelsMenu -= HandleLevelsMenu;
         MenuManager.OnStartTutorial -= HandleStartTutorial;
+        MenuManager.OnStartGame -= HandleStartGame;
     }
 
     public int Coin
@@ -148,7 +154,22 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public void OnConfirmNextFuction()
+    {
+
+    }
+
     public void OnClickHint()
+    {
+
+    }
+
+    private void ConfirmTinyTube()
+    {
+
+    }
+
+    private void ConfirmUndo()
     {
 
     }
@@ -159,8 +180,8 @@ public class LevelManager : MonoBehaviour
     private void HandleModeChange(bool mode)
     {
         currentGameMode = mode;
-        undoButton.SetActive(mode);
-        tinyTubeButton.SetActive(mode);
+        undoButton.SetActive(true);
+        tinyTubeButton.SetActive(true);
         if (!mode)
         {
             tinyTube.SetActive(false);
@@ -423,7 +444,7 @@ public class LevelManager : MonoBehaviour
         {
             GameObject newTube = Instantiate(tubePrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
-            newTube.transform.SetParent(tubeContainer);
+            newTube.transform.SetParent(!isTutorial ? tubeContainer : tutorialTubeContainer);
             newTube.transform.localScale = Vector3.one;
 
             newTube.GetComponent<Tube>().siblingIndex = i;
@@ -648,9 +669,13 @@ public class LevelManager : MonoBehaviour
 
     private void HandleStartTutorial()
     {
-        tubeObjects = tutorialTubes;
         isTutorial = true;
         LoadTutorial();
+    }
+
+    private void HandleStartGame()
+    {
+        isTutorial = false;
     }
 
     #endregion
