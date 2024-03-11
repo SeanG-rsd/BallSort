@@ -25,6 +25,14 @@ public class LevelManager : MonoBehaviour
 
     private bool inChallenge;
 
+    private string nextUse = "";
+    [Header("---Confirm Screen---")]
+    [SerializeField] private GameObject confirmScreen;
+    [SerializeField] private string confirmUndoInfo;
+    [SerializeField] private string confirmTinyTubeInfo;
+    [SerializeField] private TMP_Text confirmInfoText;
+    [SerializeField] private TMP_Text confirmCostText;
+
     public static Action<int, bool> OnBeatLevel = delegate { };
     public static Action OnLoadLevel = delegate { };
 
@@ -62,7 +70,8 @@ public class LevelManager : MonoBehaviour
 
     private bool currentGameMode = false;
 
-    private string nextUse = "";
+    
+
 
     private void Awake()
     {
@@ -137,8 +146,10 @@ public class LevelManager : MonoBehaviour
             }
             else if (coins >= undoCost)
             {
-                UndoLastMove();
-                coins -= undoCost;
+                nextUse = "undo";
+                confirmScreen.SetActive(true);
+                confirmInfoText.text = confirmUndoInfo;
+                confirmCostText.text = undoCost.ToString();
             }
         }
     }
@@ -147,16 +158,25 @@ public class LevelManager : MonoBehaviour
     {
         if (coins >= tinyTubeCost)
         {
-            tinyTubeButton.SetActive(false);
-            tinyTube.SetActive(true);
-            coins -= tinyTubeCost;
-            isTinyTubeActive = true;
+            nextUse = "tinyTube";
+            confirmScreen.SetActive(true);
+            confirmInfoText.text = confirmTinyTubeInfo;
+            confirmCostText.text = tinyTubeCost.ToString();
         }
     }
 
     public void OnConfirmNextFuction()
     {
+        if (nextUse.Equals("undo"))
+        {
+            ConfirmUndo();
+        }
+        else if (nextUse.Equals("tinyTube"))
+        {
+            ConfirmTinyTube();
+        }
 
+        confirmScreen.SetActive(false);
     }
 
     public void OnClickHint()
@@ -164,14 +184,24 @@ public class LevelManager : MonoBehaviour
 
     }
 
+    public void OnCancelConfirm()
+    {
+        confirmScreen.SetActive(false);
+        nextUse = "";
+    }
+
     private void ConfirmTinyTube()
     {
-
+        tinyTubeButton.SetActive(false);
+        tinyTube.SetActive(true);
+        coins -= tinyTubeCost;
+        isTinyTubeActive = true;
     }
 
     private void ConfirmUndo()
     {
-
+        UndoLastMove();
+        coins -= undoCost;
     }
     #endregion
 
@@ -275,17 +305,20 @@ public class LevelManager : MonoBehaviour
                 {
                     Tube firstTube = firstTubeClicked.GetComponent<Tube>(); // move balls into tubeObject from firstTubeClicked
 
-                    if (firstTube.NumberMoving() <= currentTube.NumOpenSpots() && (firstTube.GetTopBall() == currentTube.GetBottomBall() || currentTube.EmptyTube() || currentTube.isTinyTube))
+                    if ((firstTube.NumberMoving() <= currentTube.NumOpenSpots() && (firstTube.GetTopBall() == currentTube.GetBottomBall() || currentTube.EmptyTube())) || (currentTube.isTinyTube && currentTube.EmptyTube()))
                     {
                         int ballCount = firstTube.NumberMoving() - 1;
 
                         currentTube.NewBallToBottom(firstTube.GetTopBall(), firstTube.ballObjects[0], firstTube);
                         firstTube.RemoveTopBall();
 
-                        for (int i = 0; i < ballCount; ++i)
+                        if (!currentTube.isTinyTube)
                         {
-                            currentTube.NewBallToBottom(firstTube.GetBottomBall(), firstTube.ballObjects[firstTube.BottomIndex()], firstTube);
-                            firstTube.RemoveBottomBall();
+                            for (int i = 0; i < ballCount; ++i)
+                            {
+                                currentTube.NewBallToBottom(firstTube.GetBottomBall(), firstTube.ballObjects[firstTube.BottomIndex()], firstTube);
+                                firstTube.RemoveBottomBall();
+                            }
                         }
 
                         firstTubeClicked = null;
