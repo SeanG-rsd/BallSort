@@ -542,7 +542,7 @@ public class GameManager : MonoBehaviour
 
     public void PageFarRight()
     {
-        int currentCheck = currentPage;
+        int currentCheck = 2;
 
         while (!CheckRequirement(currentCheck))
         {
@@ -607,7 +607,7 @@ public class GameManager : MonoBehaviour
         {
             for (int i = 0; i < levelButtonSpots.Count; ++i)
             {
-                if (!levelButtonSpots[i].GetLevel(page))
+                if (!levelButtonSpots[i].GetLevel(page - 1))
                 {
                     return true;
                 }
