@@ -40,6 +40,7 @@ public class ShopItem : MonoBehaviour
 
         if (coins >= cost)
         {
+	    Debug.Log("can't buy");
             lockObject.SetActive(false);
             LevelManager.instance.RemoveCoins(cost);
             PlayerPrefs.SetInt(key, 1);

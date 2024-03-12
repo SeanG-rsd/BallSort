@@ -10,9 +10,6 @@ EditorBuildSettings:
       Screen Sample.unity
     guid: a2154acf9dc1c46e5a8df649580ad6b9
   - enabled: 1
-    path: Assets/Scenes/Tutorial.unity
-    guid: 547e4e07ba3c49a48803c9503c622b71
-  - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects: {}
