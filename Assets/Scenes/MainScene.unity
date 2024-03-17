@@ -67,9 +67,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 0
@@ -3772,7 +3769,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 430885094}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 23653b2b6d258a641a0d41e3d6aed7d3, type: 3}
   m_Name: 
@@ -5675,7 +5672,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c718c2be29c59a45a8bc7a0444eebe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tubePrefab: {fileID: 2464811151788143200, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  tubePrefab: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
   tubeContainer: {fileID: 149259737}
   coins: 0
   levelNumberText: {fileID: 1792906168}
@@ -7997,33 +7994,41 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 86027f511b846dc41963263bab8ed045, type: 3}
   - {fileID: 21300000, guid: 396ed23a696a33a43bb6e18325261c4e, type: 3}
   - {fileID: 21300000, guid: 224fcaec48fd76d46984385e8307306d, type: 3}
+  - {fileID: 3617382655475421408, guid: d8a45ed316d17fb4faad579488d0ef33, type: 3}
   shopItemBackgroundImages:
   - {fileID: 21300000, guid: 130e388f0baef544ab9b3e1197c816ee, type: 3}
   - {fileID: 21300000, guid: 7ff59d39859dbee489ef44589b07bb82, type: 3}
   - {fileID: 21300000, guid: 30cf4096a2c460b4ca358c718d8d8ce9, type: 3}
   - {fileID: 21300000, guid: 2623eac80293f454188e8604a107ebac, type: 3}
-  backgroundCosts: 00000000d0070000d0070000d0070000
+  - {fileID: -980537974363568062, guid: 3634b37d69d5143418847b1648ec1d32, type: 3}
+  backgroundCosts: 00000000d0070000d0070000d0070000b80b0000
   backgroundKeys:
   - defaultLock
   - greenLock
   - blueLock
   - redLock
+  - candyLock
   balls:
   - {fileID: 11400000, guid: 7a8a381c69bedc74bb5d2b4ad3ed6b9d, type: 2}
   - {fileID: 11400000, guid: 5affa606c3cb4e7438954f1c5c845ded, type: 2}
   - {fileID: 11400000, guid: c61a0642c8f34584ca86209a85579992, type: 2}
   - {fileID: 11400000, guid: cca488071d30d494dbc102c199944dce, type: 2}
+  - {fileID: 11400000, guid: 8e2cea0decfb8884e8c33a57f8fe9913, type: 2}
   shopItemBallImages:
   - {fileID: 21300000, guid: 130e388f0baef544ab9b3e1197c816ee, type: 3}
   - {fileID: 21300000, guid: 1f3620868f8eeb343b60e2e836bd4e95, type: 3}
   - {fileID: 21300000, guid: 8227b7fd84f122e4b8e75978fcbd3c1b, type: 3}
   - {fileID: 21300000, guid: f99d87e801b825b4e91f92f8d619696b, type: 3}
-  ballCosts: 00000000d0070000d0070000d0070000
+  - {fileID: 5800644013452587443, guid: 44985b9ce44f7334b87a450991d8fe60, type: 3}
+  ballCosts: 00000000d0070000d0070000d0070000b80b0000
   ballKeys:
   - defaultBall
   - jungleBall
   - oceanBall
   - sunsetBall
+  - candyBall
+  content: {fileID: 1639995990}
+  contentBox: {fileID: 1639995989}
 --- !u!1 &1056574647
 GameObject:
   m_ObjectHideFlags: 0

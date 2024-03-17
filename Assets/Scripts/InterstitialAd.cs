@@ -84,7 +84,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     // Show the loaded content in the Ad Unit:
     public void ShowAd()
     {
-        if (!removeAds)
+        if (!removeAds || true)
         {
             // Note that if the ad content wasn't previously loaded, this method will fail
             currentWinsLeft = Random.Range(currentWinsBeforeAd.x, currentWinsBeforeAd.y);

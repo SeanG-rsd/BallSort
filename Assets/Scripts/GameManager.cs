@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;
 using System;
 using System.IO;
 
@@ -542,13 +541,20 @@ public class GameManager : MonoBehaviour
 
     public void PageFarRight()
     {
-        int currentCheck = 2;
+        int currentCheck = 0;
 
+        if (currentPage > numberOfTutorialPages)
+        {
+            currentCheck = numberOfTutorialPages + 1;
+        }
+        
         while (!CheckRequirement(currentCheck))
         {
+            Debug.Log("time");
             currentCheck++;
         }
 
+        Debug.Log(currentCheck);
         currentPage = currentCheck - 1;
 
         UpdateListPage();
@@ -567,7 +573,14 @@ public class GameManager : MonoBehaviour
             levelButtonSpots[spotIndex].SetPage(currentPage);
         }
 
-        pageRequirementBox.SetActive(CheckRequirement(currentPage));
+        if (currentPage > 2)
+        {
+            pageRequirementBox.SetActive(CheckRequirement(currentPage));
+        }
+        else
+        {
+            pageRequirementBox.SetActive(false);
+        }
 
         if (pageRequirementBox.activeSelf)
         {
@@ -603,16 +616,15 @@ public class GameManager : MonoBehaviour
 
     private bool CheckRequirement(int page)
     {
-        if (page != 0 && page != 1 && page != 2)
+        if (page == 0 || page >= numberOfPages) return false;
+        for (int i = 0; i < levelButtonSpots.Count; ++i)
         {
-            for (int i = 0; i < levelButtonSpots.Count; ++i)
+            if (!levelButtonSpots[i].GetLevel(page - 1))
             {
-                if (!levelButtonSpots[i].GetLevel(page - 1))
-                {
-                    return true;
-                }
+                return true;
             }
         }
+
         return false;
     }
 
@@ -623,43 +635,58 @@ public class GameManager : MonoBehaviour
     private int lastLevelBeat;
     private bool isChallenge;
 
-    public void WinNext()
+    private bool NextLevel(int position, int LPP)
     {
-        int LPP = pageLevelLayout.x * pageLevelLayout.y;
-
-        int position = lastLevelBeat % LPP;
-
         if (position == 0) // look for levels in the page
         {
-            if (CheckRequirement(currentPage + 1))
+            if (!CheckRequirement(currentPage + 1))
             {
-                LevelManager.instance.OnClickLoadLevel(lastLevelBeat + 1);
+                LevelManager.instance.OnClickLoadLevel(lastLevelBeat);
             }
             else
             {
-                for (int index = 0;  index < LPP; index++)
+                for (int index = 0; index < LPP; index++)
                 {
                     if (!levelButtonSpots[index].GetLevel(currentPage))
                     {
-                        LevelManager.instance.OnClickLoadLevel(levelButtonSpots[index].GetLevelNumber(currentPage));
-                        return;
+                        LevelManager.instance.OnClickLoadLevel(levelButtonSpots[index].GetLevelNumber(currentPage) - 1);
+                        return true;
                     }
                 }
             }
         }
+
+        return false;
+    }
+
+    public void WinNext()
+    {
+        int LPP = pageLevelLayout.x * pageLevelLayout.y;
+        lastLevelBeat++;
+
+        int position = lastLevelBeat % LPP;
+        MenuManager.instance.ToggleWinScreen(false);
+
+        if (NextLevel(position, LPP)) return;
         else
         {
-            for (int index = 0; index < LPP - 1; index++)
+            int currentCheck = lastLevelBeat;
+
+            while (currentCheck < levels.Count)
             {
-                if (!levelButtonSpots[(index + lastLevelBeat) % LPP].GetLevel(currentPage))
+                position = currentCheck % LPP;
+
+                if (NextLevel(position, LPP)) return;
+                if (!levelButtonSpots[position].GetLevel(currentCheck / LPP))
                 {
-                    LevelManager.instance.OnClickLoadLevel(levelButtonSpots[(index + lastLevelBeat) % LPP].GetLevelNumber(currentPage) - 1);
+                    LevelManager.instance.OnClickLoadLevel(currentCheck);
                     return;
                 }
+
+
+                currentCheck++;
             }
         }
-
-        MenuManager.instance.ToggleWinScreen(false);
     }
 
     public void WinLevels()
@@ -752,6 +779,7 @@ public class GameManager : MonoBehaviour
 
     private void HandleBeatLevel(int levelIndex, bool isChallenge)
     {
+        Debug.Log(levelIndex);
         lastLevelBeat = levelIndex;
         this.isChallenge = isChallenge;
 

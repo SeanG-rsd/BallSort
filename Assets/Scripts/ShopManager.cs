@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,6 +42,10 @@ public class ShopManager : MonoBehaviour
 
     private string LAST_BACKGROUND_KEY = "lastBackground";
     private string LAST_BALL_KEY = "lastBall";
+
+    [Header("---Scroll---")]
+    [SerializeField] private VerticalLayoutGroup content;
+    [SerializeField] private RectTransform contentBox;
 
     private void Awake()
     {
@@ -115,6 +120,9 @@ public class ShopManager : MonoBehaviour
         {
             item.SetActive(false);
         }
+
+        float height = content.padding.top + content.padding.bottom + ((ballShopItems.Count - 1) * content.spacing) + (ballShopItems.Count * shopItemPrefab.GetComponent<RectTransform>().rect.size.y);
+        contentBox.sizeDelta = new Vector2(0, height);
     }
 
     public void ClickBackgroundTab()
@@ -131,6 +139,9 @@ public class ShopManager : MonoBehaviour
         {
             item.SetActive(false);
         }
+
+        float height = content.padding.top + content.padding.bottom + ((backgroundShopItems.Count - 1) * content.spacing) + (backgroundShopItems.Count * shopItemPrefab.GetComponent<RectTransform>().rect.size.y);
+        contentBox.sizeDelta = new Vector2(0, height);
     }
 
     private void LoadBackgrounds()
