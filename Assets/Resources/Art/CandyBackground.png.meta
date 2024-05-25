@@ -152,7 +152,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      CandyBackground_0: 3617382655475421408
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

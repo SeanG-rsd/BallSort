@@ -26,7 +26,15 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
 
     private void Awake()
     {
-        currentWinsLeft = PlayerPrefs.GetInt(CURRENT_ADS);
+        if (PlayerPrefs.HasKey(CURRENT_ADS))
+        {
+            currentWinsLeft = PlayerPrefs.GetInt(CURRENT_ADS);
+        }
+        else
+        {
+            currentWinsLeft = Random.Range(currentWinsBeforeAd.x, currentWinsBeforeAd.y);
+            PlayerPrefs.SetInt(CURRENT_ADS, currentWinsLeft);
+        }
         GameManager.OnWinScreen += LevelCompletion;
         InAppPurchaseManager.OnRemoveAds += HandleRemoveAds;
 
@@ -47,6 +55,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
         currentWinsLeft--;
         SetThreshold();
         PlayerPrefs.SetInt(CURRENT_ADS, currentWinsLeft);
+        Debug.Log("win");
         if (currentWinsLeft <= 0)
         {
             ShowAd();

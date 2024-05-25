@@ -152,7 +152,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      CandyTube_0: 5800644013452587443
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -5672,7 +5672,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c718c2be29c59a45a8bc7a0444eebe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tubePrefab: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
+  tubePrefab: {fileID: 2464811151788143200, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
   tubeContainer: {fileID: 149259737}
   coins: 0
   levelNumberText: {fileID: 1792906168}
