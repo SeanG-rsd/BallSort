@@ -42,6 +42,8 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
         _adUnitId = (Application.platform == RuntimePlatform.IPhonePlayer)
             ? _iOsAdUnitId
             : _androidAdUnitId;
+
+        LoadAd();
     }
 
     private void OnDestroy()
@@ -65,7 +67,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
 
     private void HandleRemoveAds()
     {
-        removeAds = true;
+        //removeAds = true;
     }
 
     private void SetThreshold()
@@ -95,6 +97,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     {
         if (!removeAds || true)
         {
+            Debug.Log("show ad");
             // Note that if the ad content wasn't previously loaded, this method will fail
             currentWinsLeft = Random.Range(currentWinsBeforeAd.x, currentWinsBeforeAd.y);
             PlayerPrefs.SetInt(CURRENT_ADS, currentWinsLeft);
