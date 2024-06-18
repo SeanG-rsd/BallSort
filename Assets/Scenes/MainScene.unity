@@ -2296,6 +2296,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 237258500}
   m_CullTransparentMesh: 1
+--- !u!1 &274316430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 274316431}
+  - component: {fileID: 274316432}
+  m_Layer: 0
+  m_Name: LevelSolver
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &274316431
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 274316430}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2047177586}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &274316432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 274316430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6dd1099fd1f617419a8ba1667656802, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &277068165
 GameObject:
   m_ObjectHideFlags: 0
@@ -3821,8 +3865,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _androidAdUnitId: Interstitial_Android
   _iOsAdUnitId: Interstitial_iOS
-  initialWinsBeforeAd: {x: 7, y: 9}
-  normalWinsBeforeAd: {x: 5, y: 7}
+  initialWinsBeforeAd: {x: 5, y: 7}
+  normalWinsBeforeAd: {x: 3, y: 5}
   initialThreshold: 120
 --- !u!1 &448789073
 GameObject:
@@ -5690,6 +5734,7 @@ MonoBehaviour:
   tinyTubeCost: 300
   tinyTubeButton: {fileID: 1771291135}
   hintButton: {fileID: 7439764311521371085}
+  levelSolver: {fileID: 274316432}
   ballColors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0, g: 0.123636246, b: 1, a: 1}
@@ -6815,6 +6860,7 @@ MonoBehaviour:
   tinyTubeCost: 0
   tinyTubeButton: {fileID: 0}
   hintButton: {fileID: 0}
+  levelSolver: {fileID: 0}
   ballColors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0, g: 0.1802516, b: 1, a: 1}
@@ -11569,7 +11615,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1572139669
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11588,7 +11634,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 80, y: -282.5}
+  m_AnchoredPosition: {x: -190, y: -283.5}
   m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1572139670
@@ -11635,9 +11681,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: LevelCreator, Assembly-CSharp
-        m_MethodName: Hint
+      - m_Target: {fileID: 720853413}
+        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+        m_MethodName: OnClickHint
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16096,6 +16142,7 @@ Transform:
   - {fileID: 720853412}
   - {fileID: 430885095}
   - {fileID: 19437071}
+  - {fileID: 274316431}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2080418162

@@ -56,6 +56,7 @@ public class LevelManager : MonoBehaviour
 
     [Header("---Hint---")]
     [SerializeField] private GameObject hintButton;
+    [SerializeField] private LevelSolver levelSolver;
 
     [SerializeField] private Color[] ballColors;
 
@@ -181,7 +182,7 @@ public class LevelManager : MonoBehaviour
 
     public void OnClickHint()
     {
-
+        levelSolver.SolveLevel(tubeObjects);
     }
 
     public void OnCancelConfirm()
@@ -249,7 +250,7 @@ public class LevelManager : MonoBehaviour
     #region Gameplay
     private bool CheckForWin()
     {
-        HandleMovesLeft();
+        //HandleMovesLeft();
         CorkTubes();
 
         if (isTutorial) return false;
@@ -271,7 +272,7 @@ public class LevelManager : MonoBehaviour
     {
         if (!CheckIfAnyMovesLeft())
         {
-            noMovesLeftPopup.Activate(10);
+            noMovesLeftPopup.Activate(4);
         }
     }
 
@@ -325,6 +326,7 @@ public class LevelManager : MonoBehaviour
                         clickState = false;
 
                         SetUndoTubes();
+                        HandleMovesLeft();
                     }
                     else if (!currentTube.EmptyTube())
                     {
@@ -336,7 +338,6 @@ public class LevelManager : MonoBehaviour
             }
             else if (!clickState && !currentTube.EmptyTube()) // move ball from tubeObject to top
             {
-                
                 firstTubeClicked = tubeObject;
 
                 currentTube.MoveBottomToTop();
