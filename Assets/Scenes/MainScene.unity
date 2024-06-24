@@ -8041,38 +8041,44 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 396ed23a696a33a43bb6e18325261c4e, type: 3}
   - {fileID: 21300000, guid: 224fcaec48fd76d46984385e8307306d, type: 3}
   - {fileID: 3617382655475421408, guid: d8a45ed316d17fb4faad579488d0ef33, type: 3}
+  - {fileID: -4354248775225258120, guid: 89b8de144a3976643bcb5d0a760dff37, type: 3}
   shopItemBackgroundImages:
   - {fileID: 21300000, guid: 130e388f0baef544ab9b3e1197c816ee, type: 3}
   - {fileID: 21300000, guid: 7ff59d39859dbee489ef44589b07bb82, type: 3}
   - {fileID: 21300000, guid: 30cf4096a2c460b4ca358c718d8d8ce9, type: 3}
   - {fileID: 21300000, guid: 2623eac80293f454188e8604a107ebac, type: 3}
   - {fileID: -980537974363568062, guid: 3634b37d69d5143418847b1648ec1d32, type: 3}
-  backgroundCosts: 00000000d0070000d0070000d0070000b80b0000
+  - {fileID: -5174894656244167344, guid: 21138ee5560264a4895b4f94297fa25d, type: 3}
+  backgroundCosts: 00000000d0070000d0070000d0070000b80b000088130000
   backgroundKeys:
   - defaultLock
   - greenLock
   - blueLock
   - redLock
   - candyLock
+  - spaceLock
   balls:
   - {fileID: 11400000, guid: 7a8a381c69bedc74bb5d2b4ad3ed6b9d, type: 2}
   - {fileID: 11400000, guid: 5affa606c3cb4e7438954f1c5c845ded, type: 2}
   - {fileID: 11400000, guid: c61a0642c8f34584ca86209a85579992, type: 2}
   - {fileID: 11400000, guid: cca488071d30d494dbc102c199944dce, type: 2}
   - {fileID: 11400000, guid: 8e2cea0decfb8884e8c33a57f8fe9913, type: 2}
+  - {fileID: 11400000, guid: 07361fc7ee5b6f34598f48cf318ed14d, type: 2}
   shopItemBallImages:
   - {fileID: 21300000, guid: 130e388f0baef544ab9b3e1197c816ee, type: 3}
   - {fileID: 21300000, guid: 1f3620868f8eeb343b60e2e836bd4e95, type: 3}
   - {fileID: 21300000, guid: 8227b7fd84f122e4b8e75978fcbd3c1b, type: 3}
   - {fileID: 21300000, guid: f99d87e801b825b4e91f92f8d619696b, type: 3}
   - {fileID: 5800644013452587443, guid: 44985b9ce44f7334b87a450991d8fe60, type: 3}
-  ballCosts: 00000000d0070000d0070000d0070000b80b0000
+  - {fileID: 8319658751969494724, guid: 70f50e323b6da544cbcf90957b9abf7c, type: 3}
+  ballCosts: 00000000d0070000d0070000d0070000b80b000088130000
   ballKeys:
   - defaultBall
   - jungleBall
   - oceanBall
   - sunsetBall
   - candyBall
+  - spaceBall
   content: {fileID: 1639995990}
   contentBox: {fileID: 1639995989}
 --- !u!1 &1056574647
