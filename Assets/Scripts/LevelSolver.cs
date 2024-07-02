@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,28 +6,40 @@ using UnityEngine;
 
 public class LevelSolver : MonoBehaviour
 {
-    List<Vector2Int> lastMoves;
+    List<Move> lastMoves;
     List<List<int>> level;
 
     private void Awake()
     {
-        lastMoves = new List<Vector2Int>();
+        lastMoves = new List<Move>();
     }
 
     public void SolveLevel(List<GameObject> tubes)
     {
         level = new List<List<int>>();
+        lastMoves.Clear();
         for (int i = 0; i < tubes.Count; i++)
         {
             Tube tube = tubes[i].GetComponent<Tube>();
             level.Add(new List<int>() { tube.spots[1], tube.spots[2], tube.spots[3], tube.spots[4] });
         }
+        DateTime start = DateTime.Now;
 
-        PrintBoard();
-        Debug.Log(GetPossibleMoves().Count);
         Solve();
-        Debug.Log(lastMoves.Count);
-        PrintBoard();
+        Debug.Log(ToText(lastMoves));
+
+        Debug.Log((DateTime.Now - start).TotalMilliseconds);
+    }
+
+    private string ToText(List<Move> list)
+    {
+        string output = "";
+        foreach (var item in list)
+        {
+            output += item.ToString() + ", ";
+        }
+
+        return output;
     }
 
     private void PrintBoard()
@@ -37,31 +50,39 @@ public class LevelSolver : MonoBehaviour
         }
     }
 
-    int iterator = 0;
-
     private void Solve()
     {
-        while (!CheckForWin() && iterator < 1000)
-        {
-            List<Vector2Int> possibleMoves = GetPossibleMoves();
+        List<Move> possibleMoves = GetPossibleMoves();
 
-            foreach (Vector2Int move in possibleMoves)
+        foreach (Move move in possibleMoves)
+        {
+            if (!lastMoves.Contains(move))
             {
-                if (!lastMoves.Contains(move))
+                MakeMove(move);
+                lastMoves.Add(move);
+                PrintBoard();
+
+                if (CheckForWin())
                 {
-                    MakeMove(move);
-                    lastMoves.Add(move);
-                    Solve();
-                    UnmakeMove();
-                    iterator++;
+                    Debug.LogWarning("win");
+                    return;
                 }
+
+                Solve();
+
+                if (CheckForWin())
+                {
+                    return;
+                }
+
+                UnmakeMove();
             }
         }
     }
 
-    private List<Vector2Int> GetPossibleMoves()
+    private List<Move> GetPossibleMoves()
     {
-        List<Vector2Int> output = new List<Vector2Int>();
+        List<Move> output = new List<Move>();
 
         for (int f = 0; f < level.Count; f++)
         {
@@ -73,7 +94,7 @@ public class LevelSolver : MonoBehaviour
                     {
                         if (GetNumberSameAtTop(level[f]) < 4 - BottomIndex(level[f]))
                         {
-                            output.Add(new Vector2Int(f, t));
+                            output.Add(new Move(f, t, level[f][BottomIndex(level[f])], GetNumberSameAtTop(level[f])));
                         }
                     }
                     else if (!IsFull(level[t]) && !IsEmpty(level[f]))
@@ -82,7 +103,7 @@ public class LevelSolver : MonoBehaviour
                         {                             
                             if (GetNumberSameAtTop(level[f]) <= GetNumberOfOpenSpots(level[t]))
                             {
-                                output.Add(new Vector2Int(f, t));
+                                output.Add(new Move(f, t, level[f][BottomIndex(level[f])], GetNumberSameAtTop(level[f])));
                             }
                         }
                     }
@@ -93,15 +114,13 @@ public class LevelSolver : MonoBehaviour
         return output;
     }
 
-    private void MakeMove(Vector2Int fromTo)
+    private void MakeMove(Move fromTo)
     {
         int bottomIndexFrom = BottomIndex(level[fromTo.x]);
         int bottomIndexTo = FirstOpenSpot(level[fromTo.y]);
 
-        int numberMoving = GetNumberSameAtTop(level[fromTo.x]);
-        int ball = level[fromTo.x][bottomIndexFrom];
-
-        Debug.Log(fromTo.ToString());
+        int numberMoving = fromTo.count;
+        int ball = fromTo.ball;
 
         for (int i = 0; i < numberMoving; i++)
         {
@@ -116,8 +135,8 @@ public class LevelSolver : MonoBehaviour
 
     private void UnmakeMove()
     {
-        Vector2Int lastMove = lastMoves[lastMoves.Count - 1];
-        MakeMove(new Vector2Int(lastMove.y, lastMove.x));
+        Move lastMove = lastMoves[lastMoves.Count - 1];
+        MakeMove(new Move(lastMove, true));
         lastMoves.RemoveAt(lastMoves.Count - 1);
     }
 
@@ -201,7 +220,7 @@ public class LevelSolver : MonoBehaviour
 
     public int BottomIndex(List<int> spots) // returns the index of the last ball
     {
-        for (int i = 0; i < spots.Count; ++i)                          // 1
+        for (int i = 0; i < spots.Count; ++i)                          // 0
         {                                                             //  3      returns 1
             if (spots[i] != 0)                                       //   3
             {                                                       //    3
