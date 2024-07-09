@@ -30,6 +30,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject confirmScreen;
     [SerializeField] private string confirmUndoInfo;
     [SerializeField] private string confirmTinyTubeInfo;
+    [SerializeField] private string confirmHintInfo;
     [SerializeField] private TMP_Text confirmInfoText;
     [SerializeField] private TMP_Text confirmCostText;
 
@@ -57,6 +58,18 @@ public class LevelManager : MonoBehaviour
     [Header("---Hint---")]
     [SerializeField] private GameObject hintButton;
     [SerializeField] private LevelSolver levelSolver;
+    [SerializeField] private int hintCost;
+    private Queue<Move> hintMoveQueue;
+    private int hintMovesGiven = 3;
+    [SerializeField] private GameObject hintFlashObj;
+    [SerializeField] private HintFlash hintFlash;
+    private bool isHintActive;
+    private bool isTinyTubeHint;
+    private Move currentHint;
+    [SerializeField] private Popup noSolutionPopup;
+    [SerializeField] private HintFlash resetFlash;
+    [SerializeField] private HintFlash tinyTubeFlash;
+    [SerializeField] private GameObject resetButtonObj;
 
     [SerializeField] private Color[] ballColors;
 
@@ -77,6 +90,7 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         tubeObjects = new List<GameObject>();
+        hintMoveQueue = new Queue<Move>();
         coins = PlayerPrefs.GetInt("CoinCount");
 
         if (instance == null)
@@ -176,13 +190,23 @@ public class LevelManager : MonoBehaviour
         {
             ConfirmTinyTube();
         }
+        else if (nextUse.Equals("hint"))
+        {
+            ConfirmHint();
+        }
 
         confirmScreen.SetActive(false);
     }
 
     public void OnClickHint()
     {
-        levelSolver.SolveLevel(tubeObjects);
+        if (coins >= hintCost)
+        {
+            nextUse = "hint";
+            confirmScreen.SetActive(true);
+            confirmCostText.text = hintCost.ToString();
+            confirmInfoText.text = confirmHintInfo;
+        }
     }
 
     public void OnCancelConfirm()
@@ -203,6 +227,44 @@ public class LevelManager : MonoBehaviour
     {
         UndoLastMove();
         coins -= undoCost;
+    }
+
+    private void ConfirmHint()
+    {
+        List<Move> movesToSolve = levelSolver.SolveFromCurrent(tubeObjects);
+        coins -= hintCost;
+
+        hintMoveQueue.Clear();
+        for (int i = 0; i < hintMovesGiven; i++)
+        {
+            if (i < movesToSolve.Count)
+            {
+                hintMoveQueue.Enqueue(movesToSolve[i]);
+            }
+        }
+
+        if (hintMoveQueue.Count > 0)
+        {
+            Move move = hintMoveQueue.Dequeue();
+            currentHint = move;
+            Debug.Log(move.ToString());
+            hintFlash.Activate(tubeObjects[move.x]);
+            isHintActive = true;
+        }
+        else
+        {
+            if (isTinyTubeActive && tinyTube.GetComponent<Tube>().EmptyTube())
+            {
+                tinyTubeFlash.Activate(tinyTube);
+                isHintActive = true;
+                isTinyTubeHint = true;
+            }
+            else
+            {
+                noSolutionPopup.Activate(3);
+                resetFlash.Activate(resetFlash.gameObject);
+            }
+        }
     }
     #endregion
 
@@ -301,6 +363,11 @@ public class LevelManager : MonoBehaviour
                 {
                     currentTube.MoveTopToBottom();
                     clickState = false;
+
+                    if (isHintActive && !isTinyTubeHint)
+                    {
+                        hintFlash.Activate(tubeObjects[currentHint.x]);
+                    }
                 }
                 else
                 {
@@ -322,17 +389,57 @@ public class LevelManager : MonoBehaviour
                             }
                         }
 
+                        if (isHintActive)
+                        {
+                            if (isTinyTubeHint)
+                            {
+                                tinyTubeFlash.Deactivate();
+                                isHintActive = false;
+                                isTinyTubeHint = false;
+                            }
+                            else if (tubeObjects[currentHint.y] == tubeObject && firstTubeClicked == tubeObjects[currentHint.x])
+                            {
+                                if (hintMoveQueue.Count > 0)
+                                {
+                                    currentHint = hintMoveQueue.Dequeue();
+                                    hintFlash.Activate(tubeObjects[currentHint.x]);
+                                }
+                                else
+                                {
+                                    hintFlash.Deactivate();
+                                }
+                            }
+                            else
+                            {
+                                hintFlash.Deactivate();
+                                isHintActive = false;
+                            }
+                        }
+
                         firstTubeClicked = null;
                         clickState = false;
 
                         SetUndoTubes();
                         HandleMovesLeft();
+
                     }
                     else if (!currentTube.EmptyTube())
                     {
                         currentTube.MoveBottomToTop();
                         firstTube.MoveTopToBottom();
                         firstTubeClicked = tubeObject;
+
+                        if (isHintActive && !isTinyTubeHint)
+                        {
+                            if (tubeObjects[currentHint.x] == tubeObject)
+                            {
+                                hintFlash.Activate(tubeObjects[currentHint.y]);
+                            }
+                            else
+                            {
+                                hintFlash.Activate(tubeObjects[currentHint.x]);
+                            }
+                        }
                     }
                 }
             }
@@ -342,6 +449,14 @@ public class LevelManager : MonoBehaviour
 
                 currentTube.MoveBottomToTop();
                 clickState = true;
+
+                if (isHintActive && !isTinyTubeHint)
+                {
+                    if (tubeObjects[currentHint.x] == tubeObject)
+                    {
+                        hintFlash.Activate(tubeObjects[currentHint.y]);
+                    }
+                }
             }
         }
 
@@ -460,6 +575,9 @@ public class LevelManager : MonoBehaviour
     {
         undosLeft = freeGivenUndos;
         noMovesLeftPopup.Deactivate();
+        noSolutionPopup.Deactivate();
+        tinyTubeFlash.Deactivate();
+        resetFlash.Deactivate();
         HandleModeChange(currentGameMode);
 
         LoadBlankLevel();

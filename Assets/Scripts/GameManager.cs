@@ -314,6 +314,11 @@ public class GameManager : MonoBehaviour
         return levelsFile.text;
     }
 
+    public int GetNumberOfLevels()
+    {
+        return levels.Count;
+    }
+
     public List<List<int>> GetLevel(int levelNumber)
     {
         return levels[levelNumber];

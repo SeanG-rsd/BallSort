@@ -97,7 +97,7 @@ public class Tube : MonoBehaviour
                     
                     return true;
                 }
-                Debug.Log(ballObjects[i].transform.localPosition);
+                //Debug.Log(ballObjects[i].transform.localPosition);
             }
         }
 

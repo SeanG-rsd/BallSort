@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -6,27 +7,17 @@ using UnityEngine.UI;
 
 public class HintFlash : MonoBehaviour
 {
-    public int direction = -1;
-    public int index = 0;
-    public Vector2 tubes = Vector2.zero;
-
+    private int direction = -1;
     float fadeSpeed = .65f;
 
-    public bool playerMadeMove = false;
+    private bool isOn;
 
     public Color color;
-    GameObject gm;
-    void Awake()
-    {
-        color = gameObject.GetComponent<Image>().color;
-        gm = GameObject.Find("GameManager");
-        gameObject.SetActive(false);
-    }
+
     void Update() // increases and decreases transparency within a range when active
     {
-        if (gameObject.activeSelf)
-        {
-            
+        if (isOn)
+        { 
             if (color.a > .15f && color.a <= 1)
             {
                 float col = color.a + (fadeSpeed * Time.deltaTime * direction);
@@ -41,17 +32,31 @@ public class HintFlash : MonoBehaviour
             {
                 direction = 1;
             }
-        }
+        }   
+    }
 
-        if (playerMadeMove) // if the player finished the hint move then set the tube inactive
+    private void Flip()
+    {
+        isOn = !isOn;
+        color.a = isOn ? 1 : 0;
+        gameObject.GetComponent<Image>().color = color;
+    }
+
+    public void Activate(GameObject tube)
+    {
+        if (!isOn)
         {
-            tubes = Vector2.zero;
-            //gm.GetComponent<LevelCreator>().lookingForHint = false;
-            index = 0;
-            playerMadeMove = false;
-            gameObject.SetActive(false);
+            Flip();
         }
-    
+        transform.position = tube.transform.position;
+    }
+
+    public void Deactivate()
+    {
+        if (isOn)
+        {
+            Flip();
+        }
     }
     
 }

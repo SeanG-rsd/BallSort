@@ -14,7 +14,15 @@ public class LevelSolver : MonoBehaviour
         lastMoves = new List<Move>();
     }
 
-    public void SolveLevel(List<GameObject> tubes)
+    private void SolveLevel()
+    {
+
+        DateTime start = DateTime.Now;
+
+        Solve();
+    }
+
+    public List<Move> SolveFromCurrent(List<GameObject> tubes)
     {
         level = new List<List<int>>();
         lastMoves.Clear();
@@ -23,12 +31,23 @@ public class LevelSolver : MonoBehaviour
             Tube tube = tubes[i].GetComponent<Tube>();
             level.Add(new List<int>() { tube.spots[1], tube.spots[2], tube.spots[3], tube.spots[4] });
         }
-        DateTime start = DateTime.Now;
 
-        Solve();
-        Debug.Log(ToText(lastMoves));
+        SolveLevel();
 
-        Debug.Log((DateTime.Now - start).TotalMilliseconds);
+        return lastMoves;
+    }
+
+    public void SolveFromList(List<List<int>> level)
+    {
+        this.level = new List<List<int>>();
+        for (int i = 0; i < level.Count; i++)
+        {
+            this.level.Add(new List<int>() { level[i][0] + 1, level[i][1] + 1, level[i][2] + 1, level[i][3] + 1 });
+        }
+        this.level.Add(new List<int>() { 0, 0, 0, 0 });
+        this.level.Add(new List<int>() { 0, 0, 0, 0 });
+
+        SolveLevel();
     }
 
     private string ToText(List<Move> list)
@@ -60,7 +79,6 @@ public class LevelSolver : MonoBehaviour
             {
                 MakeMove(move);
                 lastMoves.Add(move);
-                PrintBoard();
 
                 if (CheckForWin())
                 {
