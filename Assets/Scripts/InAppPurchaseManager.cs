@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Purchasing;
 
@@ -32,6 +33,11 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
     public NonConsumableItem nonConsumableItem;
 
     IStoreController storeController;
+
+    [SerializeField] private GameObject removeAdsObj;
+    [SerializeField] private GameObject removeAdsScreen;
+    [SerializeField] private TMP_Text removeAdsPrice;
+    [SerializeField] private TMP_Text removeAdsText;
 
     public static Action OnRemoveAds = delegate { };
     public static Action OnShowAds = delegate { };
@@ -71,6 +77,18 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
         CheckNonConsumable(catBackground.Id);
     }
 
+    public void OnOpenRemoveAdsScreen()
+    {
+        removeAdsPrice.text = "$" + nonConsumableItem.price.ToString();
+        removeAdsText.text = "Would you like to Remove all Ads from the game?";
+        removeAdsScreen.SetActive(true);
+    }
+
+    public void OnCloseRemoveAdsScreen()
+    {
+        removeAdsScreen.SetActive(false);
+    }
+
     public void OnBuyRemoveAds()
     {
         storeController.InitiatePurchase(nonConsumableItem.Id);
@@ -102,6 +120,8 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
 
     private void RemoveAds()
     {
+        removeAdsScreen.SetActive(false);
+        removeAdsObj.SetActive(false);
         OnRemoveAds?.Invoke();
     }
 
@@ -124,6 +144,10 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
     public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
     {
         Debug.Log("purchase failed : " + failureReason);
+        if (product.definition.id == nonConsumableItem.Id)
+        {
+            removeAdsScreen.SetActive(false);
+        }
     }
 
     private void CheckNonConsumable(string id)
