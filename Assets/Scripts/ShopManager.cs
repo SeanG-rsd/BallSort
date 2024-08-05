@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
@@ -29,6 +30,8 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private string[] backgroundKeys;
 
     private List<GameObject> backgroundShopItems;
+    [SerializeField] private int numberOfPurchaseBackgrounds;
+    [SerializeField] private float[] purchaseBackgroundCosts;
 
     [Header("---Balls---")]
 
@@ -47,6 +50,7 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private VerticalLayoutGroup content;
     [SerializeField] private RectTransform contentBox;
 
+    [Obsolete]
     private void Awake()
     {
         if (instance == null)
@@ -63,6 +67,8 @@ public class ShopManager : MonoBehaviour
 
         LoadBackgrounds();
         LoadBalls();
+
+        InAppPurchaseManager.instance.SetupBuilder();
 
         ClickBackgroundTab();
     }
@@ -155,13 +161,21 @@ public class ShopManager : MonoBehaviour
             {
                 if (PlayerPrefs.GetInt(backgroundKeys[i]) == 1)
                 {
-                    newShopItem.Initialize(shopItemBackgroundImages[i], backgroundCosts[i], true, backgroundKeys[i], i, true);
+                    newShopItem.Initialize(shopItemBackgroundImages[i], backgroundCosts[i], true, backgroundKeys[i], i, true, i >= backgroundKeys.Length - numberOfPurchaseBackgrounds);
+                    if (i >= backgroundKeys.Length - numberOfPurchaseBackgrounds)
+                    {
+                        InAppPurchaseManager.instance.catShopItem = newShopItem;
+                    }
                     backgroundShopItems.Add(backgroundItem);
                     continue;
                 }
             }
 
-            newShopItem.Initialize(shopItemBackgroundImages[i], backgroundCosts[i], false, backgroundKeys[i], i, true);
+            newShopItem.Initialize(shopItemBackgroundImages[i], backgroundCosts[i], false, backgroundKeys[i], i, true, i >= backgroundKeys.Length - numberOfPurchaseBackgrounds);
+            if (i >= backgroundKeys.Length - numberOfPurchaseBackgrounds)
+            {
+                InAppPurchaseManager.instance.catShopItem = newShopItem;
+            }
             backgroundShopItems.Add(backgroundItem);
         }
 
@@ -187,13 +201,13 @@ public class ShopManager : MonoBehaviour
             {
                 if (PlayerPrefs.GetInt(ballKeys[i]) == 1)
                 {
-                    newShopItem.Initialize(shopItemBallImages[i], ballCosts[i], true, ballKeys[i], i, false);
+                    newShopItem.Initialize(shopItemBallImages[i], ballCosts[i], true, ballKeys[i], i, false, false);
                     ballShopItems.Add(backgroundItem);
                     continue;
                 }
             }
 
-            newShopItem.Initialize(shopItemBallImages[i], ballCosts[i], false, ballKeys[i], i, false);
+            newShopItem.Initialize(shopItemBallImages[i], ballCosts[i], false, ballKeys[i], i, false, false);
             ballShopItems.Add(backgroundItem);
         }
 
@@ -206,5 +220,10 @@ public class ShopManager : MonoBehaviour
             PlayerPrefs.SetInt(LAST_BALL_KEY, 0);
             SetBalls(0);
         }
+    }
+
+    public float GetPriceForBackgroundPurchase(int index)
+    {
+        return purchaseBackgroundCosts[index - (backgroundKeys.Length - numberOfPurchaseBackgrounds)];
     }
 }

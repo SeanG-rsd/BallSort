@@ -247,7 +247,6 @@ public class LevelManager : MonoBehaviour
         {
             Move move = hintMoveQueue.Dequeue();
             currentHint = move;
-            Debug.Log(move.ToString());
             hintFlash.Activate(tubeObjects[move.x]);
             isHintActive = true;
         }
@@ -348,6 +347,10 @@ public class LevelManager : MonoBehaviour
             {
                 currentTube.Cork();
             }
+            else if (currentTube.corked && !currentTube.FullTube())
+            {
+                currentTube.UnCork();
+            }
         }
     }
 
@@ -407,6 +410,7 @@ public class LevelManager : MonoBehaviour
                                 else
                                 {
                                     hintFlash.Deactivate();
+                                    isHintActive = false;
                                 }
                             }
                             else
@@ -567,6 +571,7 @@ public class LevelManager : MonoBehaviour
         }
 
         Debug.Log("Count : " + undoHolster.Count);
+        CorkTubes();
     }
     #endregion
 

@@ -67,7 +67,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
 
     private void HandleRemoveAds()
     {
-        //removeAds = true;
+        removeAds = true;
     }
 
     private void SetThreshold()

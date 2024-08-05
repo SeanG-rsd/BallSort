@@ -50,17 +50,6 @@ public class LevelSolver : MonoBehaviour
         SolveLevel();
     }
 
-    private string ToText(List<Move> list)
-    {
-        string output = "";
-        foreach (var item in list)
-        {
-            output += item.ToString() + ", ";
-        }
-
-        return output;
-    }
-
     private void PrintBoard()
     {
         for (int i = 0; i < level.Count; i++)

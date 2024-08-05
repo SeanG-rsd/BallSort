@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      SpaceTube_0: 8319658751969494724
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

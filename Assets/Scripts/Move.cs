@@ -35,9 +35,4 @@ public class Move
     {
         tinyTube = tube;
     }
-
-    public string ToString()
-    {
-        return $"({x}, {y})";
-    }
 }

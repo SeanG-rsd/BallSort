@@ -16,8 +16,9 @@ public class ShopItem : MonoBehaviour
     private string key;
     private int index;
     private bool isBackground;
+    private bool isForMoney;
 
-    public void Initialize(Sprite image, int price, bool bought, string key, int index, bool isBackground)
+    public void Initialize(Sprite image, int price, bool bought, string key, int index, bool isBackground, bool isForMoney)
     {
         itemImage.sprite = image;
         this.price.text = price + " Coins";
@@ -26,11 +27,17 @@ public class ShopItem : MonoBehaviour
         this.key = key;
         this.index = index;
         this.isBackground = isBackground;
+        this.isForMoney = isForMoney;
 
-        if (price == 0)
+        if (price == 0 && !isForMoney)
         {
             lockObject.SetActive(false);
             itemName.text = "DEFAULT";
+        }
+        else if (isForMoney)
+        {
+            Debug.Log(index);
+            this.price.text = $"${ShopManager.instance.GetPriceForBackgroundPurchase(index)}";
         }
     }
 
@@ -38,13 +45,21 @@ public class ShopItem : MonoBehaviour
     {
         int coins = LevelManager.instance.Coin;
 
-        if (coins >= cost)
+        if (coins >= cost && !isForMoney)
         {
-	    Debug.Log("can't buy");
-            lockObject.SetActive(false);
+            SetBought();
             LevelManager.instance.RemoveCoins(cost);
             PlayerPrefs.SetInt(key, 1);
         }
+        else
+        {
+            InAppPurchaseManager.instance.OnBuyCatBackground();
+        }
+    }
+
+    public void SetBought()
+    {
+        lockObject.SetActive(false);
     }
 
     public void Activate()

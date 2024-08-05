@@ -655,6 +655,8 @@ public class GameManager : MonoBehaviour
                     if (!levelButtonSpots[index].GetLevel(currentPage))
                     {
                         LevelManager.instance.OnClickLoadLevel(levelButtonSpots[index].GetLevelNumber(currentPage) - 1);
+                        currentPage = (levelButtonSpots[index].GetLevelNumber(currentPage) - 1) / LPP;
+                        UpdateListPage();
                         return true;
                     }
                 }

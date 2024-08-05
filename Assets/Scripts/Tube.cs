@@ -424,6 +424,14 @@ public class Tube : MonoBehaviour
         isWaitingToBeCorked = true;
     }
 
+    public void UnCork()
+    {
+        corked = false;
+        Destroy(corkObj);
+    }
+
+
+    GameObject corkObj = null;
     private void CloseTube()
     {
         GameObject Cork = Instantiate(CorkPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -445,6 +453,8 @@ public class Tube : MonoBehaviour
         Cork.transform.SetParent(gameObject.transform);
         Cork.transform.localPosition = new Vector3(0, 104.5f, 0);
         Cork.transform.localScale = new Vector3(1, 1, 1);
+
+        corkObj = Cork;
     }
 }
 

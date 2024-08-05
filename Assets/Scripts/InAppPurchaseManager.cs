@@ -2,41 +2,147 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Purchasing;
 
-public class InAppPurchaseManager : MonoBehaviour
+[Serializable]
+
+public class NonConsumableItem
 {
-    [SerializeField] private GameObject noAdsButton;
-    private static string PURCHASE_KEY = "AD_REMOVE";
+    public string Name;
+    public string Id;
+    public string Description;
+    public float price;
+}
+
+[Serializable]
+
+public class ConsumableItem
+{
+    public string Name;
+    public string Id;
+    public string Description;
+    public float price;
+}
+
+public class InAppPurchaseManager : MonoBehaviour, IStoreListener
+{
+    public static InAppPurchaseManager instance;
+
+    public NonConsumableItem catBackground;
+    public NonConsumableItem nonConsumableItem;
+
+    IStoreController storeController;
 
     public static Action OnRemoveAds = delegate { };
+    public static Action OnShowAds = delegate { };
 
-    private void Start()
+
+    [Obsolete]
+    private void Awake()
     {
-        if (PlayerPrefs.GetInt(PURCHASE_KEY) == 1)
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    [Obsolete]
+    public void SetupBuilder()
+    {
+        var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
+
+        builder.AddProduct(catBackground.Id, ProductType.NonConsumable);
+        builder.AddProduct(nonConsumableItem.Id, ProductType.NonConsumable);
+
+        UnityPurchasing.Initialize(this, builder);
+
+        
+    }
+
+    public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
+    {
+        Debug.Log("Success");
+        storeController = controller;
+        CheckNonConsumable(nonConsumableItem.Id);
+        CheckNonConsumable(catBackground.Id);
+    }
+
+    public void OnBuyRemoveAds()
+    {
+        storeController.InitiatePurchase(nonConsumableItem.Id);
+    }
+
+    public ShopItem catShopItem;
+    public void OnBuyCatBackground()
+    {
+        storeController.InitiatePurchase(catBackground.Id);
+    }
+
+    public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs purchaseEvent)
+    {
+        var product = purchaseEvent.purchasedProduct;
+
+        Debug.Log($"Purchase Complete" + product.definition.id);
+
+        if (product.definition.id == catBackground.Id)
+        {
+            BuyCatBackground();
+        }
+        else if (product.definition.id == nonConsumableItem.Id)
         {
             RemoveAds();
         }
-    }
-    public void OnBuyRemoveAds()
-    {
-        Debug.Log("success");
-        RemoveAds();
-    }
 
-    public void OnFailBuyingRemoveAds()
-    {
-        Debug.Log("failure");
+        return PurchaseProcessingResult.Complete;
     }
 
     private void RemoveAds()
     {
-        PlayerPrefs.SetInt(PURCHASE_KEY, 1);
-        noAdsButton.SetActive(false);
         OnRemoveAds?.Invoke();
     }
 
-    public void OnTransactionsRestores()
+    private void BuyCatBackground()
     {
-        Debug.Log("restored");
+        catShopItem.SetBought();
+    }
+
+    public void OnInitializeFailed(InitializationFailureReason error)
+    {
+        Debug.Log("initialize failed : " + error);
+    }
+
+    public void OnInitializeFailed(InitializationFailureReason error, string message)
+    {
+        Debug.Log("initialize failed : " + error + message);
+    }
+
+
+    public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+    {
+        Debug.Log("purchase failed : " + failureReason);
+    }
+
+    private void CheckNonConsumable(string id)
+    {
+        var product = storeController.products.WithID(id);
+        if (product != null)
+        {
+            if (product.definition.id == nonConsumableItem.Id)
+            {
+                RemoveAds();
+            }
+            else if (product.definition.id == catBackground.Id)
+            {
+                BuyCatBackground();
+            }
+        }
+        else if (id == nonConsumableItem.Id)
+        {
+            OnShowAds?.Invoke();
+        }
     }
 }

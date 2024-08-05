@@ -11,8 +11,9 @@ public class BannerAd : MonoBehaviour
 
     [SerializeField] BannerPosition _bannerPosition = BannerPosition.BOTTOM_CENTER;
 
-    //[SerializeField] string _androidAdUnitId = "Banner_Android";
+    [SerializeField] string _androidAdUnitId = "Banner_Android";
     [SerializeField] string _iOSAdUnitId = "Banner_iOS";
+    
     string _adUnitId = null; // This will remain null for unsupported platforms.
 
     void Start()
@@ -35,8 +36,24 @@ public class BannerAd : MonoBehaviour
         //_loadBannerButton.onClick.AddListener(LoadBanner);
         //_loadBannerButton.interactable = true;
 
+        //LoadBanner();
+    }
+
+    private void Awake()
+    {
+        InAppPurchaseManager.OnShowAds += ShowAds;
+    }
+
+    private void OnDestroy()
+    {
+        InAppPurchaseManager.OnShowAds -= ShowAds;
+    }
+
+    private void ShowAds()
+    {
         LoadBanner();
     }
+    
 
     // Implement a method to call when the Load Banner button is clicked:
     public void LoadBanner()
@@ -91,12 +108,4 @@ public class BannerAd : MonoBehaviour
     }
     void OnBannerShown() { }
     void OnBannerHidden() { }
-
-    void OnDestroy()
-    {
-        // Clean up the listeners:
-        //_loadBannerButton.onClick.RemoveAllListeners();
-        //_showBannerButton.onClick.RemoveAllListeners();
-        //_hideBannerButton.onClick.RemoveAllListeners();
-    }
 }
