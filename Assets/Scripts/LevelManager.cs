@@ -6,6 +6,9 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System;
 using Unity.Burst;
+#if ENABLE_CLOUD_SERVICES_ANALYTICS
+using UnityEngine.Analytics;
+#endif
 
 public class LevelManager : MonoBehaviour
 {
@@ -139,6 +142,11 @@ public class LevelManager : MonoBehaviour
         //Debug.Log("load level : " + levelNumber);
         lastLevelLoaded = levelNumber;
         levelNumberText.text = "Level " + (levelNumber + 1).ToString();
+
+#if ENABLE_CLOUD_SERVICES_ANALYTICS
+        Debug.Log("levelStart");
+        Analytics.CustomEvent("levelStart");
+#endif
 
 
         LoadLevel(GameManager.instance.GetLevel(levelNumber));
@@ -803,6 +811,9 @@ public class LevelManager : MonoBehaviour
     {
         if (!isTutorial)
         {
+#if ENABLE_CLOUD_SERVICES_ANALYTICS
+            Analytics.CustomEvent("beatLevel");
+#endif
             OnBeatLevel?.Invoke(levelIndex, isChallenge);
         }
     }

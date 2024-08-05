@@ -9,13 +9,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     [SerializeField] string _iOsAdUnitId = "Interstitial_iOS";
     string _adUnitId;
 
-    // 6-8 wins before an ad for the first 120 levels then down to 4-6 wins before an ad
-    [SerializeField] private Vector2Int initialWinsBeforeAd;
-    [SerializeField] private Vector2Int normalWinsBeforeAd;
-
-    [SerializeField] private int initialThreshold;
-
-    private Vector2Int currentWinsBeforeAd;
+    private int winsBeforeAd;
 
     private int currentWinsLeft;
 
@@ -32,7 +26,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
         }
         else
         {
-            currentWinsLeft = Random.Range(currentWinsBeforeAd.x, currentWinsBeforeAd.y);
+            currentWinsLeft = winsBeforeAd;
             PlayerPrefs.SetInt(CURRENT_ADS, currentWinsLeft);
         }
         GameManager.OnWinScreen += LevelCompletion;
@@ -55,7 +49,6 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     private void LevelCompletion()
     {
         currentWinsLeft--;
-        SetThreshold();
         PlayerPrefs.SetInt(CURRENT_ADS, currentWinsLeft);
         Debug.Log("win");
         if (currentWinsLeft <= 0)
@@ -69,21 +62,6 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     {
         removeAds = true;
     }
-
-    private void SetThreshold()
-    {
-        currentNumberOfLevelsCompleted = GameManager.instance.GetNumberOfCompletedLevels();
-
-        if (currentNumberOfLevelsCompleted < initialThreshold)
-        {
-            currentWinsBeforeAd = initialWinsBeforeAd;
-        }
-        else
-        {
-            currentWinsBeforeAd = normalWinsBeforeAd;
-        }
-    }
-
     // Load content to the Ad Unit:
     public void LoadAd()
     {
@@ -95,11 +73,11 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     // Show the loaded content in the Ad Unit:
     public void ShowAd()
     {
-        if (!removeAds || true)
+        if (!removeAds)
         {
             Debug.Log("show ad");
             // Note that if the ad content wasn't previously loaded, this method will fail
-            currentWinsLeft = Random.Range(currentWinsBeforeAd.x, currentWinsBeforeAd.y);
+            currentWinsLeft = winsBeforeAd;
             PlayerPrefs.SetInt(CURRENT_ADS, currentWinsLeft);
             Advertisement.Show(_adUnitId, this);
         }

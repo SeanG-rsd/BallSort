@@ -164,12 +164,12 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
             if (product.definition.id == nonConsumableItem.Id)
             {
                 Debug.Log("already has no ads");
-                //RemoveAds();
+                RemoveAds();
             }
             else if (product.definition.id == catBackground.Id)
             {
                 Debug.Log("already has cat background");
-                //BuyCatBackground();
+                BuyCatBackground();
             }
         }
         else if (id == nonConsumableItem.Id)
