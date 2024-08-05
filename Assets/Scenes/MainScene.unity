@@ -4134,6 +4134,7 @@ GameObject:
   - component: {fileID: 430885096}
   - component: {fileID: 430885100}
   - component: {fileID: 430885099}
+  - component: {fileID: 430885101}
   m_Layer: 0
   m_Name: AdManager
   m_TagString: Untagged
@@ -4245,6 +4246,19 @@ MonoBehaviour:
   initialWinsBeforeAd: {x: 5, y: 7}
   normalWinsBeforeAd: {x: 4, y: 6}
   initialThreshold: 120
+--- !u!114 &430885101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 430885094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d070cf48df2d4d3db819987c544aa328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  informationText: {fileID: 0}
 --- !u!1 &448789073
 GameObject:
   m_ObjectHideFlags: 0
