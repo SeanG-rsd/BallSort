@@ -938,7 +938,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2079102463}
   - {fileID: 2031465693}
   - {fileID: 1775043212}
   - {fileID: 1094400006}
@@ -2170,6 +2169,7 @@ RectTransform:
   - {fileID: 2135541801}
   - {fileID: 2005048761}
   - {fileID: 193187114}
+  - {fileID: 2079102463}
   m_Father: {fileID: 135091203}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3182,7 +3182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3243,9 +3243,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 720853413}
-        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
-        m_MethodName: OnConfirmNextFuction
+      - m_Target: {fileID: 430885099}
+        m_TargetAssemblyTypeName: InAppPurchaseManager, Assembly-CSharp
+        m_MethodName: OnConfirmPurchase
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4352,20 +4352,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19733d2c943cc414dbca88e52e28f2a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  consumePurchase: 1
+  dontDestroyOnLoad: 1
+  onProductsFetched:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  onPurchaseDetailedFailedEvent:
+    m_PersistentCalls:
+      m_Calls: []
   catBackground:
-    Name: 
-    Id: 
-    Description: 
-    price: 0
+    Name: Cat Background
+    Id: cat_background
+    Description: Get the Cat Background
+    price: 1.99
+    Question: 
   nonConsumableItem:
     Name: Remove Ads
     Id: remove_ads
     Description: Remove all Ads
     price: 2.99
+    Question: 
   removeAdsObj: {fileID: 2005048760}
-  removeAdsScreen: {fileID: 2079102460}
-  removeAdsPrice: {fileID: 970445357}
-  removeAdsText: {fileID: 1549007215}
+  purchaseScreen: {fileID: 2079102460}
+  purchasePrice: {fileID: 970445357}
+  purchaseQuestion: {fileID: 1549007215}
   catShopItem: {fileID: 0}
 --- !u!114 &430885100
 MonoBehaviour:
@@ -16129,13 +16145,13 @@ MonoBehaviour:
       - m_Target: {fileID: 430885099}
         m_TargetAssemblyTypeName: InAppPurchaseManager, Assembly-CSharp
         m_MethodName: OnOpenRemoveAdsScreen
-        m_Mode: 1
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: remove_ads
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &2005048764
@@ -16784,7 +16800,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2079102461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16839,7 +16855,7 @@ RectTransform:
   - {fileID: 1549007217}
   - {fileID: 314744701}
   - {fileID: 951556967}
-  m_Father: {fileID: 131347281}
+  m_Father: {fileID: 212038180}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

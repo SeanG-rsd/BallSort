@@ -53,13 +53,18 @@ public class ShopItem : MonoBehaviour
         }
         else
         {
-            InAppPurchaseManager.instance.OnBuyCatBackground();
+            InAppPurchaseManager.instance.OnOpenRemoveAdsScreen("cat_background");
         }
     }
 
     public void SetBought()
     {
         lockObject.SetActive(false);
+    }
+
+    public void SetNotBought()
+    {
+        lockObject.SetActive(true);
     }
 
     public void Activate()

@@ -13,19 +13,10 @@ public class NonConsumableItem
     public string Id;
     public string Description;
     public float price;
+    public string Question;
 }
 
-[Serializable]
-
-public class ConsumableItem
-{
-    public string Name;
-    public string Id;
-    public string Description;
-    public float price;
-}
-
-public class InAppPurchaseManager : MonoBehaviour, IStoreListener
+public class InAppPurchaseManager : IAPListener, IStoreListener
 {
     public static InAppPurchaseManager instance;
 
@@ -35,12 +26,14 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
     IStoreController storeController;
 
     [SerializeField] private GameObject removeAdsObj;
-    [SerializeField] private GameObject removeAdsScreen;
-    [SerializeField] private TMP_Text removeAdsPrice;
-    [SerializeField] private TMP_Text removeAdsText;
+    [SerializeField] private GameObject purchaseScreen;
+    [SerializeField] private TMP_Text purchasePrice;
+    [SerializeField] private TMP_Text purchaseQuestion;
 
     public static Action OnRemoveAds = delegate { };
     public static Action OnShowAds = delegate { };
+
+    private string currentPurchase = "";
 
 
     [Obsolete]
@@ -65,8 +58,6 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
         builder.AddProduct(nonConsumableItem.Id, ProductType.NonConsumable);
 
         UnityPurchasing.Initialize(this, builder);
-
-        
     }
 
     public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
@@ -77,21 +68,35 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
         CheckNonConsumable(catBackground.Id);
     }
 
-    public void OnOpenRemoveAdsScreen()
+    public void OnOpenRemoveAdsScreen(string id)
     {
-        removeAdsPrice.text = "$" + nonConsumableItem.price.ToString();
-        removeAdsText.text = "Would you like to Remove all Ads from the game?";
-        removeAdsScreen.SetActive(true);
+        purchasePrice.text = "$" + (id == nonConsumableItem.Id ? nonConsumableItem.price.ToString() : catBackground.price.ToString());
+        purchaseQuestion.text = id == nonConsumableItem.Id ? "Would you like to Remove all Ads from the game?" : "Would you like to purchase the Cat Background?";
+        purchaseScreen.SetActive(true);
+        Debug.Log(id);
+        currentPurchase = id;
     }
 
     public void OnCloseRemoveAdsScreen()
     {
-        removeAdsScreen.SetActive(false);
+        purchaseScreen.SetActive(false);
     }
 
     public void OnBuyRemoveAds()
     {
         storeController.InitiatePurchase(nonConsumableItem.Id);
+    }
+
+    public void OnConfirmPurchase()
+    {
+        if (currentPurchase == nonConsumableItem.Id)
+        {
+            OnBuyRemoveAds();
+        }
+        else
+        {
+            OnBuyCatBackground();
+        }
     }
 
     public ShopItem catShopItem;
@@ -100,7 +105,7 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
         storeController.InitiatePurchase(catBackground.Id);
     }
 
-    public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs purchaseEvent)
+    PurchaseProcessingResult IStoreListener.ProcessPurchase(PurchaseEventArgs purchaseEvent)
     {
         var product = purchaseEvent.purchasedProduct;
 
@@ -120,7 +125,7 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
 
     private void RemoveAds()
     {
-        removeAdsScreen.SetActive(false);
+        purchaseScreen.SetActive(false);
         removeAdsObj.SetActive(false);
         OnRemoveAds?.Invoke();
     }
@@ -141,12 +146,13 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
     }
 
 
-    public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+    void IStoreListener.OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
     {
         Debug.Log("purchase failed : " + failureReason);
-        if (product.definition.id == nonConsumableItem.Id)
+        purchaseScreen.SetActive(false);
+        if (product.definition.id == catBackground.Id)
         {
-            removeAdsScreen.SetActive(false);
+            catShopItem.SetNotBought();
         }
     }
 
@@ -157,11 +163,13 @@ public class InAppPurchaseManager : MonoBehaviour, IStoreListener
         {
             if (product.definition.id == nonConsumableItem.Id)
             {
-                RemoveAds();
+                Debug.Log("already has no ads");
+                //RemoveAds();
             }
             else if (product.definition.id == catBackground.Id)
             {
-                BuyCatBackground();
+                Debug.Log("already has cat background");
+                //BuyCatBackground();
             }
         }
         else if (id == nonConsumableItem.Id)
