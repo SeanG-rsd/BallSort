@@ -36,7 +36,7 @@ public class BannerAd : MonoBehaviour
         //_loadBannerButton.onClick.AddListener(LoadBanner);
         //_loadBannerButton.interactable = true;
 
-        //LoadBanner();
+        LoadBanner();
     }
 
     private void Awake()
