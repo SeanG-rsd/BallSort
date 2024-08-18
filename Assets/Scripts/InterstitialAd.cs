@@ -9,9 +9,9 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     [SerializeField] string _iOsAdUnitId = "Interstitial_iOS";
     string _adUnitId;
 
-    private int winsBeforeAd = 5;
+    public int winsBeforeAd = 1;
 
-    private int currentWinsLeft;
+    public int currentWinsLeft;
 
     private string CURRENT_ADS = "CURRENT_ADS_KEY";
     private bool removeAds = false;
@@ -34,7 +34,10 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
         _adUnitId = (Application.platform == RuntimePlatform.IPhonePlayer)
             ? _iOsAdUnitId
             : _androidAdUnitId;
+    }
 
+    public void Initalize()
+    {
         LoadAd();
     }
 
@@ -101,5 +104,9 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
 
     public void OnUnityAdsShowStart(string _adUnitId) { }
     public void OnUnityAdsShowClick(string _adUnitId) { }
-    public void OnUnityAdsShowComplete(string _adUnitId, UnityAdsShowCompletionState showCompletionState) { }
+    public void OnUnityAdsShowComplete(string _adUnitId, UnityAdsShowCompletionState showCompletionState)
+    {
+        Debug.Log("completed ad");
+        LoadAd();
+    }
 }

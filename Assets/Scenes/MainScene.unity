@@ -4340,6 +4340,9 @@ MonoBehaviour:
   _androidGameId: 5229531
   _iOSGameId: 5229530
   _testMode: 1
+  InterstitialAd: {fileID: 430885100}
+  RewardedAd: {fileID: 430885096}
+  BannerAd: {fileID: 430885097}
 --- !u!114 &430885099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4397,6 +4400,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _androidAdUnitId: Interstitial_Android
   _iOsAdUnitId: Interstitial_iOS
+  winsBeforeAd: 5
+  currentWinsLeft: 0
 --- !u!114 &430885101
 MonoBehaviour:
   m_ObjectHideFlags: 0
