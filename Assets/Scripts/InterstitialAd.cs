@@ -9,14 +9,12 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     [SerializeField] string _iOsAdUnitId = "Interstitial_iOS";
     string _adUnitId;
 
-    private int winsBeforeAd;
+    private int winsBeforeAd = 5;
 
     private int currentWinsLeft;
 
     private string CURRENT_ADS = "CURRENT_ADS_KEY";
     private bool removeAds = false;
-
-    private int currentNumberOfLevelsCompleted;
 
     private void Awake()
     {
