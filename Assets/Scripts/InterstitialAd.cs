@@ -74,7 +74,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     // Show the loaded content in the Ad Unit:
     public void ShowAd()
     {
-        if (!removeAds)
+        if (!removeAds && !removeAds)
         {
             Debug.Log("show ad");
             // Note that if the ad content wasn't previously loaded, this method will fail
@@ -82,6 +82,8 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
             PlayerPrefs.SetInt(CURRENT_ADS, currentWinsLeft);
             Advertisement.Show(_adUnitId, this);
         }
+
+        if (removeAds) Debug.Log("would show ad but they are removed");
     }
 
     // Implement Load Listener and Show Listener interface methods: 

@@ -68,7 +68,7 @@ public class ShopManager : MonoBehaviour
         LoadBackgrounds();
         LoadBalls();
 
-        //InAppPurchaseManager.instance.SetupBuilder();
+        InAppPurchaseManager.instance.SetupBuilder();
 
         ClickBackgroundTab();
     }

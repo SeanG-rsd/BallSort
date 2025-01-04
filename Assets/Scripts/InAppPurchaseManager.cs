@@ -52,6 +52,7 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
     [Obsolete]
     public void SetupBuilder()
     {
+        Debug.Log("setup");
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 
         builder.AddProduct(catBackground.Id, ProductType.NonConsumable);
@@ -120,12 +121,13 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
             RemoveAds();
         }
 
+        purchaseScreen.SetActive(false);
+
         return PurchaseProcessingResult.Complete;
     }
 
     private void RemoveAds()
     {
-        purchaseScreen.SetActive(false);
         removeAdsObj.SetActive(false);
         OnRemoveAds?.Invoke();
     }
@@ -165,16 +167,19 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
             {
                 Debug.Log("already has no ads");
                 RemoveAds();
+                return;
             }
             else if (product.definition.id == catBackground.Id)
             {
                 Debug.Log("already has cat background");
                 BuyCatBackground();
+                return;
             }
         }
         else if (id == nonConsumableItem.Id)
         {
             OnShowAds?.Invoke();
+            Debug.Log("show ads");
         }
     }
 }

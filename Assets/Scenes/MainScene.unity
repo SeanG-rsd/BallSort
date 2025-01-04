@@ -9138,6 +9138,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 224fcaec48fd76d46984385e8307306d, type: 3}
   - {fileID: 3617382655475421408, guid: d8a45ed316d17fb4faad579488d0ef33, type: 3}
   - {fileID: -4354248775225258120, guid: 89b8de144a3976643bcb5d0a760dff37, type: 3}
+  - {fileID: 21300000, guid: 57ae5b45680e9644bbee799e8fa8af67, type: 3}
   shopItemBackgroundImages:
   - {fileID: 21300000, guid: 130e388f0baef544ab9b3e1197c816ee, type: 3}
   - {fileID: 21300000, guid: 7ff59d39859dbee489ef44589b07bb82, type: 3}
@@ -9145,7 +9146,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 2623eac80293f454188e8604a107ebac, type: 3}
   - {fileID: -980537974363568062, guid: 3634b37d69d5143418847b1648ec1d32, type: 3}
   - {fileID: -5174894656244167344, guid: 21138ee5560264a4895b4f94297fa25d, type: 3}
-  backgroundCosts: 00000000d0070000d0070000d0070000b80b000088130000
+  - {fileID: 21300000, guid: e300825bce676ac478426c0ef81d51de, type: 3}
+  backgroundCosts: 00000000d0070000d0070000d0070000b80b00008813000000000000
   backgroundKeys:
   - defaultLock
   - greenLock
@@ -9153,7 +9155,8 @@ MonoBehaviour:
   - redLock
   - candyLock
   - spaceLock
-  numberOfPurchaseBackgrounds: 0
+  - catLock
+  numberOfPurchaseBackgrounds: 1
   purchaseBackgroundCosts:
   - 1.99
   balls:
@@ -16074,7 +16077,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2005048761
 RectTransform:
   m_ObjectHideFlags: 0

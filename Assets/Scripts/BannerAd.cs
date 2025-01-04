@@ -42,11 +42,13 @@ public class BannerAd : MonoBehaviour
     private void Awake()
     {
         InAppPurchaseManager.OnShowAds += ShowAds;
+        InAppPurchaseManager.OnRemoveAds += HideBannerAd;
     }
 
     private void OnDestroy()
     {
         InAppPurchaseManager.OnShowAds -= ShowAds;
+        InAppPurchaseManager.OnRemoveAds -= HideBannerAd;
     }
 
     private void ShowAds()
@@ -90,6 +92,11 @@ public class BannerAd : MonoBehaviour
     {
         Debug.Log($"Banner Error: {message}");
         // Optionally execute additional code, such as attempting to load another ad.
+    }
+
+    void HideBannerAd()
+    {
+        Advertisement.Banner.Hide();
     }
 
     // Implement a method to call when the Show Banner button is clicked:
