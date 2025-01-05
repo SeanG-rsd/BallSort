@@ -35,14 +35,14 @@ namespace Samples.Purchasing.Core.InitializeGamingServices
         void OnSuccess()
         {
             var text = "Congratulations!\nUnity Gaming Services has been successfully initialized.";
-            //informationText.text = text;
+            informationText.text = text;
             Debug.Log(text);
         }
 
         void OnError(string message)
         {
             var text = $"Unity Gaming Services failed to initialize with error: {message}.";
-            //informationText.text = text;
+            informationText.text = text;
             Debug.LogError(text);
         }
 
@@ -54,7 +54,7 @@ namespace Samples.Purchasing.Core.InitializeGamingServices
                     "Error: Unity Gaming Services not initialized.\n" +
                     "To initialize Unity Gaming Services, open the file \"InitializeGamingServices.cs\" " +
                     "and uncomment the line \"Initialize(OnSuccess, OnError);\" in the \"Awake\" method.";
-                //informationText.text = text;
+                informationText.text = text;
                 Debug.LogError(text);
             }
         }

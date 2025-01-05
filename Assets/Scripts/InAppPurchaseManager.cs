@@ -103,6 +103,7 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
     public ShopItem catShopItem;
     public void OnBuyCatBackground()
     {
+        if (storeController == null) Debug.Log("error");
         storeController.InitiatePurchase(catBackground.Id);
     }
 
@@ -110,7 +111,7 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
     {
         var product = purchaseEvent.purchasedProduct;
 
-        Debug.Log($"Purchase Complete" + product.definition.id);
+        Debug.Log($"Purchase Complete : " + product.definition.id);
 
         if (product.definition.id == catBackground.Id)
         {
@@ -134,6 +135,7 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
 
     private void BuyCatBackground()
     {
+        Debug.Log("error");
         catShopItem.SetBought();
     }
 
