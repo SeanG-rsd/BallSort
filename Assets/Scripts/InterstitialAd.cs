@@ -14,7 +14,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     public int currentWinsLeft;
 
     private string CURRENT_ADS = "CURRENT_ADS_KEY";
-    private bool removeAds = false;
+    private bool removeAds = true;
 
     private void Awake()
     {
@@ -28,6 +28,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
             PlayerPrefs.SetInt(CURRENT_ADS, currentWinsLeft);
         }
         GameManager.OnWinScreen += LevelCompletion;
+        InAppPurchaseManager.OnShowAds += HandleShowAds;
         InAppPurchaseManager.OnRemoveAds += HandleRemoveAds;
 
         // Get the Ad Unit ID for the current platform:
@@ -44,6 +45,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     private void OnDestroy()
     {
         GameManager.OnWinScreen -= LevelCompletion;
+        InAppPurchaseManager.OnShowAds -= HandleShowAds;
         InAppPurchaseManager.OnRemoveAds -= HandleRemoveAds;
     }
 
@@ -63,6 +65,11 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     {
         removeAds = true;
     }
+
+    private void HandleShowAds()
+    {
+        removeAds = false;
+    }
     // Load content to the Ad Unit:
     public void LoadAd()
     {
@@ -74,7 +81,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     // Show the loaded content in the Ad Unit:
     public void ShowAd()
     {
-        if (!removeAds && !removeAds)
+        if (!removeAds)
         {
             Debug.Log("show ad");
             // Note that if the ad content wasn't previously loaded, this method will fail

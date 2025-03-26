@@ -116,10 +116,12 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
         if (product.definition.id == catBackground.Id)
         {
             BuyCatBackground();
+            PlayerPrefs.SetInt(catBackground.Id, 1);
         }
         else if (product.definition.id == nonConsumableItem.Id)
         {
             RemoveAds();
+            PlayerPrefs.SetInt(nonConsumableItem.Id, 1);
         }
 
         purchaseScreen.SetActive(false);
@@ -135,7 +137,6 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
 
     private void BuyCatBackground()
     {
-        Debug.Log("error");
         catShopItem.SetBought();
     }
 
@@ -163,7 +164,7 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
     private void CheckNonConsumable(string id)
     {
         var product = storeController.products.WithID(id);
-        if (product != null)
+        if (PlayerPrefs.HasKey(id))
         {
             if (product.definition.id == nonConsumableItem.Id)
             {

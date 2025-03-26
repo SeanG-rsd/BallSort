@@ -42,6 +42,7 @@ public class BannerAd : MonoBehaviour
     private void Awake()
     {
         InAppPurchaseManager.OnShowAds += ShowAds;
+
         InAppPurchaseManager.OnRemoveAds += HideBannerAd;
     }
 
@@ -53,6 +54,7 @@ public class BannerAd : MonoBehaviour
 
     private void ShowAds()
     {
+        Advertisement.Banner.SetPosition(_bannerPosition);
         LoadBanner();
     }
     
