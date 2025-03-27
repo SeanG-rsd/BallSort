@@ -4,7 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Data;
+using Mono.Data.SqliteClient;
 using System.IO;
+using System.Text;
 
 public class GameManager : MonoBehaviour
 { 
@@ -65,6 +68,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject loadingScreen;
     [SerializeField] private RectTransform loadingBarMask;
     private float loadingBarStartingWidth;
+
+    string conn;
+    string sqlQuery;
+    IDbConnection dbconn;
+    IDbCommand dbcmd;
+    IDataReader dbreader;  // not used in this example
+    string DATABASE_NAME = "/mydatabase.s3db";
 
     private void Awake()
     {
@@ -218,7 +228,7 @@ public class GameManager : MonoBehaviour
     public int GetNumberOfCompletedLevels()
     {
         return completedLevels.Count;
-    }
+    } 
 
     public void LoadGame() // load all the levels from a string to their list versions
     {
@@ -232,6 +242,8 @@ public class GameManager : MonoBehaviour
         string level = "";
 
         // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
+
+        // 0001001000110100
 
         if (savedLevels.Length > 0)
         {
