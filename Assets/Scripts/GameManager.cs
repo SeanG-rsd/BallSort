@@ -8,12 +8,15 @@ using System.Data;
 using Mono.Data.SqliteClient;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 { 
     public static GameManager instance;
 
     private List<List<List<int>>> levels = new List<List<List<int>>>(); // a list of levels
+
+    private int numLevels;
 
     private List<int> chosen = new List<int>();
 
@@ -74,7 +77,7 @@ public class GameManager : MonoBehaviour
     IDbConnection dbconn;
     IDbCommand dbcmd;
     IDataReader dbreader;  // not used in this example
-    string DATABASE_NAME = "/mydatabase.s3db";
+    string DATABASE_NAME = "/levels_database.s3db";
 
     private void Awake()
     {
@@ -129,6 +132,95 @@ public class GameManager : MonoBehaviour
             loadingBarMask.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, highestLoadedLevel / (float)levels.Count * loadingBarStartingWidth);
         }
     }
+
+    #region Database
+
+    private void InitDatabase()
+    {
+        string filepath = Application.dataPath + DATABASE_NAME;
+        Debug.Log($"filepath={filepath}");
+        conn = "URI=file:" + filepath;
+
+        CreateTable();
+    }
+
+    private void CreateTable()
+    {
+        using (dbconn = new SqliteConnection(conn))
+        {
+            dbconn.Open();
+            dbcmd = dbconn.CreateCommand();
+            sqlQuery = "CREATE TABLE IF NOT EXISTS [levels] (" +
+                       "[level_index] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                       "[level] VARCHAR(255) NOT NULL)";
+            dbcmd.CommandText = sqlQuery;
+            dbcmd.ExecuteScalar();
+            dbconn.Close();
+        }
+    }
+
+    private void InsertLevel(List<List<int>> level)
+    {
+        string info = "";
+        for (int i = 0; i < level.Count - 1; i++) 
+        {
+            info += string.Join(",", level[i]) + ",";
+        }
+
+        info += string.Join(",", level[level.Count - 1]);
+
+        using (dbconn = new SqliteConnection(conn))
+        {
+            dbconn.Open();
+            dbcmd = dbconn.CreateCommand();
+            string sqlQuery = "INSERT OR REPLACE INTO [levels] ([level]) VALUES (@level)";
+        
+		    dbcmd.CommandText = sqlQuery;
+             dbcmd.Parameters.Add(new SqliteParameter("@level", info));
+		    dbcmd.ExecuteNonQuery();
+		    dbconn.Close();
+        }
+        Debug.Log("level");
+    }
+
+    private List<List<int>> ReadLevel(int index)
+    {
+        string text = "Not Found";
+        dbconn = new SqliteConnection(conn);
+        dbconn.Open();
+
+        string sqlQuery = "SELECT [level] FROM [levels] WHERE [level_index] = @level_index";
+        dbcmd = dbconn.CreateCommand();
+        dbcmd.CommandText = sqlQuery;
+
+        dbcmd.Parameters.Add(new SqliteParameter("@level_index", index.ToString()));
+
+        dbreader = dbcmd.ExecuteReader();
+		if (dbreader.Read())
+            {
+                text = dbreader.GetString(0); // Assuming you're retrieving the first column (id)
+            }
+            else
+            {
+                Debug.Log("QueryString - nothing to read...");
+            }
+		dbreader.Close();
+		dbconn.Close();
+
+        int sublistSize = 4;
+
+        List<int> flatList = text.Split(',').Select(int.Parse).ToList();
+
+        List<List<int>> level = new List<List<int>>();
+        for (int i = 0; i < flatList.Count; i += sublistSize)
+        {
+            level.Add(flatList.GetRange(i, sublistSize));
+        }
+
+        return level;
+    }
+
+    #endregion
 
     #region Initialize Game
     public void AddToDatabase(int index) // add a new level to the saved string
@@ -241,6 +333,8 @@ public class GameManager : MonoBehaviour
 
         string level = "";
 
+        InitDatabase();
+
         // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
 
         // 0001001000110100
@@ -308,7 +402,7 @@ public class GameManager : MonoBehaviour
                     if (loadLevel.Count > 0)
                     {
                         List<List<int>> newLevel = new List<List<int>>(loadLevel);
-
+                        //InsertLevel(newLevel);
                         levels.Add(newLevel);
 
                         loadLevel = new List<List<int>>();
@@ -333,7 +427,7 @@ public class GameManager : MonoBehaviour
 
     public List<List<int>> GetLevel(int levelNumber)
     {
-        return levels[levelNumber];
+        return ReadLevel(levelNumber);
     }
     #endregion
 

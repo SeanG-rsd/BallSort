@@ -5,6 +5,7 @@ using System.Data;
 using Mono.Data.SqliteClient;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 public class DatabaseTest : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class DatabaseTest : MonoBehaviour
     IDbCommand dbcmd;
     IDataReader dbreader;  // not used in this example
     string DATABASE_NAME = "/database.s3db";
+
+    static List<int> tube = new List<int>{ 1, 2, 3, 4 };
+    List<List<int>> level = new List<List<int>>{ tube, tube, tube};
     // Start is called before the first frame update
     void Start()
     {
@@ -22,9 +26,17 @@ public class DatabaseTest : MonoBehaviour
         Debug.Log($"filepath={filepath}");
         conn = "URI=file:" + filepath;
 
-        //CreateATable();
+        CreateATable();
 
-        //InsertValue();
+        string info = "";
+        for (int i = 0; i < level.Count; i++) 
+        {
+            info += string.Join(",", level[i]) + ",";
+        }
+
+        Debug.Log(info);
+
+        InsertValue(info);
 
         ReadTable();
     }
@@ -41,26 +53,25 @@ public class DatabaseTest : MonoBehaviour
         {
             dbconn.Open();
             dbcmd = dbconn.CreateCommand();
-            sqlQuery = "CREATE TABLE IF NOT EXISTS [my_table] (" +
-                       "[id] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                       "[name] VARCHAR(255)  NOT NULL," +
-                       "[age] INTEGER DEFAULT '18' NOT NULL)";
+            sqlQuery = "CREATE TABLE IF NOT EXISTS [levels] (" +
+                       "[level_index] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                       "[level] VARCHAR(255) NOT NULL)";
             dbcmd.CommandText = sqlQuery;
             dbcmd.ExecuteScalar();
             dbconn.Close();
         }
     }
 
-    private void InsertValue()
+    private void InsertValue(string value)
     {
         using (dbconn = new SqliteConnection(conn))
         {
             dbconn.Open();
             dbcmd = dbconn.CreateCommand();
-            string sqlQuery = "INSERT OR REPLACE INTO [my_table] ([name]) VALUES (@name)";
+            string sqlQuery = "INSERT OR REPLACE INTO [levels] ([level]) VALUES (@level)";
         
 		    dbcmd.CommandText = sqlQuery;
-             dbcmd.Parameters.Add(new SqliteParameter("@name", "Sean G"));
+             dbcmd.Parameters.Add(new SqliteParameter("@level", value));
 		    dbcmd.ExecuteNonQuery();
 		    dbconn.Close();
         }
@@ -72,11 +83,11 @@ public class DatabaseTest : MonoBehaviour
         dbconn = new SqliteConnection(conn);
         dbconn.Open();
 
-        string sqlQuery = "SELECT [name] FROM [my_table] WHERE [name] = @name";
+        string sqlQuery = "SELECT [level] FROM [levels] WHERE [level_index] = 1";
         dbcmd = dbconn.CreateCommand();
         dbcmd.CommandText = sqlQuery;
 
-        dbcmd.Parameters.Add(new SqliteParameter("@name", "Sean G"));
+        //dbcmd.Parameters.Add(new SqliteParameter("@name", "Sean G"));
 
         dbreader = dbcmd.ExecuteReader();
 		if (dbreader.Read())
@@ -91,5 +102,15 @@ public class DatabaseTest : MonoBehaviour
 		dbconn.Close();
 
         Debug.Log("Read Table: " + text);
+
+        int sublistSize = 4;
+
+        List<int> flatList = text.Split(',').Select(int.Parse).ToList();
+
+        List<List<int>> nestedList = new List<List<int>>();
+        for (int i = 0; i < flatList.Count; i += sublistSize)
+        {
+            nestedList.Add(flatList.GetRange(i, sublistSize));
+        }
     }
 }
