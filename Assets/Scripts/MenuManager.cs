@@ -41,7 +41,7 @@ public class MenuManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        screens[loadingScreenIndex].SetActive(true);
+        //screens[loadingScreenIndex].SetActive(true);
 
         if (PlayerPrefs.HasKey(tutorialKeyString))
         {

@@ -96,7 +96,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 9e588227c32a67d4a872f2a94220e74c, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -5500,7 +5500,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 100
+  m_text: Not set
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -15253,10 +15253,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelButtonPrefab: {fileID: 6807884434142539258, guid: 77e32631c5f815b43a627bf7746ff436, type: 3}
-  levelsFile: {fileID: 4900000, guid: 23dec4cef1145b64abb6fcd48be57211, type: 3}
   pageLevelLayout: {x: 6, y: 10}
-  spotPrefab: {fileID: 1891005995998222646, guid: c3d0e7bc0326d98458d2c00874cbc9d2, type: 3}
-  levelSpotContainer: {fileID: 448789074}
+  levelButtonContainer: {fileID: 448789074}
   generateXLevels: 10
   winScreen: {fileID: 1055464239}
   winNextButton: {fileID: 1254049889}

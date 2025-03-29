@@ -52,8 +52,6 @@ public class InAppPurchaseManager : IAPListener, IStoreListener
     [Obsolete]
     public void SetupBuilder()
     {
-        PlayerPrefs.DeleteAll();
-        PlayerPrefs.Save();
         Debug.Log("setup");
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 

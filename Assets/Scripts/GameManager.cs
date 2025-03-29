@@ -14,16 +14,11 @@ public class GameManager : MonoBehaviour
 { 
     public static GameManager instance;
 
-    private List<List<List<int>>> levels = new List<List<List<int>>>(); // a list of levels
-
     private int numLevels;
 
     private List<int> chosen = new List<int>();
 
-    private string savedLevels = "";
-
-
-    private List<LevelSpot> levelButtonSpots;
+    private List<LevelButton> levelButtons;
 
     [Header("---Levels---")]
     [SerializeField] private GameObject levelButtonPrefab;
@@ -31,11 +26,9 @@ public class GameManager : MonoBehaviour
     private List<int> completedLevels = new List<int>();
     private string completedSaveLevels = "";
 
-    [SerializeField] private TextAsset levelsFile;
-
     [SerializeField] private Vector2Int pageLevelLayout;
-    [SerializeField] private GameObject spotPrefab;
-    [SerializeField] private Transform levelSpotContainer;
+
+    [SerializeField] private Transform levelButtonContainer;
 
     [SerializeField] private int generateXLevels;
 
@@ -105,10 +98,9 @@ public class GameManager : MonoBehaviour
 
     private void StartLoadingGame()
     {
-        loadingScreen.SetActive(true);
+        //loadingScreen.SetActive(true);
 
-        savedLevels = GetLevels();
-        LoadGame();
+        InitDatabase();
         GenerateLevelSpots();
 
         LoadLevelChooseList();
@@ -129,7 +121,7 @@ public class GameManager : MonoBehaviour
 
         if (loadingScreen.activeSelf)
         {
-            loadingBarMask.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, highestLoadedLevel / (float)levels.Count * loadingBarStartingWidth);
+            loadingBarMask.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, highestLoadedLevel / (float)numLevels * loadingBarStartingWidth);
         }
     }
 
@@ -141,10 +133,40 @@ public class GameManager : MonoBehaviour
         Debug.Log($"filepath={filepath}");
         conn = "URI=file:" + filepath;
 
-        CreateTable();
+        numLevels = SetNumLevels();
+
+        //CreateLevelTable();
     }
 
-    private void CreateTable()
+    private int SetNumLevels()
+    {
+        using (dbconn = new SqliteConnection(conn))
+        {
+            string text = "Not Found";
+
+            dbconn.Open();
+            dbcmd = dbconn.CreateCommand();
+            sqlQuery = "SELECT COUNT(*) FROM [levels]";
+            dbcmd.CommandText = sqlQuery;
+            dbreader = dbcmd.ExecuteReader();
+            if (dbreader.Read())
+            {
+                text = dbreader.GetString(0);
+            }
+            else
+            {
+                Debug.Log("QueryString - nothing to read...");
+            }
+
+            dbconn.Close();
+
+            Debug.Log(text);
+
+            return Int32.Parse(text);
+        }
+    }
+
+    private void CreateLevelTable()
     {
         using (dbconn = new SqliteConnection(conn))
         {
@@ -152,7 +174,8 @@ public class GameManager : MonoBehaviour
             dbcmd = dbconn.CreateCommand();
             sqlQuery = "CREATE TABLE IF NOT EXISTS [levels] (" +
                        "[level_index] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                       "[level] VARCHAR(255) NOT NULL)";
+                       "[level] VARCHAR(255) NOT NULL" + 
+                       "[completed] BOOLEAN NOT NULL DEFAULT 0)";
             dbcmd.CommandText = sqlQuery;
             dbcmd.ExecuteScalar();
             dbconn.Close();
@@ -198,7 +221,7 @@ public class GameManager : MonoBehaviour
         dbreader = dbcmd.ExecuteReader();
 		if (dbreader.Read())
             {
-                text = dbreader.GetString(0); // Assuming you're retrieving the first column (id)
+                text = dbreader.GetString(0);
             }
             else
             {
@@ -220,214 +243,124 @@ public class GameManager : MonoBehaviour
         return level;
     }
 
+    private bool ReadIsCompleted(int index)
+    {
+        string text = "Not Found";
+        dbconn = new SqliteConnection(conn);
+        dbconn.Open();
+
+        string sqlQuery = "SELECT [completed] FROM [levels] WHERE [level_index] = @level_index";
+        dbcmd = dbconn.CreateCommand();
+        dbcmd.CommandText = sqlQuery;
+
+        dbcmd.Parameters.Add(new SqliteParameter("@level_index", index.ToString()));
+
+        dbreader = dbcmd.ExecuteReader();
+		if (dbreader.Read())
+            {
+                text = dbreader.GetString(0); // Assuming you're retrieving the first column (id)
+            }
+            else
+            {
+                Debug.Log("QueryString - nothing to read...");
+            }
+		dbreader.Close();
+		dbconn.Close();
+
+        return  Convert.ToBoolean(Int32.Parse(text));
+    }
+
     #endregion
 
     #region Initialize Game
-    public void AddToDatabase(int index) // add a new level to the saved string
-    {
-        string level = "";
 
-        for (int i = 0; i < levels[index].Count; ++i)
-        {
-            string tube = "";
+    // public void LoadCompleted() // this loads the completed levels of the player
+    // {
+    //     if (PlayerPrefs.HasKey("SavedString"))
+    //     {
+    //         completedSaveLevels = PlayerPrefs.GetString("SavedString");
+    //     }
 
-            for (int ii = 0; ii < levels[index][i].Count; ++ii)
-            {
-                string ball = levels[index][i][ii].ToString();
+    //     completedLevels = new List<int>();
+    //     string set = "";
 
-                if (ii == levels[index][i].Count - 1) { tube += ball; }
-                else { tube = tube + ball + ","; }
-            }
+    //     if (completedSaveLevels.Length > 0)
+    //     {
+    //         for (int i = 0; i < completedSaveLevels.Length; ++i)
+    //         {
+    //             if (completedSaveLevels[i] != ',')
+    //             {
+    //                 set += completedSaveLevels[i];
+    //             }
+    //             else
+    //             {
+    //                 int add = Convert.ToInt32(set);
+    //                 completedLevels.Add(add);
 
-            if (i == levels[index].Count - 1) { level += tube; }
-            else { level = level + tube + ":"; }
-        }
+    //                 set = "";
+    //             }
 
-        level += "-";
+    //         }
+    //     }
 
-        savedLevels += level;
-    }
+    //     for (int spot = 0; spot < levelButtonSpots.Count; ++spot)
+    //     {
+    //         for (int level = 0; level < levelButtonSpots[spot].levelSpots.Count; level++)
+    //         {
+    //             if (completedLevels.Contains(levelButtonSpots[spot].GetLevelNumber(level)))
+    //             {
+    //                 levelButtonSpots[spot].SetLevel(level, true);
+    //             }
+    //         }
+    //     }
+    // }
 
-    public void LoadCompleted() // this loads the completed levels of the player
-    {
-        if (PlayerPrefs.HasKey("SavedString"))
-        {
-            completedSaveLevels = PlayerPrefs.GetString("SavedString");
-        }
+    // public void UpdateCompleted() // this updates the completed levels of the player then saves them
+    // {
+    //     string newCompleted = "";
 
-        completedLevels = new List<int>();
-        string set = "";
+    //     for (int spot = 0; spot < levelButtonSpots.Count; ++spot)
+    //     {
+    //         for (int level = 0; level < levelButtonSpots[spot].levelSpots.Count; level++)
+    //         {
+    //             if (levelButtonSpots[spot].GetLevel(level))
+    //             {
+    //                 int value = levelButtonSpots[spot].GetLevelNumber(level);
+    //                 newCompleted += value + ",";
+    //                 if (!completedLevels.Contains(value))
+    //                 {
+    //                     completedLevels.Add(value - 1);
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        if (completedSaveLevels.Length > 0)
-        {
-            for (int i = 0; i < completedSaveLevels.Length; ++i)
-            {
-                if (completedSaveLevels[i] != ',')
-                {
-                    set += completedSaveLevels[i];
-                }
-                else
-                {
-                    int add = Convert.ToInt32(set);
-                    completedLevels.Add(add);
-
-                    set = "";
-                }
-
-            }
-        }
-
-        for (int spot = 0; spot < levelButtonSpots.Count; ++spot)
-        {
-            for (int level = 0; level < levelButtonSpots[spot].levelSpots.Count; level++)
-            {
-                if (completedLevels.Contains(levelButtonSpots[spot].GetLevelNumber(level)))
-                {
-                    levelButtonSpots[spot].SetLevel(level, true);
-                }
-            }
-        }
-    }
-
-    public void UpdateCompleted() // this updates the completed levels of the player then saves them
-    {
-        string newCompleted = "";
-
-        for (int spot = 0; spot < levelButtonSpots.Count; ++spot)
-        {
-            for (int level = 0; level < levelButtonSpots[spot].levelSpots.Count; level++)
-            {
-                if (levelButtonSpots[spot].GetLevel(level))
-                {
-                    int value = levelButtonSpots[spot].GetLevelNumber(level);
-                    newCompleted += value + ",";
-                    if (!completedLevels.Contains(value))
-                    {
-                        completedLevels.Add(value - 1);
-                    }
-                }
-            }
-        }
-
-        completedSaveLevels = newCompleted;
-        SaveCompleted();
-    }
-    public void SaveCompleted()
-    {
-        PlayerPrefs.SetString("SavedString", completedSaveLevels);
-    }
+    //     completedSaveLevels = newCompleted;
+    //     SaveCompleted();
+    // }
+    // public void SaveCompleted()
+    // {
+    //     PlayerPrefs.SetString("SavedString", completedSaveLevels);
+    // }
 
     public int GetNumberOfCompletedLevels()
     {
         return completedLevels.Count;
-    } 
-
-    public void LoadGame() // load all the levels from a string to their list versions
-    {
-        DateTime time = DateTime.Now;
-        string ball = "";
-
-        int loadBall = 0;
-        List<int> loadTube = new List<int>();
-        List<List<int>> loadLevel = new List<List<int>>();
-
-        string level = "";
-
-        InitDatabase();
-
-        // 1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12:1,2,3,4:5,6,7,8:9,10,11,12-    one level
-
-        // 0001001000110100
-
-        if (savedLevels.Length > 0)
-        {
-            for (int index = 0; index < savedLevels.Length; index++)
-            {
-                level += savedLevels[index];
-
-                if (savedLevels[index] != '-')
-                {
-                    if (savedLevels[index] != ':')
-                    {
-                        if (savedLevels[index] != ',') // add to ball
-                        {
-                            ball = ball + savedLevels[index];
-                        }
-                        else if (savedLevels[index] == ',') // finish ball
-                        {
-                            int newBall = Convert.ToInt32(ball);
-                            ball = "";
-
-                            loadTube.Add(newBall);
-
-                        }
-                    }
-                    else if (savedLevels[index] == ':') // finish tube
-                    {
-                        if (ball != "")
-                        {
-                            int newBall = Convert.ToInt32(ball);
-                            ball = "";
-
-                            loadTube.Add(newBall);
-                        }
-
-                        List<int> newTube = loadTube;
-
-                        loadLevel.Add(newTube);
-
-                        loadTube = new List<int>();
-                    }
-                }
-                else if (savedLevels[index] == '-')
-                {
-                    if (loadTube.Count > 0)
-                    {
-                        if (ball != "")
-                        {
-                            loadBall = Convert.ToInt32(ball);
-                            ball = "";
-                            int newBall = loadBall;
-
-                            loadTube.Add(newBall);
-                        }
-
-                        List<int> newTube = loadTube;
-
-                        loadLevel.Add(newTube);
-
-                        loadTube = new List<int>();
-                    }
-
-                    if (loadLevel.Count > 0)
-                    {
-                        List<List<int>> newLevel = new List<List<int>>(loadLevel);
-                        //InsertLevel(newLevel);
-                        levels.Add(newLevel);
-
-                        loadLevel = new List<List<int>>();
-
-                        level = "";
-                    }
-                }
-            }
-        }
-
-        Debug.Log((DateTime.Now - time).TotalMilliseconds);
-    }
-    public string GetLevels() // open the text file containing the string of levels
-    {
-        return levelsFile.text;
     }
 
     public int GetNumberOfLevels()
     {
-        return levels.Count;
+        return numLevels;
     }
 
     public List<List<int>> GetLevel(int levelNumber)
     {
         return ReadLevel(levelNumber);
+    }
+
+    public bool GetIsCompleted(int levelNumber)
+    {
+        return ReadIsCompleted(levelNumber);
     }
     #endregion
 
@@ -460,23 +393,14 @@ public class GameManager : MonoBehaviour
             List<List<int>> newLevel = GenerateLevel(i, tubeCount - 2);
             if (newLevel != null)
             {
-                AddToDatabase(levels.Count - 1);
-                WriteLevels("Assets/Resources/Levels.txt");
+                //AddToDatabase(levels.Count - 1);
+                //WriteLevels("Assets/Resources/Levels.txt");
             }
             else
             {
                 Debug.LogError("had full tube or was not solvable");
             }
         }
-    }
-
-    public void WriteLevels(string path) // save the string of levels to a text file
-    {
-        StreamWriter writer = new(path);
-
-        writer.WriteLine(savedLevels);
-
-        writer.Close();
     }
 
     List<int> FindPossibleChoices(int tubeCount) // find the possible ball options for generating a level
@@ -561,53 +485,14 @@ public class GameManager : MonoBehaviour
 
     private void GenerateLevelSpots()
     {        
-        levelButtonSpots = new List<LevelSpot>();
+        levelButtons = new List<LevelButton>();
         int levelsPerPage = pageLevelLayout.x * pageLevelLayout.y;
 
         for (int current = 0; current < levelsPerPage; current++)
         {
-            GameObject newSpot = Instantiate(spotPrefab, levelSpotContainer);
+            GameObject newSpot = Instantiate(levelButtonPrefab, levelButtonContainer);
 
-            levelButtonSpots.Add(newSpot.GetComponent<LevelSpot>());
-        }
-    }
-
-    private IEnumerator LoadLevelSpot(int index)
-    {
-        int levelsPerPage = pageLevelLayout.x * pageLevelLayout.y;
-
-        for (int current = 0; current < numberOfPages; current++)
-        {
-            int currentLevel = current * levelsPerPage + index + 1;
-            if (currentLevel <= levels.Count)
-            {
-                LevelSpot currentSpot = levelButtonSpots[index];
-
-                GameObject newButton = Instantiate(levelButtonPrefab, currentSpot.gameObject.transform);
-                newButton.transform.localScale = Vector3.one;
-
-                currentSpot.AddNewLevel(newButton, currentLevel);
-
-                highestLoadedLevel++;
-            }
-
-            if (currentLevel == levels.Count)
-            {
-                StopAllCoroutines();
-                loadingScreen.SetActive(false);
-                Debug.Log((DateTime.Now - time).TotalMilliseconds);
-
-                MenuManager.instance.OnClickStartGame();
-                LoadCompleted();
-                PageFarRight();
-
-                StopAllCoroutines();
-            }
-
-            if (current % 5 == 0)
-            {
-                yield return null;
-            }
+            levelButtons.Add(newSpot.GetComponent<LevelButton>());
         }
     }
 
@@ -615,16 +500,21 @@ public class GameManager : MonoBehaviour
     {
         int levelsPerPage = pageLevelLayout.x * pageLevelLayout.y;
 
-        numberOfPages = levels.Count / levelsPerPage;
+        numberOfPages = numLevels / levelsPerPage;
 
-        if (levels.Count % levelsPerPage != 0)
+        if (numLevels % levelsPerPage != 0)
         {
             numberOfPages++;
         }
 
+        for (int i = 1; i <= numLevels; i++)
+        {
+            levelButtons[(i-1) % levelsPerPage].AddNewLevel(i, GetIsCompleted(i));
+        }
+
         for (int index = 0; index < levelsPerPage; index++)
         {
-            StartCoroutine(LoadLevelSpot(index));
+            //StartCoroutine(LoadLevelSpot(index));
         }
     }
 
@@ -679,9 +569,9 @@ public class GameManager : MonoBehaviour
 
         pageNumberText.text = (currentPage + 1).ToString();
 
-        for (int spotIndex = 0; spotIndex < levelButtonSpots.Count; spotIndex++)
+        for (int spotIndex = 0; spotIndex < levelButtons.Count; spotIndex++)
         {
-            levelButtonSpots[spotIndex].SetPage(currentPage);
+            levelButtons[spotIndex].SetPage(currentPage);
         }
 
         if (currentPage > 2)
@@ -696,7 +586,7 @@ public class GameManager : MonoBehaviour
         if (pageRequirementBox.activeSelf)
         {
             int levelsPerPage = pageLevelLayout.x * pageLevelLayout.y;
-            pageRequirementText.text = "Complete levels " + levelButtonSpots[0].GetLevelNumber(currentPage) + "-" + (levelButtonSpots[0].GetLevelNumber(currentPage) + levelsPerPage - 1) + " to unlock";
+            pageRequirementText.text = "Complete levels " + levelButtons[0].GetLevelNumber() + "-" + (levelButtons[0].GetLevelNumber() + levelsPerPage - 1) + " to unlock";
         }
     }
 
@@ -713,7 +603,7 @@ public class GameManager : MonoBehaviour
             pageButtons[farLeftIndex].interactable = true;
         }
 
-        if (currentPage == levelButtonSpots[0].levelSpots.Count - 1)
+        if (currentPage == numberOfPages - 1)
         {
             pageButtons[rightIndex].interactable = false;
             pageButtons[farRightIndex].interactable = false;
@@ -728,9 +618,9 @@ public class GameManager : MonoBehaviour
     private bool CheckRequirement(int page)
     {
         if (page == 0 || page >= numberOfPages) return false;
-        for (int i = 0; i < levelButtonSpots.Count; ++i)
+        for (int i = 0; i < levelButtons.Count; ++i)
         {
-            if (!levelButtonSpots[i].GetLevel(page - 1))
+            if (!levelButtons[i].isCompletedAtPage(page - 1))
             {
                 return true;
             }
@@ -758,10 +648,10 @@ public class GameManager : MonoBehaviour
             {
                 for (int index = 0; index < LPP; index++)
                 {
-                    if (!levelButtonSpots[index].GetLevel(currentPage))
+                    if (!levelButtons[index].isCompletedAtPage(currentPage))
                     {
-                        LevelManager.instance.OnClickLoadLevel(levelButtonSpots[index].GetLevelNumber(currentPage) - 1);
-                        currentPage = (levelButtonSpots[index].GetLevelNumber(currentPage) - 1) / LPP;
+                        LevelManager.instance.OnClickLoadLevel(levelButtons[index].GetLevelNumber() - 1);
+                        currentPage = (levelButtons[index].GetLevelNumber() - 1) / LPP;
                         UpdateListPage();
                         return true;
                     }
@@ -785,12 +675,12 @@ public class GameManager : MonoBehaviour
         {
             int currentCheck = lastLevelBeat;
 
-            while (currentCheck < levels.Count)
+            while (currentCheck < numLevels)
             {
                 position = currentCheck % LPP;
 
                 if (NextLevel(position, LPP)) return;
-                if (!levelButtonSpots[position].GetLevel(currentCheck / LPP))
+                if (!levelButtons[position].isCompletedAtPage(currentCheck / LPP))
                 {
                     LevelManager.instance.OnClickLoadLevel(currentCheck);
                     return;
@@ -815,13 +705,13 @@ public class GameManager : MonoBehaviour
         int pageNumber = levelIndex / LPP;
         int number = levelIndex % LPP;
 
-        if (levelButtonSpots[number].GetLevel(pageNumber))
+        if (levelButtons[number].isCompletedAtPage(pageNumber))
         {
             return false;
         }
 
         LevelManager.instance.AddCoins(coinIncrement);
-        levelButtonSpots[number].SetLevel(pageNumber, true);
+        //levelButtonSpots[number].SetLevel(pageNumber, true);
         return true;
     }
 
@@ -860,10 +750,10 @@ public class GameManager : MonoBehaviour
                 
             }
 
-            UpdateCompleted();
+            //UpdateCompleted();
 
 
-            if (lastLevelBeat >= levels.Count - 1)
+            if (lastLevelBeat >= numLevels - 1)
             {
                 winNextButton.interactable = false;
                 winCoinText.text = "You've Won the Game!\n+" + coinIncrement.ToString() + " Coins";

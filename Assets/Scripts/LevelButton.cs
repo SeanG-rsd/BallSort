@@ -6,9 +6,12 @@ using UnityEngine.UI;
 
 public class LevelButton : MonoBehaviour
 {
-    public int levelNumber;
+    private int currentPage = 0;
+    public int currentLevel;
     [SerializeField] private Image image;
-    public bool isCompleted;
+
+    List<int> levelNumbers = new();
+    List<bool> isCompleted = new();
 
     [SerializeField] private Color completedColor;
     [SerializeField] private Color normalColor;
@@ -17,26 +20,39 @@ public class LevelButton : MonoBehaviour
 
     [SerializeField] private Button button;
 
-    public void Initialize(int index)
+    public void AddNewLevel(int index, bool isCompleted)
     {
-        levelNumber = index;
-        levelNumberText.text = index.ToString();
-        button.onClick.AddListener(delegate { LevelManager.instance.OnClickLoadLevel(index - 1); });
+        levelNumbers.Add(index);
+        this.isCompleted.Add(isCompleted);
+    }
+
+    public void SetPage(int newPage)
+    {
+        currentPage = newPage;
+        currentLevel = levelNumbers[currentPage];
+        UpdateSelf();
+        levelNumberText.text = currentLevel.ToString();
+        button.onClick.AddListener(delegate { LevelManager.instance.OnClickLoadLevel(currentLevel); });
     }
 
     public int GetLevelNumber()
     {
-        return levelNumber;
+        return currentLevel;
     }
 
-    public void SetColor(bool isCompleted)
+    public bool isCompletedAtPage(int page)
     {
-        this.isCompleted = isCompleted;
+        return isCompleted[page];
+    }
+
+    public void SetColor(bool completed)
+    {
+        this.isCompleted[currentPage] = completed;
         UpdateSelf();
     }
 
     public void UpdateSelf()
     {
-        image.color = isCompleted ? completedColor : normalColor;
+        image.color = isCompleted[currentPage] ? completedColor : normalColor;
     }
 }
