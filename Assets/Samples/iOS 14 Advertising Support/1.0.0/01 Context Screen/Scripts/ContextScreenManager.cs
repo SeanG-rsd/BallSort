@@ -17,6 +17,8 @@ namespace Unity.Advertisement.IosSupport.Samples
         /// </summary>
         public ContextScreenView contextScreenPrefab;
 
+        private ContextScreenView contextScreen;
+
         void Start()
         {
 #if UNITY_IOS
@@ -25,7 +27,7 @@ namespace Unity.Advertisement.IosSupport.Samples
 
             if (status == ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED)
             {
-                var contextScreen = Instantiate(contextScreenPrefab).GetComponent<ContextScreenView>();
+                contextScreen = Instantiate(contextScreenPrefab).GetComponent<ContextScreenView>();
 
                 // after the Continue button is pressed, and the tracking request
                 // has been sent, automatically destroy the popup to conserve memory
@@ -36,12 +38,12 @@ namespace Unity.Advertisement.IosSupport.Samples
 #else
             Debug.Log("Unity iOS Support: App Tracking Transparency status not checked, because the platform is not iOS.");
 #endif
-            StartCoroutine(LoadNextScene());
+            StartCoroutine(LoadGame());
         }
 
-        private IEnumerator LoadNextScene()
+        private IEnumerator LoadGame()
         {
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR
             var status = ATTrackingStatusBinding.GetAuthorizationTrackingStatus();
 
             while (status == ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED)
@@ -51,7 +53,10 @@ namespace Unity.Advertisement.IosSupport.Samples
                 yield return null;
             }
 #endif
-            SceneManager.LoadScene("MainScene");
+            if (contextScreen != null) 
+            {
+                Destroy(contextScreen.gameObject);
+            }
             yield return null;
         }
     }   

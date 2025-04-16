@@ -141,7 +141,7 @@ public class LevelManager : MonoBehaviour
         OnLoadLevel?.Invoke();
         //Debug.Log("load level : " + levelNumber);
         lastLevelLoaded = levelNumber;
-        levelNumberText.text = "Level " + (levelNumber + 1).ToString();
+        levelNumberText.text = "Level " + levelNumber.ToString();
 
 #if ENABLE_CLOUD_SERVICES_ANALYTICS
         Debug.Log("levelStart");

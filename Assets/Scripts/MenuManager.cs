@@ -11,7 +11,7 @@ public class MenuManager : MonoBehaviour
 
     [Header("---Menu---")]
     [SerializeField] private GameObject[] screens;
-    [SerializeField] private int levelScreenIndex, gameScreenIndex, settingsScreenIndex, howToPlayScreenIndex, winScreenIndex, tutorialScreenIndex, loadingScreenIndex;
+    public int levelScreenIndex, gameScreenIndex, settingsScreenIndex, howToPlayScreenIndex, winScreenIndex, tutorialScreenIndex, loadingScreenIndex;
 
     [Header("---Mode---")]
     [SerializeField] private GameObject modeButton;
@@ -138,13 +138,12 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene("Tutorial");
     }
 
-    private void OpenMenuNumber(int number)
+    public void OpenMenuNumber(int number)
     {
         for (int index = 0; index < screens.Length; index++)
         {
             if (index == number)
             {
-                //Debug.Log(number);
                 screens[number].SetActive(true);
             }
             else

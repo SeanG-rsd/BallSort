@@ -1051,6 +1051,7 @@ RectTransform:
   - {fileID: 1099955320}
   - {fileID: 1302060508}
   - {fileID: 1840039390}
+  - {fileID: 1183667479}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4356,7 +4357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   consumePurchase: 1
-  dontDestroyOnLoad: 1
+  dontDestroyOnLoad: 0
   onProductsFetched:
     m_PersistentCalls:
       m_Calls: []
@@ -4400,7 +4401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _androidAdUnitId: Interstitial_Android
   _iOsAdUnitId: Interstitial_iOS
-  winsBeforeAd: 0
+  winsBeforeAd: 4
   currentWinsLeft: 0
 --- !u!114 &430885101
 MonoBehaviour:
@@ -6295,7 +6296,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c718c2be29c59a45a8bc7a0444eebe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tubePrefab: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
+  tubePrefab: {fileID: 2464811151788143200, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
   tubeContainer: {fileID: 149259737}
   coins: 0
   levelNumberText: {fileID: 1792906168}
@@ -10178,6 +10179,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182734962}
   m_CullTransparentMesh: 1
+--- !u!1 &1183667478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1183667479}
+  - component: {fileID: 1183667480}
+  m_Layer: 7
+  m_Name: ContextScreen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1183667479
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1183667478}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 135091203}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1183667480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1183667478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f0c6ccc637064b31981616bfc724dcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contextScreenPrefab: {fileID: 114597661633457500, guid: fa79c615e83e14e2fbc0f083dee317e0, type: 3}
 --- !u!1 &1185752096
 GameObject:
   m_ObjectHideFlags: 0
