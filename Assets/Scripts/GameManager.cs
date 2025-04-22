@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,10 +8,9 @@ using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using Unity.Services.Analytics;
 using Mono.Data.SqliteClient;
-using System.IO;
-using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
@@ -74,12 +72,11 @@ public class GameManager : MonoBehaviour
     IDbConnection dbconn;
     IDbCommand dbcmd;
     IDataReader dbreader;  // not used in this example
-    string DATABASE_NAME = "/levels_database.s3db";
 
-    private async Task Awake()
+    private void Awake()
     {
         loadingBarStartingWidth = loadingBarMask.rect.width;
-        await StartLoadingGame();
+        StartLoadingGame();
         LevelManager.OnBeatLevel += HandleBeatLevel;
 
         if (instance == null)
@@ -100,7 +97,7 @@ public class GameManager : MonoBehaviour
     DateTime time = DateTime.Now;
 
 
-    private async Task StartLoadingGame()
+    private async void StartLoadingGame()
     {
         //loadingScreen.SetActive(true);
 
@@ -156,9 +153,24 @@ public class GameManager : MonoBehaviour
 
     private void InitDatabase()
     {
-        string filepath = Application.dataPath + DATABASE_NAME;
-        Debug.Log($"filepath={filepath}");
-        conn = "URI=file:" + filepath;
+        string DATABASE_NAME = "/levels_database.s3db";
+
+        string sourcePath = Application.streamingAssetsPath + DATABASE_NAME;
+        string targetPath = Application.persistentDataPath + DATABASE_NAME;
+
+        Debug.Log($"[Database] Source Path: {sourcePath}");
+        Debug.Log($"[Database] Target Path: {targetPath}");
+
+        Debug.Log("streamingAssetsPath = " + Application.streamingAssetsPath);
+        Debug.Log("persistentDataPath = " + Application.persistentDataPath);
+
+        if (!File.Exists(targetPath))
+        {
+            File.Copy(sourcePath, targetPath);
+        }
+
+        Debug.Log($"filepath={targetPath}");
+        conn = "URI=file:" + targetPath;
 
         numLevels = SetNumLevels();
 
@@ -186,8 +198,6 @@ public class GameManager : MonoBehaviour
             }
 
             dbconn.Close();
-
-            Debug.Log(text);
 
             return Int32.Parse(text);
         }
@@ -230,7 +240,6 @@ public class GameManager : MonoBehaviour
             dbcmd.ExecuteNonQuery();
             dbconn.Close();
         }
-        Debug.Log("level");
     }
 
     private List<List<int>> ReadLevel(int index)
@@ -238,7 +247,6 @@ public class GameManager : MonoBehaviour
         string text = "Not Found";
         dbconn = new SqliteConnection(conn);
         dbconn.Open();
-        Debug.Log(index);
 
         string sqlQuery = "SELECT [level] FROM [levels] WHERE [level_index] = @level_index";
         dbcmd = dbconn.CreateCommand();
@@ -295,8 +303,6 @@ public class GameManager : MonoBehaviour
         dbreader.Close();
         dbconn.Close();
 
-        Debug.Log(completed);
-
         return completed == 1;
     }
 
@@ -311,7 +317,6 @@ public class GameManager : MonoBehaviour
 
         dbcmd.Parameters.Add(new SqliteParameter("@level_index", index.ToString()));
         int rows = dbcmd.ExecuteNonQuery();
-        Debug.Log("Rows updated: " + rows);
     }
 
     #endregion
@@ -462,7 +467,6 @@ public class GameManager : MonoBehaviour
 
                 if (CompletedTube(newTube))
                 {
-                    Debug.Log("error");
                     GenerateLevel(index, tubeCount);
                     return null;
                 }
@@ -475,7 +479,6 @@ public class GameManager : MonoBehaviour
 
                 if (!output)
                 {
-                    Debug.Log("no solution");
                     GenerateLevel(index, tubeCount);
                 }
 
@@ -560,11 +563,8 @@ public class GameManager : MonoBehaviour
 
         while (!CheckRequirement(currentCheck))
         {
-            Debug.Log("time");
             currentCheck++;
         }
-
-        Debug.Log(currentCheck);
         currentPage = currentCheck - 1;
 
         UpdateListPage();
@@ -709,7 +709,6 @@ public class GameManager : MonoBehaviour
 
     private bool BeatLevel(int levelIndex)
     {
-        Debug.Log("Beat level: " + levelIndex);
         int LPP = pageLevelLayout.x * pageLevelLayout.y;
 
         int pageNumber = levelIndex / LPP;
@@ -793,7 +792,6 @@ public class GameManager : MonoBehaviour
 
     private void HandleBeatLevel(int levelIndex, bool isChallenge)
     {
-        Debug.Log(levelIndex);
         lastLevelBeat = levelIndex;
         this.isChallenge = isChallenge;
 

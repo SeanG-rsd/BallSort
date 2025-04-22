@@ -9,7 +9,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     [SerializeField] string _iOsAdUnitId = "Interstitial_iOS";
     string _adUnitId;
 
-    public int winsBeforeAd = 1;
+    public int winsBeforeAd = 4;
 
     public int currentWinsLeft;
 
