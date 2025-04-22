@@ -107,9 +107,10 @@ public class GameManager : MonoBehaviour
         LoadLevelChooseList();
 
         MenuManager.instance.OpenMenuNumber(MenuManager.instance.levelScreenIndex);
-        PageRight();
 
         await LoadUnityGamingServices();
+
+        PageFarRight();
     }
     async Task LoadUnityGamingServices()
     {
@@ -158,16 +159,24 @@ public class GameManager : MonoBehaviour
         string sourcePath = Application.streamingAssetsPath + DATABASE_NAME;
         string targetPath = Application.persistentDataPath + DATABASE_NAME;
 
-        Debug.Log($"[Database] Source Path: {sourcePath}");
-        Debug.Log($"[Database] Target Path: {targetPath}");
+#if UNITY_ANDROID
+            UnityWebRequest www = UnityWebRequest.Get(sourcePath);
+            yield return www.SendWebRequest();
 
-        Debug.Log("streamingAssetsPath = " + Application.streamingAssetsPath);
-        Debug.Log("persistentDataPath = " + Application.persistentDataPath);
-
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                File.WriteAllBytes(targetPath, www.downloadHandler.data);
+            }
+            else
+            {
+                Debug.LogError("Failed to load DB from StreamingAssets: " + www.error);
+            }
+#else
         if (!File.Exists(targetPath))
         {
             File.Copy(sourcePath, targetPath);
         }
+#endif
 
         Debug.Log($"filepath={targetPath}");
         conn = "URI=file:" + targetPath;
@@ -317,6 +326,27 @@ public class GameManager : MonoBehaviour
 
         dbcmd.Parameters.Add(new SqliteParameter("@level_index", index.ToString()));
         int rows = dbcmd.ExecuteNonQuery();
+    }
+
+    #endregion
+
+    #region Dev Options
+
+    [SerializeField] private TMP_InputField DEV_LEVEL_INPUT;
+    [SerializeField] private TMP_InputField DEV_PASSWORD_INPUT;
+
+    public void DEV_COMPLETE_LEVELS() {
+        if (DEV_PASSWORD_INPUT.text == "NutronLabs") {
+            PageFarLeft();
+            for (int i = 1; i <= Int32.Parse(DEV_LEVEL_INPUT.text); i++) {
+                BeatLevel(i);
+                if (i % 60 == 0) PageRight();
+            }
+        }
+    }
+
+    public void DEV_TOGGLE_TAB(GameObject tab) {
+        tab.SetActive(!tab.activeSelf);
     }
 
     #endregion
@@ -676,7 +706,7 @@ public class GameManager : MonoBehaviour
         int LPP = pageLevelLayout.x * pageLevelLayout.y;
         lastLevelBeat++;
 
-        int position = lastLevelBeat % LPP;
+        int position = (lastLevelBeat - 1) % LPP;
         MenuManager.instance.ToggleWinScreen(false);
 
         if (NextLevel(position, LPP)) return;
@@ -686,7 +716,7 @@ public class GameManager : MonoBehaviour
 
             while (currentCheck < numLevels)
             {
-                position = currentCheck % LPP;
+                position = (currentCheck - 1) % LPP;
 
                 if (NextLevel(position, LPP)) return;
                 if (!levelButtons[position].isCompletedAtPage(currentCheck / LPP))
@@ -711,17 +741,17 @@ public class GameManager : MonoBehaviour
     {
         int LPP = pageLevelLayout.x * pageLevelLayout.y;
 
-        int pageNumber = levelIndex / LPP;
-        int number = levelIndex % LPP;
+        int pageNumber = (levelIndex - 1) / LPP;
+        int number = (levelIndex - 1) % LPP;
 
-        if (levelButtons[number - 1].isCompletedAtPage(pageNumber))
+        if (levelButtons[number].isCompletedAtPage(pageNumber))
         {
             return false;
         }
 
         LevelManager.instance.AddCoins(coinIncrement);
         CompleteLevel(levelIndex);
-        levelButtons[number - 1].SetColor(true);
+        levelButtons[number].SetColor(true);
         return true;
     }
 
