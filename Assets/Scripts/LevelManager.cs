@@ -139,6 +139,7 @@ public class LevelManager : MonoBehaviour
 
     public void OnClickLoadLevel(int levelNumber)
     {
+        Debug.Log("load level: " + levelNumber);
         OnLoadLevel?.Invoke();
         lastLevelLoaded = levelNumber;
         levelNumberText.text = "Level " + levelNumber.ToString();

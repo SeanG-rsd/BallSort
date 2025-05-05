@@ -553,11 +553,6 @@ public class GameManager : MonoBehaviour
         {
             levelButtons[(i - 1) % levelsPerPage].AddNewLevel(i, GetIsCompleted(i));
         }
-
-        for (int index = 0; index < levelsPerPage; index++)
-        {
-            //StartCoroutine(LoadLevelSpot(index));
-        }
     }
 
     #endregion
@@ -654,7 +649,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool CheckRequirement(int page)
+    private bool CheckRequirement(int page) // true if you can't go to the current page
     {
         if (page == 0 || page >= numberOfPages) return false;
         for (int i = 0; i < levelButtons.Count; ++i)
@@ -675,13 +670,14 @@ public class GameManager : MonoBehaviour
     private int lastLevelBeat;
     private bool isChallenge;
 
-    private bool NextLevel(int position, int LPP)
+    private void NextLevel(int position, int LPP)
     {
         if (position == 0) // look for levels in the page
         {
             if (!CheckRequirement(currentPage + 1))
             {
                 LevelManager.instance.OnClickLoadLevel(lastLevelBeat);
+                Debug.Log("HERE");
             }
             else
             {
@@ -689,16 +685,14 @@ public class GameManager : MonoBehaviour
                 {
                     if (!levelButtons[index].isCompletedAtPage(currentPage))
                     {
-                        LevelManager.instance.OnClickLoadLevel(levelButtons[index].GetLevelNumber() - 1);
-                        currentPage = (levelButtons[index].GetLevelNumber() - 1) / LPP;
+                        LevelManager.instance.OnClickLoadLevel(levelButtons[index].GetLevelNumber());
+                        currentPage = levelButtons[index].GetLevelNumber() / LPP;
                         UpdateListPage();
-                        return true;
+                        Debug.Log("also here");
                     }
                 }
             }
         }
-
-        return false;
     }
 
     public void WinNext()
@@ -706,29 +700,14 @@ public class GameManager : MonoBehaviour
         int LPP = pageLevelLayout.x * pageLevelLayout.y;
         lastLevelBeat++;
 
+        Debug.Log(lastLevelBeat);
+
         int position = (lastLevelBeat - 1) % LPP;
         MenuManager.instance.ToggleWinScreen(false);
 
-        if (NextLevel(position, LPP)) return;
-        else
-        {
-            int currentCheck = lastLevelBeat;
+        PageFarRight();
 
-            while (currentCheck < numLevels)
-            {
-                position = (currentCheck - 1) % LPP;
-
-                if (NextLevel(position, LPP)) return;
-                if (!levelButtons[position].isCompletedAtPage(currentCheck / LPP))
-                {
-                    LevelManager.instance.OnClickLoadLevel(currentCheck);
-                    return;
-                }
-
-
-                currentCheck++;
-            }
-        }
+        NextLevel(position, LPP);
     }
 
     public void WinLevels()
