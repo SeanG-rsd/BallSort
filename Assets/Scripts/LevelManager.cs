@@ -6,6 +6,8 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System;
 using Unity.Burst;
+using BallSortSolver;
+
 
 #if ENABLE_CLOUD_SERVICES_ANALYTICS
 using Unity.Services.Analytics;
@@ -239,7 +241,14 @@ public class LevelManager : MonoBehaviour
 
     private void ConfirmHint()
     {
-        List<Move> movesToSolve = levelSolver.SolveFromCurrent(tubeObjects);
+        List<Move> movesToSolve = new List<Move>();
+        List<SolverMove> moves = levelSolver.SolveFromCurrent(tubeObjects);
+        for (int i = 1; i < 4 && i < moves.Count; i++)
+        {
+
+            movesToSolve.Add(new Move(moves[i].Source, moves[i].Target));
+        }
+
         coins -= hintCost;
 
         hintMoveQueue.Clear();
@@ -365,6 +374,7 @@ public class LevelManager : MonoBehaviour
     private void MoveBalls(GameObject tubeObject)
     {
         Tube currentTube = tubeObject.GetComponent<Tube>();
+        Debug.Log("move balls");
 
         if (!currentTube.corked)
         {

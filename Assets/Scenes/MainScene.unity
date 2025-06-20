@@ -6715,7 +6715,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c718c2be29c59a45a8bc7a0444eebe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tubePrefab: {fileID: 2464811151788143200, guid: ac8e93de20396fa4fa8cd33817b10204, type: 3}
+  tubePrefab: {fileID: 2464811151788143200, guid: 0a2cfa06c6ad1b3438aef4c0f8a0fb0b, type: 3}
   tubeContainer: {fileID: 149259737}
   coins: 0
   levelNumberText: {fileID: 1792906168}
@@ -15582,6 +15582,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1864562662}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: GenerateLevelsButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1775043214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16407,6 +16419,7 @@ MonoBehaviour:
   pageLevelLayout: {x: 6, y: 10}
   levelButtonContainer: {fileID: 448789074}
   generateXLevels: 10
+  levelSolver: {fileID: 274316432}
   winScreen: {fileID: 1055464239}
   winNextButton: {fileID: 1254049889}
   confettiSpots:
@@ -16434,7 +16447,7 @@ MonoBehaviour:
   loadingBarMask: {fileID: 406307982}
   DEV_LEVEL_INPUT: {fileID: 1900217053}
   DEV_PASSWORD_INPUT: {fileID: 1075471663}
-  tubeCount: 0
+  tubeCount: 14
 --- !u!1 &1871454794
 GameObject:
   m_ObjectHideFlags: 0

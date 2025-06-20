@@ -11,6 +11,7 @@ using Mono.Data.SqliteClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
+using BallSortSolver;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform levelButtonContainer;
 
     [SerializeField] private int generateXLevels;
+
+    [SerializeField] private LevelSolver levelSolver;
 
     [Header("---Win---")]
     [SerializeField] private GameObject winScreen;
@@ -103,6 +106,8 @@ public class GameManager : MonoBehaviour
 
         InitDatabase();
         GenerateLevelSpots();
+
+        Debug.Log(numLevels);
 
         LoadLevelChooseList();
 
@@ -435,15 +440,8 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < generateXLevels; ++i)
         {
             List<List<int>> newLevel = GenerateLevel(i, tubeCount - 2);
-            if (newLevel != null)
-            {
-                //AddToDatabase(levels.Count - 1);
-                //WriteLevels("Assets/Resources/Levels.txt");
-            }
-            else
-            {
-                Debug.LogError("had full tube or was not solvable");
-            }
+            Debug.Log("made level");
+            InsertLevel(newLevel);
         }
     }
 
@@ -476,6 +474,8 @@ public class GameManager : MonoBehaviour
 
     List<List<int>> GenerateLevel(int index, int tubeCount) // generates a random new level then solves it
     {
+        Debug.Log("started making");
+
         ResetMaker(tubeCount);
 
         if (!FinishedMaking())
@@ -497,19 +497,18 @@ public class GameManager : MonoBehaviour
 
                 if (CompletedTube(newTube))
                 {
-                    GenerateLevel(index, tubeCount);
-                    return null;
+                    return GenerateLevel(index, tubeCount);
                 }
                 newLevel.Add(newTube);
             }
 
             if (FinishedMaking())
             {
-                bool output = true;// SolveList(newLevel, index);
+                bool output = levelSolver.SolveFromList(newLevel);
 
                 if (!output)
                 {
-                    GenerateLevel(index, tubeCount);
+                    return GenerateLevel(index, tubeCount);
                 }
 
                 return newLevel;

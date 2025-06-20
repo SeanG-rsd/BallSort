@@ -1,253 +1,103 @@
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
+using System.IO;
+
+using BallSortSolver;
+
 
 public class LevelSolver : MonoBehaviour
 {
-    List<Move> lastMoves;
-    List<List<int>> level;
 
-    private void Awake()
-    {
-        lastMoves = new List<Move>();
-    }
-
-    private void SolveLevel()
-    {
-
-        DateTime start = DateTime.Now;
-
-        Solve();
-    }
-
-    public List<Move> SolveFromCurrent(List<GameObject> tubes)
-    {
-        level = new List<List<int>>();
-        lastMoves.Clear();
-        for (int i = 0; i < tubes.Count; i++)
+    private Dictionary<string, char> ColorMap = new Dictionary<string, char>()
         {
-            Tube tube = tubes[i].GetComponent<Tube>();
-            level.Add(new List<int>() { tube.spots[1], tube.spots[2], tube.spots[3], tube.spots[4] });
-        }
-
-        SolveLevel();
-
-        return lastMoves;
-    }
-
-    public void SolveFromList(List<List<int>> level)
+            { "0", 'r' }, // red
+            { "1", 'b' }, // blue
+            { "2", 'w' }, // brown
+            { "3", 'y' }, // yellow
+            { "4", 'o' }, // orange
+            { "5", 'p' }, // purple
+            { "6", 'k' }, // pink
+            { "7", 'l' }, // light-blue
+            { "8", 'd' }, // dark-green
+            { "9", 'e' }, // grey
+            {"10", 'g' }, // green
+            {"11", 'a' }, // aqua
+        };
+    public List<SolverMove> SolveFromCurrent(List<GameObject> level)
     {
-        this.level = new List<List<int>>();
-        for (int i = 0; i < level.Count; i++)
+        var board = new SolverBoard(level.Count, 4, level.Count - 2);
+        var tubeIndex = 0;
+        foreach (var tube in level)
         {
-            this.level.Add(new List<int>() { level[i][0] + 1, level[i][1] + 1, level[i][2] + 1, level[i][3] + 1 });
-        }
-        this.level.Add(new List<int>() { 0, 0, 0, 0 });
-        this.level.Add(new List<int>() { 0, 0, 0, 0 });
-
-        SolveLevel();
-    }
-
-    private void PrintBoard()
-    {
-        for (int i = 0; i < level.Count; i++)
-        {
-            Debug.Log(string.Join(',', level[i]));
-        }
-    }
-
-    private void Solve()
-    {
-        List<Move> possibleMoves = GetPossibleMoves();
-
-        foreach (Move move in possibleMoves)
-        {
-            if (!lastMoves.Contains(move))
+            var tubeString = new StringBuilder();
+            for (int i = 1; i < 5; i++)
             {
-                MakeMove(move);
-                lastMoves.Add(move);
-
-                if (CheckForWin())
-                {
-                    Debug.LogWarning("win");
-                    return;
-                }
-
-                Solve();
-
-                if (CheckForWin())
-                {
-                    return;
-                }
-
-                UnmakeMove();
+                int ball = tube.GetComponent<Tube>().spots[i];
+                if (ball == 0) continue;
+                tubeString.Append(ColorMap[(ball - 1).ToString()]);
             }
+
+            board.SetTube(tubeIndex, new SolverTube(board, tubeIndex, new string(tubeString.ToString().Reverse().ToArray())));
+            tubeIndex++;
         }
-    }
 
-    private List<Move> GetPossibleMoves()
-    {
-        List<Move> output = new List<Move>();
+        var solver = new Solver();
+        List<SolverMove> solution = new List<SolverMove>();
+        var ret = solver.FindSolution(board);
 
-        for (int f = 0; f < level.Count; f++)
+        if (ret == null)
         {
-            for (int t = 0; t < level.Count; t++)
+            Debug.Log($"No solution!!! Visited = {solver.Visited.Count}");
+            return solution;
+        }
+
+        //Console.WriteLine($"Solved!!! Visited = {solver.Visited.Count}");
+        // boards are in "reverse order" at this point (walking up looking at parents).
+        // make understanding the moves easier now by reversing the order.
+        while (ret != null)
+        {
+            solution.Insert(0, ret.Move);
+            ret = ret.Parent;
+        }
+
+        Debug.Log(solution.Count);
+        foreach (SolverMove move in solution)
+        {
+            if (move != null)
             {
-                if (f != t)
-                {
-                    if (IsEmpty(level[t]) && !IsEmpty(level[f]))
-                    {
-                        if (GetNumberSameAtTop(level[f]) < 4 - BottomIndex(level[f]))
-                        {
-                            output.Add(new Move(f, t, level[f][BottomIndex(level[f])], GetNumberSameAtTop(level[f])));
-                        }
-                    }
-                    else if (!IsFull(level[t]) && !IsEmpty(level[f]))
-                    {
-                        if (GetTopBall(level[f]) == GetTopBall(level[t]))
-                        {                             
-                            if (GetNumberSameAtTop(level[f]) <= GetNumberOfOpenSpots(level[t]))
-                            {
-                                output.Add(new Move(f, t, level[f][BottomIndex(level[f])], GetNumberSameAtTop(level[f])));
-                            }
-                        }
-                    }
-                }
+                Debug.Log($"{move.Source} to {move.Target}");
             }
         }
 
-        return output;
+        return solution;
     }
 
-    private void MakeMove(Move fromTo)
+    public bool SolveFromList(List<List<int>> level)
     {
-        int bottomIndexFrom = BottomIndex(level[fromTo.x]);
-        int bottomIndexTo = FirstOpenSpot(level[fromTo.y]);
-
-        int numberMoving = fromTo.count;
-        int ball = fromTo.ball;
-
-        for (int i = 0; i < numberMoving; i++)
+        var board = new SolverBoard(level.Count, 4, level.Count - 2);
+        var tubeIndex = 0;
+        foreach (var tube in level)
         {
-            level[fromTo.x][bottomIndexFrom + i] = 0;
-            level[fromTo.y][bottomIndexTo - i] = ball;
-            if (bottomIndexTo - i == 0)
+            var tubeString = new StringBuilder();
+            for (int i = 0; i < 4; i++)
             {
-                break;
+                int ball = tube[i];
+                if (ball == 0) continue;
+                tubeString.Append(ColorMap[(ball - 1).ToString()]);
             }
-        }
-    }
 
-    private void UnmakeMove()
-    {
-        Move lastMove = lastMoves[lastMoves.Count - 1];
-        MakeMove(new Move(lastMove, true));
-        lastMoves.RemoveAt(lastMoves.Count - 1);
-    }
-
-    private bool CheckForWin()
-    {
-        for (int i = 0; i < level.Count; i++)
-        {
-            if (!IsFull(level[i]))
-            {
-                return false;
-            }
+            board.SetTube(tubeIndex, new SolverTube(board, tubeIndex, new string(tubeString.ToString().Reverse().ToArray())));
+            tubeIndex++;
         }
 
-        return true;
-    }
+        var solver = new Solver();
+        List<SolverMove> solution = new List<SolverMove>();
+        var ret = solver.FindSolution(board);
 
-    private bool IsFull(List<int> tube)
-    {
-        int same = tube[0];
-        for (int i = 1;  i < tube.Count; i++)
-        {
-            if (tube[i] != same && tube[i] != 0)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private bool IsEmpty(List<int> tube)
-    {
-        for (int i = 0; i < tube.Count; i++)
-        {
-            if (tube[i] != 0)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private int GetTopBall(List<int> tube)
-    {
-        return tube[BottomIndex(tube)];
-    }
-
-    private int GetNumberSameAtTop(List<int> tube)
-    {
-        int num = 0;
-        if (!IsEmpty(tube))
-        {
-            for (int i = BottomIndex(tube); i < 4; ++i)
-            {
-                if (tube[i] != 0)
-                {
-                    if (tube[i] != GetTopBall(tube)) { return num; }
-                    if (tube[i] == GetTopBall(tube))
-                    {
-                        num++;
-                    }
-                }
-            }
-        }
-        return num;
-    }
-
-    private int GetNumberOfOpenSpots(List<int> spots)
-    {
-        int num = 0;
-
-        for (int i = 0; i < spots.Count; ++i)
-        {
-            if (spots[i] == 0) { num++; }
-            else break;
-        }
-
-        return num;
-    }
-
-    public int BottomIndex(List<int> spots) // returns the index of the last ball
-    {
-        for (int i = 0; i < spots.Count; ++i)                          // 0
-        {                                                             //  3      returns 1
-            if (spots[i] != 0)                                       //   3
-            {                                                       //    3
-                return i;
-            }
-        }
-
-        return 3;
-    }
-
-    private int FirstOpenSpot(List<int> spots)
-    {
-        for (int i = spots.Count - 1; i >= 0; i--)
-        {
-            if (spots[i] == 0)
-            {
-                return i;
-            }
-        }
-
-        return 0;
+        return ret != null;
     }
 }
