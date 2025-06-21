@@ -78,7 +78,7 @@ public class LevelSolver : MonoBehaviour
 
     public bool SolveFromList(List<List<int>> level)
     {
-        var board = new SolverBoard(level.Count, 4, level.Count - 2);
+        var board = new SolverBoard(level.Count + 2, 4, level.Count);
         var tubeIndex = 0;
         foreach (var tube in level)
         {
@@ -86,8 +86,7 @@ public class LevelSolver : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 int ball = tube[i];
-                if (ball == 0) continue;
-                tubeString.Append(ColorMap[(ball - 1).ToString()]);
+                tubeString.Append(ColorMap[(ball).ToString()]);
             }
 
             board.SetTube(tubeIndex, new SolverTube(board, tubeIndex, new string(tubeString.ToString().Reverse().ToArray())));

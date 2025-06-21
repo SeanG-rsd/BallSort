@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour
         GenerateLevelSpots();
 
         Debug.Log(numLevels);
+        LoadCompleted();
 
         LoadLevelChooseList();
 
@@ -177,8 +178,9 @@ public class GameManager : MonoBehaviour
                 Debug.LogError("Failed to load DB from StreamingAssets: " + www.error);
             }
 #else
-        if (!File.Exists(targetPath))
+        if (!File.Exists(targetPath) || !PlayerPrefs.HasKey("Added20KLEVELS"))
         {
+            PlayerPrefs.SetString("Added20KLEVELS", "");
             File.Copy(sourcePath, targetPath);
         }
 #endif
@@ -243,7 +245,7 @@ public class GameManager : MonoBehaviour
 
         info += string.Join(",", level[level.Count - 1]);
 
-        using (dbconn = new SqliteConnection(conn))
+        using (dbconn = new SqliteConnection("URI=file:" + Application.streamingAssetsPath + "/levels_database.s3db"))
         {
             dbconn.Open();
             dbcmd = dbconn.CreateCommand();

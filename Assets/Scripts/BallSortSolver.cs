@@ -419,7 +419,7 @@ namespace BallSortSolver
             };
             Visited.Add(origin);
 
-            //origin.PrintBoard("Starting board");
+            //Debug.Log($"Starting Board\n{origin.ToString()}");
             if (origin.IsWinner)
             {
                 return origin;
@@ -429,7 +429,6 @@ namespace BallSortSolver
             {
                 var board = open.First();
                 open.RemoveAt(0);
-                Debug.Log($"Current Board\n{board.ToString()}");
 
                 var children = board.GetNextBoards();
                 //Debug.Log($"Found {children.Count} moves.");

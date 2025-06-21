@@ -15582,18 +15582,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1864562662}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: GenerateLevelsButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1775043214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16418,7 +16406,7 @@ MonoBehaviour:
   levelButtonPrefab: {fileID: 6807884434142539258, guid: 77e32631c5f815b43a627bf7746ff436, type: 3}
   pageLevelLayout: {x: 6, y: 10}
   levelButtonContainer: {fileID: 448789074}
-  generateXLevels: 10
+  generateXLevels: 19
   levelSolver: {fileID: 274316432}
   winScreen: {fileID: 1055464239}
   winNextButton: {fileID: 1254049889}
