@@ -6,12 +6,9 @@ using UnityEngine.UI;
 
 public class LevelButton : MonoBehaviour
 {
-    private int currentPage = 0;
     public int currentLevel;
     [SerializeField] private Image image;
-
-    List<int> levelNumbers = new();
-    List<bool> isCompleted = new();
+    private bool currentCompleted;
 
     [SerializeField] private Color completedColor;
     [SerializeField] private Color normalColor;
@@ -20,39 +17,27 @@ public class LevelButton : MonoBehaviour
 
     [SerializeField] private Button button;
 
-    public void AddNewLevel(int index, bool isCompleted)
+    public void SetLevel(int index, bool isCompleted)
     {
-        levelNumbers.Add(index);
-        this.isCompleted.Add(isCompleted);
-    }
-
-    public void SetPage(int newPage)
-    {
-        currentPage = newPage;
-        currentLevel = levelNumbers[currentPage];
+        currentLevel = index;
+        currentCompleted = isCompleted;
         UpdateSelf();
-        levelNumberText.text = currentLevel.ToString();
-        button.onClick.AddListener(delegate { LevelManager.instance.OnClickLoadLevel(currentLevel); });
     }
 
     public int GetLevelNumber()
     {
         return currentLevel;
     }
-
-    public bool isCompletedAtPage(int page)
-    {
-        return isCompleted[page];
-    }
-
     public void SetColor(bool completed)
     {
-        this.isCompleted[currentPage] = completed;
+        currentCompleted = completed;
         UpdateSelf();
     }
 
     public void UpdateSelf()
     {
-        image.color = isCompleted[currentPage] ? completedColor : normalColor;
+        image.color = currentCompleted ? completedColor : normalColor;
+        levelNumberText.text = currentLevel.ToString();
+        button.onClick.AddListener(delegate { LevelManager.instance.OnClickLoadLevel(currentLevel); });
     }
 }

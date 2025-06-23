@@ -550,10 +550,12 @@ public class GameManager : MonoBehaviour
             numberOfPages++;
         }
 
-        for (int i = 1; i <= numLevels; i++)
+        for (int i = 1; i <= levelsPerPage; i++)
         {
-            levelButtons[(i - 1) % levelsPerPage].AddNewLevel(i, GetIsCompleted(i));
+            levelButtons[i - 1].SetLevel(i, GetIsCompleted(i));
         }
+
+        PageRight();
     }
 
     #endregion
@@ -606,7 +608,8 @@ public class GameManager : MonoBehaviour
 
         for (int spotIndex = 0; spotIndex < levelButtons.Count; spotIndex++)
         {
-            levelButtons[spotIndex].SetPage(currentPage);
+            int level = currentPage * 60 + spotIndex + 1;
+            levelButtons[spotIndex].SetLevel(level, GetIsCompleted(level));
         }
 
         if (currentPage > 2)
@@ -653,9 +656,9 @@ public class GameManager : MonoBehaviour
     private bool CheckRequirement(int page) // true if you can't go to the current page
     {
         if (page == 0 || page >= numberOfPages) return false;
-        for (int i = 0; i < levelButtons.Count; ++i)
+        for (int i = 1; i <= levelButtons.Count; ++i)
         {
-            if (!levelButtons[i].isCompletedAtPage(page - 1))
+            if (!GetIsCompleted((page - 1) * 60 + i))
             {
                 return true;
             }
@@ -684,7 +687,7 @@ public class GameManager : MonoBehaviour
             {
                 for (int index = 0; index < LPP; index++)
                 {
-                    if (!levelButtons[index].isCompletedAtPage(currentPage))
+                    if (!GetIsCompleted(currentPage * LPP + index + 1))
                     {
                         LevelManager.instance.OnClickLoadLevel(levelButtons[index].GetLevelNumber());
                         currentPage = levelButtons[index].GetLevelNumber() / LPP;
@@ -724,7 +727,7 @@ public class GameManager : MonoBehaviour
         int pageNumber = (levelIndex - 1) / LPP;
         int number = (levelIndex - 1) % LPP;
 
-        if (levelButtons[number].isCompletedAtPage(pageNumber))
+        if (GetIsCompleted(LPP * pageNumber + number + 1))
         {
             return false;
         }
