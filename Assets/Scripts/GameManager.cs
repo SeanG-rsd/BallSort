@@ -714,6 +714,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                page = IsCompletedPage(currentPage);
                 for (int index = 0; index < LPP; index++)
                 {
                     if (!page[index])
