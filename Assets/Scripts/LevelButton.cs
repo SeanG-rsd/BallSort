@@ -38,6 +38,7 @@ public class LevelButton : MonoBehaviour
     {
         image.color = currentCompleted ? completedColor : normalColor;
         levelNumberText.text = currentLevel.ToString();
+        button.onClick.RemoveAllListeners();
         button.onClick.AddListener(delegate { LevelManager.instance.OnClickLoadLevel(currentLevel); });
     }
 }

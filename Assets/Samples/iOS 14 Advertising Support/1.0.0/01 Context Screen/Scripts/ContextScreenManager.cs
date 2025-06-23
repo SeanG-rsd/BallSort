@@ -21,27 +21,31 @@ namespace Unity.Advertisement.IosSupport.Samples
 
         void Start()
         {
-#if UNITY_IOS
-            // check with iOS to see if the user has accepted or declined tracking
-            var status = ATTrackingStatusBinding.GetAuthorizationTrackingStatus();
+#if UNITY_IOS && !UNITY_EDITOR
+    var status = ATTrackingStatusBinding.GetAuthorizationTrackingStatus();
 
-            if (status == ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED)
-            {
-                contextScreen = Instantiate(contextScreenPrefab).GetComponent<ContextScreenView>();
+    // Only show the context screen if status is NOT_DETERMINED and we haven’t shown it yet
+    if (status == ATTrackingStatusBinding.AuthorizationTrackingStatus.NOT_DETERMINED &&
+        PlayerPrefs.GetInt("ATT_Request_Shown", 0) == 0)
+    {
+        contextScreen = Instantiate(contextScreenPrefab).GetComponent<ContextScreenView>();
 
-                // after the Continue button is pressed, and the tracking request
-                // has been sent, automatically destroy the popup to conserve memory
-                contextScreen.sentTrackingAuthorizationRequest += () => Destroy(contextScreen.gameObject);
+        contextScreen.sentTrackingAuthorizationRequest += () =>
+        {
+            // Mark that the ATT request has been shown
+            PlayerPrefs.SetInt("ATT_Request_Shown", 1);
+            PlayerPrefs.Save();
+
+            Destroy(contextScreen.gameObject);
+        };
+    }
+#else
+                Debug.Log("Unity iOS Support: App Tracking Transparency status not checked, because the platform is not iOS.");
+#endif
+                StartCoroutine(LoadGame());
             }
 
-            
-#else
-            Debug.Log("Unity iOS Support: App Tracking Transparency status not checked, because the platform is not iOS.");
-#endif
-            StartCoroutine(LoadGame());
-        }
-
-        private IEnumerator LoadGame()
+            private IEnumerator LoadGame()
         {
 #if UNITY_IOS && !UNITY_EDITOR
             var status = ATTrackingStatusBinding.GetAuthorizationTrackingStatus();

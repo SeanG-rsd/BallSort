@@ -109,6 +109,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log(numLevels);
         LoadCompleted();
+        LoadCompletedLevels();
 
         LoadLevelChooseList();
 
@@ -370,7 +371,6 @@ public class GameManager : MonoBehaviour
                 completedSaveLevels = PlayerPrefs.GetString("SavedString");
             }
 
-            completedLevels = new List<int>();
             string set = "";
 
             if (completedSaveLevels.Length > 0)
@@ -394,11 +394,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public int GetNumberOfCompletedLevels()
-    {
-        return completedLevels.Count;
-    }
-
     public int GetNumberOfLevels()
     {
         return numLevels;
@@ -409,10 +404,31 @@ public class GameManager : MonoBehaviour
         return ReadLevel(levelNumber);
     }
 
-    public bool GetIsCompleted(int levelNumber)
+    private void LoadCompletedLevels()
     {
-        return ReadIsCompleted(levelNumber);
+        using (var dbconn = new SqliteConnection(conn))
+        {
+            dbconn.Open();
+
+            using (var dbcmd = dbconn.CreateCommand())
+            {
+                string sqlQuery = "SELECT level_index FROM levels WHERE completed = 1;";
+                dbcmd.CommandText = sqlQuery;
+
+                using (IDataReader reader = dbcmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int levelIndex = reader.GetInt32(0);
+                        completedLevels.Add(levelIndex);
+                    }
+                }
+            }
+        }
+
+        Debug.Log("Completed levels: " + string.Join(", ", completedLevels));
     }
+
     #endregion
 
     #region GenerateLevels
@@ -550,11 +566,6 @@ public class GameManager : MonoBehaviour
             numberOfPages++;
         }
 
-        for (int i = 1; i <= levelsPerPage; i++)
-        {
-            levelButtons[i - 1].SetLevel(i, GetIsCompleted(i));
-        }
-
         PageRight();
     }
 
@@ -589,8 +600,11 @@ public class GameManager : MonoBehaviour
             currentCheck = numberOfTutorialPages + 1;
         }
 
-        while (!CheckRequirement(currentCheck))
+        bool[] page = IsCompletedPage(currentCheck);
+
+        while (!CheckRequirement(currentCheck, page))
         {
+            page = IsCompletedPage(currentCheck);
             currentCheck++;
         }
         currentPage = currentCheck - 1;
@@ -598,23 +612,37 @@ public class GameManager : MonoBehaviour
         UpdateListPage();
     }
 
+    private bool[] IsCompletedPage(int page)
+    {
+        bool[] output = new bool[60];
+        for (int i = 0; i < 60; i++)
+        {
+            output[i] = completedLevels.Contains(page * 60 + i + 1);
+        }
+
+        return output;
+    }
+
     private void UpdateListPage()
     {
         currentPage = Mathf.Clamp(currentPage, 0, numberOfPages);
+        Debug.Log("currentPage: " + currentPage);
 
         UpdateButtons();
+        bool[] page = IsCompletedPage(currentPage);
 
-        pageNumberText.text = (currentPage + 1).ToString();
+        pageNumberText.text = (currentPage + 1).ToString();   
 
         for (int spotIndex = 0; spotIndex < levelButtons.Count; spotIndex++)
         {
             int level = currentPage * 60 + spotIndex + 1;
-            levelButtons[spotIndex].SetLevel(level, GetIsCompleted(level));
+            levelButtons[spotIndex].SetLevel(level, page[spotIndex]);
         }
 
         if (currentPage > 2)
         {
-            pageRequirementBox.SetActive(CheckRequirement(currentPage));
+            page = IsCompletedPage(currentPage - 1);
+            pageRequirementBox.SetActive(CheckRequirement(currentPage, page));
         }
         else
         {
@@ -653,12 +681,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool CheckRequirement(int page) // true if you can't go to the current page
+    private bool CheckRequirement(int page, bool[] complete) // true if you can't go to the current page
     {
         if (page == 0 || page >= numberOfPages) return false;
-        for (int i = 1; i <= levelButtons.Count; ++i)
+        for (int i = 0; i < levelButtons.Count; ++i)
         {
-            if (!GetIsCompleted((page - 1) * 60 + i))
+            if (!complete[i])
             {
                 return true;
             }
@@ -676,9 +704,10 @@ public class GameManager : MonoBehaviour
 
     private void NextLevel(int position, int LPP)
     {
+        bool[] page = IsCompletedPage(currentPage + 1);
         if (position == 0) // look for levels in the page
         {
-            if (!CheckRequirement(currentPage + 1))
+            if (!CheckRequirement(currentPage + 1, page))
             {
                 LevelManager.instance.OnClickLoadLevel(lastLevelBeat);
                 Debug.Log("HERE");
@@ -687,12 +716,13 @@ public class GameManager : MonoBehaviour
             {
                 for (int index = 0; index < LPP; index++)
                 {
-                    if (!GetIsCompleted(currentPage * LPP + index + 1))
+                    if (!page[index])
                     {
                         LevelManager.instance.OnClickLoadLevel(levelButtons[index].GetLevelNumber());
                         currentPage = levelButtons[index].GetLevelNumber() / LPP;
                         UpdateListPage();
                         Debug.Log("also here");
+                        break;
                     }
                 }
             }
@@ -727,13 +757,14 @@ public class GameManager : MonoBehaviour
         int pageNumber = (levelIndex - 1) / LPP;
         int number = (levelIndex - 1) % LPP;
 
-        if (GetIsCompleted(LPP * pageNumber + number + 1))
+        if (completedLevels.Contains(LPP * pageNumber + number + 1))
         {
             return false;
         }
 
         LevelManager.instance.AddCoins(coinIncrement);
         CompleteLevel(levelIndex);
+            completedLevels.Add(levelIndex);
         levelButtons[number].SetColor(true);
         return true;
     }
