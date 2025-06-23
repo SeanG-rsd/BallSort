@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log(numLevels);
         LoadCompleted();
-        LoadCompletedLevels();
+        //LoadCompletedLevels();
 
         LoadLevelChooseList();
 
@@ -705,39 +705,37 @@ public class GameManager : MonoBehaviour
     private void NextLevel(int position, int LPP)
     {
         bool[] page = IsCompletedPage(currentPage + 1);
-        if (position == 0) // look for levels in the page
+        if (!CheckRequirement(currentPage + 1, page))
         {
-            if (!CheckRequirement(currentPage + 1, page))
+            LevelManager.instance.OnClickLoadLevel((currentPage + 1) * 60 + 1);
+            Debug.Log("HERE");
+        }
+        else
+        {
+            page = IsCompletedPage(currentPage);
+            for (int index = 0; index < LPP; index++)
             {
-                LevelManager.instance.OnClickLoadLevel(lastLevelBeat);
-                Debug.Log("HERE");
-            }
-            else
-            {
-                page = IsCompletedPage(currentPage);
-                for (int index = 0; index < LPP; index++)
+                int check = (position + index) % LPP;
+                if (!page[check])
                 {
-                    if (!page[index])
-                    {
-                        LevelManager.instance.OnClickLoadLevel(levelButtons[index].GetLevelNumber());
-                        currentPage = levelButtons[index].GetLevelNumber() / LPP;
-                        UpdateListPage();
-                        Debug.Log("also here");
-                        break;
-                    }
+                    Debug.Log(check);
+                    LevelManager.instance.OnClickLoadLevel(levelButtons[check].GetLevelNumber());
+                    UpdateListPage();
+                    Debug.Log("also here");
+                    return;
                 }
             }
+            Debug.Log("HEREEEE");
         }
     }
 
     public void WinNext()
     {
         int LPP = pageLevelLayout.x * pageLevelLayout.y;
-        lastLevelBeat++;
 
         Debug.Log(lastLevelBeat);
 
-        int position = (lastLevelBeat - 1) % LPP;
+        int position = (lastLevelBeat) % LPP;
         MenuManager.instance.ToggleWinScreen(false);
 
         PageFarRight();
