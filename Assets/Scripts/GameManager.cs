@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 using BallSortSolver;
+using UnityEngine.Networking;
 
 public class GameManager : MonoBehaviour
 {
@@ -104,7 +105,7 @@ public class GameManager : MonoBehaviour
     {
         //loadingScreen.SetActive(true);
 
-        InitDatabase();
+        StartCoroutine(InitDatabase());
         GenerateLevelSpots();
 
         Debug.Log(numLevels);
@@ -159,7 +160,7 @@ public class GameManager : MonoBehaviour
 
     #region Database
 
-    private void InitDatabase()
+    private IEnumerator<UnityWebRequestAsyncOperation> InitDatabase()
     {
         string DATABASE_NAME = "/levels_database.s3db";
 
@@ -167,17 +168,17 @@ public class GameManager : MonoBehaviour
         string targetPath = Application.persistentDataPath + DATABASE_NAME;
 
 #if UNITY_ANDROID
-            UnityWebRequest www = UnityWebRequest.Get(sourcePath);
-            yield return www.SendWebRequest();
+        UnityWebRequest www = UnityWebRequest.Get(sourcePath);
+        yield return www.SendWebRequest();
 
-            if (www.result == UnityWebRequest.Result.Success)
-            {
-                File.WriteAllBytes(targetPath, www.downloadHandler.data);
-            }
-            else
-            {
-                Debug.LogError("Failed to load DB from StreamingAssets: " + www.error);
-            }
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            File.WriteAllBytes(targetPath, www.downloadHandler.data);
+        }
+        else
+        {
+            Debug.LogError("Failed to load DB from StreamingAssets: " + www.error);
+        }
 #else
         if (!File.Exists(targetPath) || !PlayerPrefs.HasKey("Added20KLEVELS"))
         {
@@ -192,6 +193,7 @@ public class GameManager : MonoBehaviour
         numLevels = SetNumLevels();
 
         //CreateLevelTable();
+        yield return null;
     }
 
     private int SetNumLevels()

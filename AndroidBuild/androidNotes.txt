@@ -1,0 +1,2 @@
+Gradle Version: 8.14.0
+user.keystore password is in 1Password
